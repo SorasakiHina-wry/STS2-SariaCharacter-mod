@@ -20,3 +20,8 @@ mods-src/probe/lib/
 *.log
 *.user
 .DS_Store
+
+# python
+__pycache__/
+*.pyc
+
