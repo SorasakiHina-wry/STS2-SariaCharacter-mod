@@ -26,7 +26,7 @@ public sealed class BrittleCraft : CustomRelicModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "脆化技艺"),
-        ("description", "你的攻击对目标每有 1 层[gold]易伤[/gold]，额外造成 1 点伤害。"),
-        ("flavor", "先让外壳开裂，再谈力道。"),
+        // 描述原样取自 design/relics.md，不做任何改写
+        ("description", "目标每有 1 层易伤，攻击就额外造成 1 点伤害"),
     };
 }

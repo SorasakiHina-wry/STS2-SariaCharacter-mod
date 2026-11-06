@@ -45,8 +45,8 @@ public sealed class SignalAmplifier : CustomRelicModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "Signal Amplifier"),
-        ("description", "At the start of each combat, gain {StrengthPower:diff()} [gold]Strength[/gold]."),
-        ("flavor", "Everything it hears, it makes louder."),
+        // 描述 = design/relics.md 的「触发，效果」原文
+        ("description", "战斗开始时，获得 1 点力量。"),
     };
 }
 
@@ -78,8 +78,7 @@ public sealed class StaticLantern : CustomRelicModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "Static Lantern"),
-        ("description", "At the start of each combat, gain {DexterityPower:diff()} [gold]Dexterity[/gold]."),
-        ("flavor", "The light does not move. The shadows do."),
+        ("description", "战斗开始时，获得 1 点敏捷。"),
     };
 }
 
@@ -109,7 +108,6 @@ public sealed class RecursionEngine : CustomRelicModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "Recursion Engine"),
-        ("description", "At the start of each combat, gain {StrengthPower:diff()} [gold]Strength[/gold] and {DexterityPower:diff()} [gold]Dexterity[/gold]."),
-        ("flavor", "It runs the same moment again, slightly better each time."),
+        ("description", "战斗开始时，获得 2 点力量，获得 2 点敏捷。"),
     };
 }

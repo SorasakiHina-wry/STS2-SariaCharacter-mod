@@ -80,6 +80,7 @@ public sealed class CalciumArmorPower : CustomPowerModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "钙铠"),
-        ("description", "回合开始时，获得与层数相等的[gold]格挡[/gold]。每次受到攻击时失去 1 层。"),
+        // 描述原样取自 design/powers.md
+        ("description", "回合开始时，获得与层数相等的格挡。受到攻击时失去 1 层。"),
     };
 }
