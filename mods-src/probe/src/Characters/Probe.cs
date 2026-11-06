@@ -52,7 +52,7 @@ public sealed class Probe : PlaceholderCharacterModel
 
     public override IReadOnlyList<RelicModel> StartingRelics => new RelicModel[]
     {
-        ModelDb.Relic<ProbeCore>(),
+        ModelDb.Relic<BrittleCraft>(),
     };
 
     /// <summary>

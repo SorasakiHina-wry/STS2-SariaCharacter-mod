@@ -176,6 +176,40 @@ UI 显示 PROCEED 一切正常，直到点下去才 NRE —— 表现为「打�
 3. Prefix 里 `return false` 跳过 async 原方法，会让它返回 null Task，
    调用方 `EventOption.Chosen()` 再解引用 → 又一个 NRE。**要返回真正的 Task，就得放行原方法**。
 
+## 工作流：状态标记 + 待办队列
+
+每条设计（卡牌 / 状态 / 机制 / 遗物）的 `备注` 里带一个标签：
+
+| 标签 | 含义 | 我做什么 |
+|---|---|---|
+| `已实装` | 代码已实现 | 跳过，不再看 |
+| `待实装` | 待实现 | 写代码 + 编译 + 部署 |
+| `待修改` | 需要改 | 按备注里写的改 |
+| `待删除` | 要删 | 删代码，**并从 md 里删掉这一条** |
+
+查待办（只打印未实装的部分）：
+
+```powershell
+$env:PYTHONUTF8='1'
+D:\STS2\.python312\python.exe D:\STS2\mods-src\probe\tools\cardspec.py --todo
+```
+
+它会顺带做一致性检查，例如：
+
+- 标了 `已实装` 但 `src/` 里找不到同名 title → 报错
+- 标了 `待实装` 但代码里已经有 → 报错（提醒你改标签）
+- 标了 `待删除` 但代码里已经没了 → 提示可以直接删条目
+
+给**已实现**的内容批量补 `已实装` 标签：
+
+```powershell
+D:\STS2\.python312\python.exe D:\STS2\mods-src\probe\tools\tag_status.py --dry-run   # 预览
+D:\STS2\.python312\python.exe D:\STS2\mods-src\probe\tools\tag_status.py             # 写入
+```
+
+版本管理：工作区根目录已 `git init`，`.gitignore` 排除了 vendor/.cache/spine-1 等大目录，
+只跟踪 `docs/` 与 `mods-src/`。每次改动我都提交一次，方便 `git diff` 对比和回退。
+
 ## 卡牌设计流程（你 ↔ 我）
 
 1. 你在 [design/cards.md](D:\STS2\mods-src\probe\design\cards.md) 里按格式写卡（格式说明见

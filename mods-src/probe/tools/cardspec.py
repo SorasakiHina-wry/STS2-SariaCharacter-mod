@@ -57,6 +57,8 @@ STATUS_RE = re.compile(r"(?:施加|获得)\s*(\d+)\s*层([^\s|｜，,。.；;、
 # Workflow tags the author puts inside 备注. 已实装 = implemented, leave it alone.
 STATUS_TAGS = ("已实装", "待实装", "待修改", "待删除")
 TITLE_RE = re.compile(r'\("title"\s*,\s*"([^"]+)"\)')
+# cards whose localization is built by a helper, e.g. ProbeCardKit.DamageLoc("Probe Tap")
+TITLE_HELPER_RE = re.compile(r'(?:DamageLoc|BlockLoc)\(\s*"([^"]+)"\s*\)')
 
 KV_RE = re.compile(r"^([^:：]{1,8})[:：]\s*(.*)$")
 FENCE_RE = re.compile(r"^\s*```+\s*(\w*)\s*$")
@@ -128,6 +130,8 @@ def scan_code_titles(src_dir: Path) -> dict[str, str]:
         except Exception:
             continue
         for m in TITLE_RE.finditer(text):
+            titles.setdefault(m.group(1).strip(), str(path.relative_to(src_dir.parent)))
+        for m in TITLE_HELPER_RE.finditer(text):
             titles.setdefault(m.group(1).strip(), str(path.relative_to(src_dir.parent)))
     return titles
 
@@ -574,8 +578,7 @@ def main(argv: list[str]) -> int:
     problems += queue_problems
     infos += queue_infos
 
-    if not todo_only:
-        print_queue(items, code_titles)
+    print_queue(items, code_titles)
 
     for info in infos:
         print(f"提示: {info}")
