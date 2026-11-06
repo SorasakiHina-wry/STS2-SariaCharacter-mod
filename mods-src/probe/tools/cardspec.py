@@ -108,14 +108,22 @@ def _extract_cost(text: str) -> int | None:
 
 
 def _extract_status(notes: str) -> tuple[str, str]:
-    """Split the workflow tag out of 备注 -> (status, remaining notes)."""
+    """Split the workflow tag out of 备注 -> (status, remaining notes).
+
+    Tolerates spaces inside the tag ("已 实装") and multiple tags (the most actionable wins:
+    待删除 > 待修改 > 待实装 > 已实装), so a half-edited entry is never mistaken for done.
+    """
     if not notes:
         return "", ""
-    for tag in STATUS_TAGS:
-        idx = notes.find(tag)
-        if idx >= 0:
-            rest = (notes[:idx] + " " + notes[idx + len(tag):]).strip(" \t：:，,;；。.")
-            return tag, rest.strip()
+    for tag in ("待删除", "待修改", "待实装", "已实装"):
+        pattern = r"\s*".join(tag)  # 已实装 -> 已\s*实装
+        m = re.search(pattern, notes)
+        if m:
+            rest = notes[:m.start()] + " " + notes[m.end():]
+            # drop any other status tags that were left behind, then tidy separators
+            for other in STATUS_TAGS:
+                rest = re.sub(r"\s*".join(other), "", rest)
+            return tag, rest.strip(" \t：:，,;；。、")
     return "", notes.strip()
 
 
@@ -512,6 +520,108 @@ def print_queue(items: list[tuple[str, dict]], code_titles: dict[str, str]) -> N
         print()
 
 
+def _spec_line(kind: str, item: dict) -> str:
+    """One compact line containing everything needed to implement the entry."""
+    name = item["name"]
+    if kind == "cards":
+        return (f"{name} | {item['rarity'] or '?'} | {item['type']} | {item['target']} | "
+                f"基础: {item['base_raw']} | 升级: {item['upgrade_raw']}"
+                + (f" | 备注: {item['notes']}" if item["notes"] else ""))
+    if kind == "powers":
+        bits = [f"{name}", item["kind"] or "?"]
+        for label, key in (("叠层", "stack"), ("衰减", "decay"), ("触发", "trigger"),
+                           ("效果", "effect"), ("描述", "description")):
+            if item.get(key):
+                bits.append(f"{label}: {item[key]}")
+        return " | ".join(bits)
+    if kind == "mechanics":
+        bits = [f"{name}", item["scope"] or "?"]
+        for label, key in (("规则", "summary"), ("时机", "timing"), ("细节", "details")):
+            if item.get(key):
+                bits.append(f"{label}: {item[key]}")
+        return " | ".join(bits)
+    # relics
+    bits = [f"{name}", item["rarity"] or "?"]
+    for label, key in (("触发", "trigger"), ("效果", "effect"), ("描述", "description")):
+        if item.get(key):
+            bits.append(f"{label}: {item[key]}")
+    return " | ".join(bits)
+
+
+def print_pending(items: list[tuple[str, dict]], code_titles: dict[str, str]) -> int:
+    """Full specs of everything that still needs work - the only thing worth reading per round."""
+    count = 0
+    for tag in ("待实装", "待修改", "待删除", ""):
+        rows = [(k, i) for k, i in items
+                if i.get("status") == tag and i["name"].strip() and not i.get("disabled")]
+        if not rows:
+            continue
+        label = tag or "未标记"
+        print(f"\n[{label}] {len(rows)} 条")
+        for kind, item in rows:
+            target = f" → {code_titles[item['name']]}" if item["name"] in code_titles else ""
+            print(f"  - {kind}: {_spec_line(kind, item)}{target}")
+            count += 1
+    if count == 0:
+        print("没有待处理的条目（全部已实装）")
+    return count
+
+
+def _blocks_by_name(text: str, kind: str) -> dict[str, str]:
+    out: dict[str, str] = {}
+    for m in re.finditer(r"```" + kind + r"\s*\n(.*?)```", text, re.S):
+        body = m.group(1)
+        nm = re.search(r"^名称[:：][ \t]*(.+?)[ \t]*$", body, re.M)
+        if nm:
+            out[nm.group(1).strip()] = body.strip()
+    return out
+
+
+def _head_text(path: Path) -> str | None:
+    """File content as committed in HEAD ('' when the file is new), None if git is unavailable."""
+    import subprocess
+    try:
+        root = subprocess.run(["git", "rev-parse", "--show-toplevel"], cwd=str(path.parent),
+                              capture_output=True, text=True, encoding="utf-8")
+        if root.returncode != 0:
+            return None
+        repo = Path(root.stdout.strip())
+        rel = path.resolve().relative_to(repo.resolve()).as_posix()
+        show = subprocess.run(["git", "show", f"HEAD:{rel}"], cwd=str(repo),
+                              capture_output=True, text=True, encoding="utf-8")
+        return show.stdout if show.returncode == 0 else ""
+    except Exception:
+        return None
+
+
+def print_changed(design_dir: Path) -> None:
+    """Entries added or edited since the last commit - catches untagged edits too."""
+    total = 0
+    for name, kind in (("cards.md", "card"), ("powers.md", "power"),
+                       ("mechanics.md", "mechanic"), ("relics.md", "relic")):
+        path = design_dir / name
+        if not path.exists():
+            continue
+        head = _head_text(path)
+        if head is None:
+            print("（不在 git 仓库里，跳过 --changed）")
+            return
+
+        old = _blocks_by_name(head, kind)
+        new = _blocks_by_name(path.read_text(encoding="utf-8-sig"), kind)
+        added = [n for n in new if n not in old]
+        removed = [n for n in old if n not in new]
+        modified = [n for n in new if n in old and new[n] != old[n]]
+        if added or removed or modified:
+            total += len(added) + len(removed) + len(modified)
+            print(f"\n{name}")
+            for label, rows in (("新增", added), ("修改", modified), ("删除", removed)):
+                if rows:
+                    print(f"  {label}（{len(rows)}）: " + "、".join(rows))
+    if total == 0:
+        print("设计表自上次提交以来没有变化")
+
+
 # --------------------------------------------------------------------------- main
 
 
@@ -534,10 +644,31 @@ def main(argv: list[str]) -> int:
     active_relics = [r for r in relics if not r["disabled"] and r["name"].strip()]
 
     if as_json:
+        pending_only = "--pending" in argv
+        if pending_only:
+            active_cards = [c for c in active_cards if c.get("status") != "已实装"]
+            active_powers = [p for p in active_powers if p.get("status") != "已实装"]
+            active_mechs = [m for m in active_mechs if m.get("status") != "已实装"]
+            active_relics = [r for r in active_relics if r.get("status") != "已实装"]
         print(json.dumps(
             {"cards": active_cards, "powers": active_powers, "mechanics": active_mechs, "relics": active_relics},
             ensure_ascii=False, indent=2,
         ))
+        return 0
+
+    items_for_modes: list[tuple[str, dict]] = (
+        [("cards", c) for c in cards]
+        + [("powers", p) for p in powers]
+        + [("mechanics", m) for m in mechs]
+        + [("relics", r) for r in relics]
+    )
+
+    # Cheap modes for the per-round workflow: no full-sheet reading needed.
+    if "--pending" in argv:
+        print_pending(items_for_modes, scan_code_titles(design_dir.parent / "src"))
+        return 0
+    if "--changed" in argv:
+        print_changed(design_dir)
         return 0
 
     print(f"卡牌表: {cards_path}")

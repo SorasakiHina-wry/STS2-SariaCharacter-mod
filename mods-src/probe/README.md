@@ -178,39 +178,62 @@ UI 显示 PROCEED 一切正常，直到点下去才 NRE —— 表现为「打�
 3. Prefix 里 `return false` 跳过 async 原方法，会让它返回 null Task，
    调用方 `EventOption.Chosen()` 再解引用 → 又一个 NRE。**要返回真正的 Task，就得放行原方法**。
 
-## 工作流：状态标记 + 待办队列
+## 工作流：状态标记 + 每轮只读待办
 
 每条设计（卡牌 / 状态 / 机制 / 遗物）的 `备注` 里带一个标签：
 
 | 标签 | 含义 | 我做什么 |
 |---|---|---|
-| `已实装` | 代码已实现 | 跳过，不再看 |
+| `已实装` | 代码已实现 | **完全不读**（省 token） |
 | `待实装` | 待实现 | 写代码 + 编译 + 部署 |
 | `待修改` | 需要改 | 按备注里写的改 |
 | `待删除` | 要删 | 删代码，**并从 md 里删掉这一条** |
 
-查待办（只打印未实装的部分）：
+标签识别对 `已 实装`（带空格）也有效；同一条写了多个标签时按 `待删除 > 待修改 > 待实装 > 已实装`
+取最需要处理的那个，所以「已实装；待修改」不会被误判为已完成。
+
+### 每轮我只跑这两条（不整篇读设计表）
 
 ```powershell
 $env:PYTHONUTF8='1'
-D:\STS2\.python312\python.exe D:\STS2\mods-src\probe\tools\cardspec.py --todo
+$exe = 'D:\STS2\.python312\python.exe'
+$tool = 'D:\STS2\mods-src\probe\tools\cardspec.py'
+
+& $exe $tool --changed    # 自上次提交以来你改了哪些条目（没打标签也能抓到）
+& $exe $tool --pending    # 未实装条目的完整规格，一行一条
 ```
 
-它会顺带做一致性检查，例如：
+`--changed` 的输出形如：
 
-- 标了 `已实装` 但 `src/` 里找不到同名 title → 报错
-- 标了 `待实装` 但代码里已经有 → 报错（提醒你改标签）
-- 标了 `待删除` 但代码里已经没了 → 提示可以直接删条目
+```
+cards.md
+  新增（2）: 针剂弹药、部署
+  修改（1）: 硬化
+```
 
-给**已实现**的内容批量补 `已实装` 标签：
+`--pending` 的输出形如（每行包含实现所需的全部字段，我不用再打开 md）：
+
+```
+[待修改] 1 条
+  - cards: 硬化 | Basic | Skill | Self | 基础: 费用 1 | 获得 6 层钙铠 | 升级: 费用 1 | 获得 8 层钙铠 → src\Cards\ProbeCalciumCards.cs
+```
+
+机器可读：`cardspec.py --json --pending`。
+
+一致性检查（`--todo` / 默认模式）仍会报：标了 `已实装` 但代码里没有、标了 `待实装` 但代码已有、
+标了 `待删除` 但代码已无。
+
+### 批量维护
 
 ```powershell
-D:\STS2\.python312\python.exe D:\STS2\mods-src\probe\tools\tag_status.py --dry-run   # 预览
-D:\STS2\.python312\python.exe D:\STS2\mods-src\probe\tools\tag_status.py             # 写入
+& $exe D:\STS2\mods-src\probe\tools\tag_status.py --dry-run   # 给已实现的补 已实装
+& $exe D:\STS2\mods-src\probe\tools\tag_status.py
+& $exe D:\STS2\mods-src\probe\tools\prune.py --dry-run        # 预览：删「待删除」条目 + 翻状态
+& $exe D:\STS2\mods-src\probe\tools\prune.py --retag
 ```
 
 版本管理：工作区根目录已 `git init`，`.gitignore` 排除了 vendor/.cache/spine-1 等大目录，
-只跟踪 `docs/` 与 `mods-src/`。每次改动我都提交一次，方便 `git diff` 对比和回退。
+只跟踪 `docs/` 与 `mods-src/`。每次改动都提交一次，`--changed` 就是基于这条提交线做对比的。
 
 ## 卡牌设计流程（你 ↔ 我）
 
