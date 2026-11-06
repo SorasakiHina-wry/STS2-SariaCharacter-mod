@@ -44,7 +44,7 @@ public sealed class ProbeHardening : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "硬化"),
-        ("description", "获得 {CalciumArmorPower:diff()} 层 [gold]钙铠[/gold]。"),
+        ("description", "获得 {CalciumArmorPower:diff()} 层钙铠"),
     };
 }
 
@@ -82,13 +82,13 @@ public sealed class ProbeIgnite : CustomCardModel
             this);
     }
 
-    protected override void OnUpgrade() => EnergyCost.UpgradeBy(-1);
+    protected override void OnUpgrade() => DynamicVars.Vulnerable.UpgradeValueBy(1m);
 
     public override string? CustomPortraitPath => "res://images/packed/card_portraits/ironclad/bash.png";
 
     public override List<(string, string)>? Localization => new()
     {
         ("title", "激发"),
-        ("description", "若拥有至少 1 层 [gold]钙铠[/gold]，失去 1 层并施加 {VulnerablePower:diff()} 层 [gold]易伤[/gold]。"),
+        ("description", "若拥有大于等于 1 层钙铠，则失去 1 层钙铠，并施加 {VulnerablePower:diff()} 层易伤"),
     };
 }

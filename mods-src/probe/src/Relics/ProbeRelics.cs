@@ -45,8 +45,8 @@ public sealed class SignalAmplifier : CustomRelicModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "Signal Amplifier"),
-        // 描述 = design/relics.md 的「触发，效果」原文
-        ("description", "战斗开始时，获得 1 点力量。"),
+        // 描述留空时回退到 effects.md 的「效果」原文，不拼接触发条件
+        ("description", "获得 1 点力量"),
     };
 }
 
@@ -78,7 +78,7 @@ public sealed class StaticLantern : CustomRelicModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "Static Lantern"),
-        ("description", "战斗开始时，获得 1 点敏捷。"),
+        ("description", "获得 1 点敏捷"),
     };
 }
 
@@ -108,6 +108,6 @@ public sealed class RecursionEngine : CustomRelicModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "Recursion Engine"),
-        ("description", "战斗开始时，获得 2 点力量，获得 2 点敏捷。"),
+        ("description", "获得 2 点力量，获得 2 点敏捷"),
     };
 }

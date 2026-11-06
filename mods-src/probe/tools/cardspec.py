@@ -376,6 +376,8 @@ def validate_relics(relics: list[dict]) -> tuple[list[str], list[str]]:
         for field in ("稀有度", "效果"):
             if not r["_raw"].get(field):
                 problems.append(f"{where}: 缺少必填字段「{field}」")
+        if not r["description"].strip():
+            infos.append(f"{where}: 没写「描述」——玩家看到的文本会退化成「效果」原文")
         if r["rarity_raw"] and not r["rarity"]:
             problems.append(
                 f"{where}: 稀有度「{r['rarity_raw']}」无法识别（初始/普通/罕见/稀有/商店/事件/远古）"

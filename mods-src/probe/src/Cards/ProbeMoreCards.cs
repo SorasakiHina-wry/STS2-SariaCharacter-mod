@@ -49,7 +49,7 @@ public sealed class ProbeJab : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "Probe Jab"),
-        ("description", "Deal {Damage:diff()} damage."),
+        ("description", "造成 {Damage:diff()} 点伤害"),
     };
 }
 
@@ -80,7 +80,7 @@ public sealed class ProbeWard : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "Probe Ward"),
-        ("description", "Gain {Block:diff()} [gold]Block[/gold]."),
+        ("description", "获得 {Block:diff()} 点格挡"),
     };
 }
 
@@ -114,7 +114,7 @@ public sealed class ProbeSpark : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "Probe Spark"),
-        ("description", "Deal {Damage:diff()} damage."),
+        ("description", "造成 {Damage:diff()} 点伤害"),
     };
 }
 
@@ -159,7 +159,7 @@ public sealed class ProbeSurge : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "Probe Surge"),
-        ("description", "Deal {Damage:diff()} damage.\nApply {VulnerablePower:diff()} [gold]Vulnerable[/gold]."),
+        ("description", "造成 {Damage:diff()} 点伤害，施加 {VulnerablePower:diff()} 层易伤"),
     };
 }
 
@@ -193,7 +193,7 @@ public sealed class ProbeOverload : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "Probe Overload"),
-        ("description", "Deal {Damage:diff()} damage."),
+        ("description", "造成 {Damage:diff()} 点伤害"),
     };
 }
 
@@ -229,7 +229,7 @@ public sealed class ProbeCalibrate : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "Probe Calibrate"),
-        ("description", "Gain {Block:diff()} [gold]Block[/gold]."),
+        ("description", "获得 {Block:diff()} 点格挡"),
     };
 }
 
@@ -260,7 +260,7 @@ public sealed class ProbeFocus : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "Probe Focus"),
-        ("description", "Gain {Block:diff()} [gold]Block[/gold]."),
+        ("description", "获得 {Block:diff()} 点格挡"),
     };
 }
 
@@ -291,7 +291,7 @@ public sealed class ProbeBastion : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "Probe Bastion"),
-        ("description", "Gain {Block:diff()} [gold]Block[/gold]."),
+        ("description", "获得 {Block:diff()} 点格挡"),
     };
 }
 
@@ -325,6 +325,6 @@ public sealed class ProbeCharge : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "Probe Charge"),
-        ("description", "Gain {StrengthPower:diff()} [gold]Strength[/gold]."),
+        ("description", "获得 {StrengthPower:diff()} 点力量"),
     };
 }

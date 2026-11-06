@@ -49,6 +49,6 @@ public sealed class ProbeStrike : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "打击"),
-        ("description", "造成 {Damage:diff()} 点伤害。"),
+        ("description", "造成 {Damage:diff()} 点伤害"),
     };
 }

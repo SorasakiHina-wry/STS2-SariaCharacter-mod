@@ -58,6 +58,6 @@ public sealed class ProbeBolt : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "Probe Bolt"),
-        ("description", "Deal {Damage:diff()} damage.\nApply {VulnerablePower:diff()} [gold]Vulnerable[/gold]."),
+        ("description", "造成 {Damage:diff()} 点伤害，施加 {VulnerablePower:diff()} 层易伤"),
     };
 }
