@@ -1,0 +1,11 @@
+{
+  "id": "strikesprite",
+  "name": "Strike Sprite",
+  "author": "CHANGE_ME",
+  "description": "Spawns a sprite above the struck enemy when Ironclad plays Strike.",
+  "version": "0.1.0",
+  "has_dll": true,
+  "has_pck": false,
+  "affects_gameplay": false,
+  "min_game_version": "0.111.0"
+}

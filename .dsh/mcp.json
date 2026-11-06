@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "sts2-modding": {
+      "command": "D:/STS2/.python312/python.exe",
+      "args": ["D:/STS2/tools/sts2mcp_launch.py"],
+      "cwd": "D:/STS2",
+      "env": {
+        "PYTHONUTF8": "1",
+        "PYTHONIOENCODING": "utf-8",
+        "TMP": "D:/STS2/.tmp",
+        "TEMP": "D:/STS2/.tmp"
+      },
+      "toolCallTimeoutMs": 120000
+    }
+  }
+}

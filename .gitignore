@@ -1,0 +1,22 @@
+# toolchain / caches (never tracked)
+.cache/
+.tools/
+.nuget/
+.dotnet-home/
+.python312/
+.tmp/
+vendor/
+spine-1/
+STS2_Spine/
+GDRE_tools-v2.7.4-windows/
+
+# build output
+**/bin/
+**/obj/
+**/out/
+mods-src/probe/lib/
+
+# noise
+*.log
+*.user
+.DS_Store
