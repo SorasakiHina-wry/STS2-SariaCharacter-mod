@@ -23,18 +23,20 @@
 | **整局通关** | `bridge_autoslay_start(character="Probe", seed="PROBEWIN6")` → 打通三幕 → `[probe] installing placeholder architect dialogue` → `Victory! Run completed`，全程仅 1 条 ERROR（来自别的 mod 的旧式依赖声明） |
 | 画面 | 使用 Ironclad 的 Spine 立绘占位，UI 正常（见 `.cache/probe_combat.png`） |
 
-### 卡池（22 张，覆盖三种类型与全部稀有度）
+### 卡池（17 张）
 
 **以 [design/cards.md](design/cards.md) 为准**（那是设计稿，也是我生成代码的输入）。当前配比：
 
 | 稀有度 | 数量 | 类型 | 数量 |
 |---|---|---|---|
-| 基础 Basic | 4（打击×4、防御×4、硬化×1、激发×1 起手） | 攻击 Attack | 10 |
-| 普通 Common | 6 | 技能 Skill | 10 |
-| 罕见 Uncommon | 6 | 能力 Power | 2 |
+| 基础 Basic | 4（打击×4、防御×4、硬化×1、激发×1 起手） | 攻击 Attack | 7 |
+| 普通 Common | 6 | 技能 Skill | 9 |
+| 罕见 Uncommon | 1 | 能力 Power | 1 |
 | 稀有 Rare | 6 | | |
 
-自定义状态：**钙铠**（`src/Powers/CalciumArmorPower.cs`，回合开始按层数给格挡、受攻击掉 1 层）。
+> ⚠️ 罕见档只剩 **1** 张。奖励卡按稀有度抽，薄档位抽干后有抛异常的风险，建议补到 ≥6。
+
+自定义状态：**钙铠**（`src/Powers/CalciumArmorPower.cs`，回合开始按层数给格挡；从卡牌获得格挡时按格挡值一半掉层）。
 
 > **为什么必须是这个分布**：奖励卡按稀有度抽、商店按「类型」抽。
 > 见下面「卡池规模的两个硬性要求」。

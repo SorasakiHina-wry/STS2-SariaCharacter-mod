@@ -14,9 +14,8 @@ using Probe.Pools;
 
 namespace Probe.Cards;
 
-// Small shared helpers so the filler cards below stay one-liners. Values are literals inside each
-// class rather than constructor parameters: CanonicalVars must never depend on subclass state that
-// might not be assigned yet.
+// Small shared helpers. Values are literals inside each card class rather than constructor
+// parameters: CanonicalVars must never depend on subclass state that might not be assigned yet.
 internal static class ProbeCardKit
 {
     internal const string StrikePortrait = "res://images/packed/card_portraits/ironclad/strike_ironclad.png";
@@ -51,52 +50,6 @@ internal static class ProbeCardKit
         ("title", title),
         ("description", "获得 {Block:diff()} 点格挡"),
     };
-}
-
-[Pool(typeof(ProbeCardPool))]
-public sealed class ProbeTap : CustomCardModel
-{
-    public ProbeTap() : base(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[] { new DamageVar(6m, ValueProp.Move) };
-    protected override Task OnPlay(PlayerChoiceContext c, CardPlay p) => ProbeCardKit.Hit(c, p, this, "vfx/vfx_attack_slash");
-    protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(3m);
-    public override string? CustomPortraitPath => ProbeCardKit.StrikePortrait;
-    public override List<(string, string)>? Localization => ProbeCardKit.DamageLoc("Probe Tap");
-}
-
-[Pool(typeof(ProbeCardPool))]
-public sealed class ProbeScreen : CustomCardModel
-{
-    public ProbeScreen() : base(1, CardType.Skill, CardRarity.Common, TargetType.Self) { }
-    public override bool GainsBlock => true;
-    protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[] { new BlockVar(5m, ValueProp.Move) };
-    protected override Task OnPlay(PlayerChoiceContext c, CardPlay p) => ProbeCardKit.Guard(c, p, this);
-    protected override void OnUpgrade() => DynamicVars.Block.UpgradeValueBy(3m);
-    public override string? CustomPortraitPath => ProbeCardKit.DefendPortrait;
-    public override List<(string, string)>? Localization => ProbeCardKit.BlockLoc("Probe Screen");
-}
-
-[Pool(typeof(ProbeCardPool))]
-public sealed class ProbeVolley : CustomCardModel
-{
-    public ProbeVolley() : base(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy) { }
-    protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[] { new DamageVar(8m, ValueProp.Move) };
-    protected override Task OnPlay(PlayerChoiceContext c, CardPlay p) => ProbeCardKit.Hit(c, p, this, "vfx/vfx_attack_slash");
-    protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(3m);
-    public override string? CustomPortraitPath => ProbeCardKit.StrikePortrait;
-    public override List<(string, string)>? Localization => ProbeCardKit.DamageLoc("Probe Volley");
-}
-
-[Pool(typeof(ProbeCardPool))]
-public sealed class ProbeAegis : CustomCardModel
-{
-    public ProbeAegis() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
-    public override bool GainsBlock => true;
-    protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[] { new BlockVar(8m, ValueProp.Move) };
-    protected override Task OnPlay(PlayerChoiceContext c, CardPlay p) => ProbeCardKit.Guard(c, p, this);
-    protected override void OnUpgrade() => DynamicVars.Block.UpgradeValueBy(4m);
-    public override string? CustomPortraitPath => ProbeCardKit.DefendPortrait;
-    public override List<(string, string)>? Localization => ProbeCardKit.BlockLoc("Probe Aegis");
 }
 
 [Pool(typeof(ProbeCardPool))]

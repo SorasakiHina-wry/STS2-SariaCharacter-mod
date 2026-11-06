@@ -24,7 +24,7 @@ public sealed class ProbeHardening : CustomCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new PowerVar<CalciumArmorPower>(4m),
+        new PowerVar<CalciumArmorPower>(6m),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

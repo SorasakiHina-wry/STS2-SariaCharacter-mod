@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BaseLib.Abstracts;
+using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
-using MegaCrit.Sts2.Core.Commands.Builders;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.Logging;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
 
 namespace Probe.Powers;
@@ -17,14 +17,20 @@ namespace Probe.Powers;
 /// 钙铠 — the character's signature defensive buff.
 ///
 ///   At the start of your turn: gain Block equal to the stack count.
-///   Each time an attack hits you: lose 1 stack — one per hit, so a 3-hit attack strips 3.
+///   Whenever you gain Block FROM A CARD: lose half that Block's value in stacks (rounded down).
 ///
-/// Decay is counted from the attack's damage-result batches (AttackCommand.Results holds one list
-/// per hit), not from BeforeDamageReceived: that damage hook does not fire once per hit, which made
-/// a two-hit attack only strip a single layer. Statuses, curses and self-damage never decay it.
+/// "From a card" mirrors how Dexterity scopes its bonus: block granted by powers, relics or the
+/// power's own turn-start payout (cardSource == null) never decays the armour.
+/// 紧密防护 suppresses the decay until the next turn starts (see SuppressDecay).
 /// </summary>
 public sealed class CalciumArmorPower : CustomPowerModel
 {
+    /// <summary>Creatures whose armour ignores card-block decay until their next turn begins.</summary>
+    private static readonly HashSet<Creature> Suppressed = new();
+
+    /// <summary>Called by 紧密防护: stop card-block decay until the next player turn starts.</summary>
+    public static void SuppressDecay(Creature creature) => Suppressed.Add(creature);
+
     public override PowerType Type => PowerType.Buff;
 
     public override PowerStackType StackType => PowerStackType.Counter;
@@ -33,54 +39,45 @@ public sealed class CalciumArmorPower : CustomPowerModel
     public override string? CustomPackedIconPath => "res://images/atlases/power_atlas.sprites/thorns_power.tres";
     public override string? CustomBigIconPath => "res://images/powers/thorns_power.png";
 
-    /// <summary>Start of the player's turn: block == stacks.</summary>
+    /// <summary>Start of the player's turn: block == stacks, and 紧密防护's protection lapses.</summary>
     public override async Task AfterPlayerTurnStart(PlayerChoiceContext choiceContext, Player player)
     {
-        if (player != Owner.Player || Amount <= 0)
+        if (player != Owner.Player)
+            return;
+
+        Suppressed.Remove(Owner);
+
+        if (Amount <= 0)
             return;
 
         Flash();
         await CreatureCmd.GainBlock(Owner, Amount, ValueProp.Unpowered, null);
     }
 
-    /// <summary>Every hit of an incoming attack strips one stack.</summary>
-    public override async Task AfterAttack(PlayerChoiceContext choiceContext, AttackCommand command)
+    /// <summary>Card-gained block costs half its value in stacks.</summary>
+    public override async Task AfterBlockGained(Creature creature, decimal amount, ValueProp props, CardModel? cardSource)
     {
-        if (Amount <= 0)
+        if (creature != Owner || cardSource == null || Amount <= 0)
+            return; // not us, or not block from a card
+
+        if (Suppressed.Contains(Owner))
+            return; // 紧密防护 is active
+
+        int loss = (int)(amount / 2m); // 向下取整
+        if (loss <= 0)
             return;
 
-        if (command.Attacker == Owner)
-            return; // being the attacker never decays your own armour
+        if (loss > Amount)
+            loss = Amount;
 
-        if (!command.DamageProps.HasFlag(ValueProp.Move))
-            return; // not an attack (statuses, curses, pure effects)
-
-        int hits = 0;
-        foreach (List<DamageResult> hit in command.Results)
-        {
-            foreach (DamageResult result in hit)
-            {
-                if (result.Receiver == Owner)
-                {
-                    hits++;
-                    break;
-                }
-            }
-        }
-
-        if (hits <= 0)
-            return; // the attack never touched us
-
-        Log.Info($"[probe] 钙铠 takes {hits} hit(s), losing {Math.Min(hits, Amount)} stack(s)");
         Flash();
-        for (int i = 0; i < hits && Amount > 0; i++)
-            await PowerCmd.Decrement(this);
+        await PowerCmd.ModifyAmount(new ThrowingPlayerChoiceContext(), this, -loss, Owner, cardSource);
     }
 
     public override List<(string, string)>? Localization => new()
     {
         ("title", "钙铠"),
         // 描述原样取自 design/powers.md
-        ("description", "回合开始时，获得与层数相等的格挡。受到攻击时失去 1 层。"),
+        ("description", "回合开始时，获得与层数相等的格挡。当你从卡牌中获得格挡时，失去获得格挡数值一半的钙铠"),
     };
 }
