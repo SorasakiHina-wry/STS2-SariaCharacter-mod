@@ -154,7 +154,7 @@ public sealed class ProbeChargeUp : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "充能"),
-        ("description", "获得{CalciumArmorPower:diff()}点钙铠。获得{VigorPower:diff()}点活力。"),
+        ("description", "获得{CalciumArmorPower:diff()}层钙铠。获得{VigorPower:diff()}点活力。"),
     };
 }
 
@@ -171,10 +171,11 @@ public sealed class ProbeDistract : CustomCardModel
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
-        var power = await PowerCmd.Apply<ProbeDistractPower>(
-            ctx, Owner.Creature, DynamicVars["ProbeDistractPower"].BaseValue, Owner.Creature, this);
-        if (power != null)
-            power.BlockLoss = IsUpgraded ? 2 : 3;
+        // 升级前后分别提供 分神 / 分神+（见 design/powers.md）
+        if (IsUpgraded)
+            await PowerCmd.Apply<ProbeDistractPlusPower>(ctx, Owner.Creature, 1m, Owner.Creature, this);
+        else
+            await PowerCmd.Apply<ProbeDistractPower>(ctx, Owner.Creature, 1m, Owner.Creature, this);
     }
 
     public override string? CustomPortraitPath => ProbeCardKit.InflamePortrait;

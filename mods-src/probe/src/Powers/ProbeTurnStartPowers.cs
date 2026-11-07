@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.ValueProps;
 
 namespace Probe.Powers;
 
@@ -16,11 +17,14 @@ namespace Probe.Powers;
 // AfterSideTurnStart - the hook 钙铠 pays its block out in - so "after the armour gives block"
 // holds regardless of model iteration order.
 
-/// <summary>分神: lose block, then gain stacks of 钙铠.</summary>
-public sealed class ProbeDistractPower : CustomPowerModel
+/// <summary>
+/// 分神 / 分神+ — turn start: spend 钙铠 stacks to gain block.
+/// Base consumes 3 armour per stack, the upgraded version consumes 2.
+/// </summary>
+public abstract class ProbeArmorToBlockPower : CustomPowerModel
 {
-    /// <summary>Block taken by the turn-start trigger. Set by the card (3 base, 2 upgraded).</summary>
-    public int BlockLoss = 3;
+    /// <summary>How many 钙铠 stacks each stack of this power consumes.</summary>
+    protected abstract int ArmorMultiplier { get; }
 
     public override PowerType Type => PowerType.Buff;
 
@@ -34,21 +38,39 @@ public sealed class ProbeDistractPower : CustomPowerModel
         if (player != Owner.Player || Amount <= 0)
             return;
 
-        if (Owner.Block > 0)
+        int cost = (int)Amount * ArmorMultiplier;
+        var armour = Owner.GetPower<CalciumArmorPower>();
+        if (armour != null && armour.Amount > 0)
         {
-            decimal loss = Math.Min(BlockLoss, Owner.Block);
+            int loss = Math.Min(cost, armour.Amount);
             if (loss > 0)
-                await CreatureCmd.LoseBlock(choiceContext, Owner, loss, null);
+                await PowerCmd.ModifyAmount(choiceContext, armour, -loss, Owner, null);
         }
 
         Flash();
-        await PowerCmd.Apply<CalciumArmorPower>(choiceContext, Owner, Amount, Owner, null);
+        await CreatureCmd.GainBlock(Owner, Amount, ValueProp.Unpowered, null);
     }
+}
+
+public sealed class ProbeDistractPower : ProbeArmorToBlockPower
+{
+    protected override int ArmorMultiplier => 3;
 
     public override List<(string, string)>? Localization => new()
     {
         ("title", "分神"),
-        ("description", "回合开始时，失去格挡，获得与层数相等的钙铠。"),
+        ("description", "回合开始时，失去3倍层数的钙铠，获得与层数相等的格挡。"),
+    };
+}
+
+public sealed class ProbeDistractPlusPower : ProbeArmorToBlockPower
+{
+    protected override int ArmorMultiplier => 2;
+
+    public override List<(string, string)>? Localization => new()
+    {
+        ("title", "分神+"),
+        ("description", "回合开始时，失去2倍层数的钙铠，获得与层数相等的格挡。"),
     };
 }
 

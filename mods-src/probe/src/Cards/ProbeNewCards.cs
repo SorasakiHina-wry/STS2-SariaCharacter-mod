@@ -26,7 +26,7 @@ public sealed class ProbeAmmoDose : CustomCardModel
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
         new DamageVar(8m, ValueProp.Move),
-        new PowerVar<CalciumArmorPower>(4m),
+        new PowerVar<CalciumArmorPower>(2m),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)

@@ -139,68 +139,135 @@ def _extract_status(notes: str) -> tuple[str, str]:
     return "", notes.strip()
 
 
-def scan_code_titles(src_dir: Path) -> dict[str, str]:
-    """Map every localization title found in src/**.cs to its file (relative to the project)."""
-    titles: dict[str, str] = {}
+KIND_SINGULAR = {"cards": "card", "powers": "power", "relics": "relic", "mechanics": "mechanic"}
+
+
+def _chunk_kind(chunk: str) -> str:
+    """Guess a class's model type from its body - card/power/relic names may collide."""
+    if "PowerType" in chunk:
+        return "power"
+    if "RelicRarity" in chunk:
+        return "relic"
+    if "CardType" in chunk:
+        return "card"
+    return ""
+
+
+CLASS_START_RE = re.compile(
+    r"(?:^|\n)\s*(?:public|internal|private)?\s*"
+    r"(?:sealed\s+|abstract\s+|static\s+|partial\s+)*class\s+\w+"
+)
+
+
+def _iter_class_chunks(text: str):
+    """Yield one chunk per class body. [Pool( only marks cards/relics, so powers need this."""
+    starts = [m.start() for m in CLASS_START_RE.finditer(text)]
+    if not starts:
+        yield text
+        return
+    for i, start in enumerate(starts):
+        end = starts[i + 1] if i + 1 < len(starts) else len(text)
+        yield text[start:end]
+
+
+KIND_ROOTS = (
+    ("card", ("CardModel",)),
+    ("power", ("PowerModel",)),
+    ("relic", ("RelicModel",)),
+)
+
+
+def _class_decls(text: str) -> list[tuple[str, str, int, int]]:
+    """(class name, base list, start, end) for every class in a file."""
+    out: list[tuple[str, str, int, int]] = []
+    starts = [m.start() for m in CLASS_START_RE.finditer(text)]
+    for i, start in enumerate(starts):
+        end = starts[i + 1] if i + 1 < len(starts) else len(text)
+        head = text[start:end]
+        brace = head.find("{")
+        decl = head[:brace if brace >= 0 else len(head)]
+        name_m = re.search(r"class\s+(\w+)", decl)
+        if not name_m:
+            continue
+        bases = decl.split(":", 1)[1] if ":" in decl else ""
+        out.append((name_m.group(1), bases, start, end))
+    return out
+
+
+def _resolve_kind(name: str, bases_of: dict[str, str], seen: set[str] | None = None) -> str:
+    seen = seen or set()
+    if name in seen:
+        return ""
+    seen.add(name)
+    tokens = [t.split("<")[0].strip() for t in re.split(r"[,\s]+", bases_of.get(name, "")) if t.strip()]
+    for token in tokens:
+        for kind, roots in KIND_ROOTS:
+            if any(token.endswith(root) for root in roots):
+                return kind
+    for token in tokens:
+        if token in bases_of:
+            kind = _resolve_kind(token, bases_of, seen)
+            if kind:
+                return kind
+    return ""
+
+
+def scan_code_index(src_dir: Path) -> dict[tuple[str, str], dict]:
+    """(kind, title) -> {file, description, keywords, breaks} for every model class."""
     if not src_dir.exists():
-        return titles
+        return {}
+    files = []
+    bases_of: dict[str, str] = {}
     for path in src_dir.rglob("*.cs"):
         try:
             text = path.read_text(encoding="utf-8-sig")
         except Exception:
             continue
-        for m in TITLE_RE.finditer(text):
-            titles.setdefault(m.group(1).strip(), str(path.relative_to(src_dir.parent)))
-        for m in TITLE_HELPER_RE.finditer(text):
-            titles.setdefault(m.group(1).strip(), str(path.relative_to(src_dir.parent)))
-    return titles
+        decls = _class_decls(text)
+        files.append((path, text, decls))
+        for name, bases, _s, _e in decls:
+            bases_of[name] = bases
 
-
-def scan_code_line_breaks(src_dir: Path) -> dict[str, tuple[str, int]]:
-    """title -> (file, number of line breaks in its description literal).
-
-    A card's class is treated as one chunk ([Pool(...)] delimited), so files holding several
-    classes still pair each title with its own description.
-    """
-    out: dict[str, tuple[str, int]] = {}
-    if not src_dir.exists():
-        return out
-    for path in src_dir.rglob("*.cs"):
-        try:
-            text = path.read_text(encoding="utf-8-sig")
-        except Exception:
-            continue
-        for chunk in text.split("[Pool("):
+    index: dict[tuple[str, str], dict] = {}
+    for path, text, decls in files:
+        for name, _bases, start, end in decls:
+            chunk = text[start:end]
             tm = TITLE_RE.search(chunk) or TITLE_HELPER_RE.search(chunk)
             if not tm:
                 continue
             dm = re.search(r'\("description"\s*,\s*"((?:[^"\\]|\\.)*)"\)', chunk)
-            breaks = dm.group(1).count("\\n") if dm else 0
-            out.setdefault(tm.group(1).strip(), (str(path.relative_to(src_dir.parent)), breaks))
-    return out
+            kw_idx = chunk.find("CanonicalKeywords")
+            index.setdefault((_resolve_kind(name, bases_of), tm.group(1).strip()), {
+                "file": str(path.relative_to(src_dir.parent)),
+                "description": dm.group(1) if dm else None,
+                "keywords": set(re.findall(r"CardKeyword\.(\w+)", chunk[kw_idx:kw_idx + 400])) if kw_idx >= 0 else set(),
+                "breaks": dm.group(1).count("\\n") if dm else 0,
+            })
+    return index
 
 
-def scan_code_keywords(src_dir: Path) -> dict[str, set[str]]:
-    """title -> set of CardKeyword names declared by that class."""
-    out: dict[str, set[str]] = {}
-    if not src_dir.exists():
-        return out
-    for path in src_dir.rglob("*.cs"):
-        try:
-            text = path.read_text(encoding="utf-8-sig")
-        except Exception:
-            continue
-        for chunk in text.split("[Pool("):
-            tm = TITLE_RE.search(chunk) or TITLE_HELPER_RE.search(chunk)
-            if not tm:
-                continue
-            idx = chunk.find("CanonicalKeywords")
-            kws = set(re.findall(r"CardKeyword\.(\w+)", chunk[idx:idx + 400])) if idx >= 0 else set()
-            out.setdefault(tm.group(1).strip(), kws)
-    return out
+def scan_code_titles(src_dir: Path) -> dict[str, str]:
+    """Map every localization title found in src/**.cs to its file (relative to the project)."""
+    titles: dict[str, str] = {}
+    for (kind, title), info in scan_code_index(src_dir).items():
+        titles.setdefault(title, info["file"])
+    return titles
 
 
-def check_keywords(items: list[tuple[str, dict]], code_keywords: dict[str, set[str]]) -> list[str]:
+def scan_code_line_breaks(src_dir: Path) -> dict[tuple[str, str], tuple[str, int]]:
+    """(kind, title) -> (file, number of line breaks in its description literal)."""
+    return {
+        key: (info["file"], info["breaks"])
+        for key, info in scan_code_index(src_dir).items()
+    }
+
+
+def scan_code_keywords(src_dir: Path) -> dict[tuple[str, str], set[str]]:
+    """(kind, title) -> set of CardKeyword names declared by that class."""
+    return {key: info["keywords"] for key, info in scan_code_index(src_dir).items()}
+
+
+def check_keywords(items: list[tuple[str, dict]], code_keywords: dict[tuple[str, str], set[str]]) -> list[str]:
     """The sheet's 词条 field and the class's CanonicalKeywords must agree."""
     problems: list[str] = []
     for kind, card in items:
@@ -210,7 +277,7 @@ def check_keywords(items: list[tuple[str, dict]], code_keywords: dict[str, set[s
         if not name or card.get("status") == "待删除":
             continue
         sheet = set(card.get("keywords") or [])
-        code = set(code_keywords.get(name, set()))
+        code = set(code_keywords.get((KIND_SINGULAR[kind], name), set()))
         if sheet == code:
             continue
         where = f"  cards 第 {card['line']} 行 [{name}]"
@@ -228,7 +295,7 @@ def check_keywords(items: list[tuple[str, dict]], code_keywords: dict[str, set[s
 LINE_BREAK_TOKEN = "<br>"
 
 
-def check_line_breaks(items: list[tuple[str, dict]], code_breaks: dict[str, tuple[str, int]]) -> list[str]:
+def check_line_breaks(items: list[tuple[str, dict]], code_breaks: dict[tuple[str, str], tuple[str, int]]) -> list[str]:
     """The sheet writes <br>; the .cs must contain the same number of \\n escapes.
 
     A card shares one description literal between its base and upgraded versions, so only 基础 is
@@ -258,10 +325,11 @@ def check_line_breaks(items: list[tuple[str, dict]], code_breaks: dict[str, tupl
             continue
 
         where = f"  {kind} 第 {item['line']} 行 [{name}]"
-        if name not in code_breaks:
+        key = (KIND_SINGULAR.get(kind, kind), name)
+        if key not in code_breaks:
             problems.append(f"{where}: 写了 {LINE_BREAK_TOKEN}，但 src 里找不到同名本地化")
             continue
-        path, actual = code_breaks[name]
+        path, actual = code_breaks[key]
         if actual != wanted:
             problems.append(
                 f"{where}: 设计表有 {wanted} 个 {LINE_BREAK_TOKEN}，{path} 里只有 {actual} 个 \\n"
@@ -660,7 +728,7 @@ def cross_check(
 # --------------------------------------------------------------------------- workflow queue
 
 
-def build_queue(items: list[tuple[str, dict]], code_titles: dict[str, str]) -> tuple[list[str], list[str]]:
+def build_queue(items: list[tuple[str, dict]], code_index: dict[tuple[str, str], dict]) -> tuple[list[str], list[str]]:
     """Consistency checks between the workflow tags and the actual source files."""
     problems: list[str] = []
     infos: list[str] = []
@@ -670,14 +738,15 @@ def build_queue(items: list[tuple[str, dict]], code_titles: dict[str, str]) -> t
             continue
         where = f"  {kind} 第 {item['line']} 行 [{name}]"
         status = item.get("status", "")
-        in_code = name in code_titles
+        info = code_index.get((KIND_SINGULAR.get(kind, kind), name))
+        in_code = info is not None
 
         if not status:
             infos.append(f"{where}: 没有状态标记（{'/'.join(STATUS_TAGS)}）")
         elif status == "已实装" and not in_code:
             problems.append(f"{where}: 标了「已实装」，但 src 里找不到同名 title")
         elif status == "待实装" and in_code:
-            problems.append(f"{where}: 标了「待实装」，但 {code_titles[name]} 已存在同名")
+            problems.append(f"{where}: 标了「待实装」，但 {info['file']} 已存在同名")
         elif status == "待删除" and not in_code:
             infos.append(f"{where}: 标了「待删除」，代码里已经没有了——这一条可以直接从 md 删掉")
     return problems, infos
@@ -728,7 +797,7 @@ def _spec_line(kind: str, item: dict) -> str:
     return " | ".join(bits)
 
 
-def print_pending(items: list[tuple[str, dict]], code_titles: dict[str, str]) -> int:
+def print_pending(items: list[tuple[str, dict]], code_index: dict[tuple[str, str], dict]) -> int:
     """Full specs of everything that still needs work - the only thing worth reading per round."""
     count = 0
     for tag in ("待实装", "待修改", "待删除", ""):
@@ -739,7 +808,8 @@ def print_pending(items: list[tuple[str, dict]], code_titles: dict[str, str]) ->
         label = tag or "未标记"
         print(f"\n[{label}] {len(rows)} 条")
         for kind, item in rows:
-            target = f" → {code_titles[item['name']]}" if item["name"] in code_titles else ""
+            info = code_index.get((KIND_SINGULAR.get(kind, kind), item["name"]))
+            target = f" → {info['file']}" if info else ""
             print(f"  - {kind}: {_spec_line(kind, item)}{target}")
             count += 1
     if count == 0:
@@ -840,20 +910,33 @@ def _effect_part(raw: str) -> str:
     return raw or ""
 
 
-def check_text_matches(items: list[tuple[str, dict]], code_desc: dict[str, tuple[str, str]]) -> list[str]:
+def scan_code_descriptions(src_dir: Path) -> dict[tuple[str, str], tuple[str, str]]:
+    """(kind, title) -> (file, raw description literal)."""
+    return {
+        key: (info["file"], info["description"])
+        for key, info in scan_code_index(src_dir).items()
+        if info["description"]
+    }
+
+
+def check_text_matches(items: list[tuple[str, dict]], code_desc: dict[tuple[str, str], tuple[str, str]]) -> list[str]:
     """The card text in the sheet and in C# must be the same sentence (numbers excepted)."""
     problems: list[str] = []
     for kind, item in items:
         name = item["name"].strip()
-        if not name or item.get("status") == "待删除" or name not in code_desc:
+        key = (KIND_SINGULAR.get(kind, kind), name)
+        if not name or item.get("status") == "待删除" or key not in code_desc:
             continue
         where = f"  {kind} 第 {item['line']} 行 [{name}]"
-        path, desc = code_desc[name]
+        path, desc = code_desc[key]
         if kind == "cards":
             sheet = _effect_part(str(item.get("base_raw") or ""))
         else:
             sheet = str(item.get("description") or "")
             if not sheet.strip():
+                continue
+            if "{" in sheet:
+                # 描述里用了 {3*层数} 这类占位符，无法逐字比对；由实现方（我）人工核对
                 continue
         a, b = _skeleton(sheet, from_code=False), _skeleton(desc, from_code=True)
         if a != b:
@@ -943,7 +1026,7 @@ def main(argv: list[str]) -> int:
 
     # Cheap modes for the per-round workflow: no full-sheet reading needed.
     if "--pending" in argv:
-        print_pending(items_for_modes, scan_code_titles(design_dir.parent / "src"))
+        print_pending(items_for_modes, scan_code_index(design_dir.parent / "src"))
         return 0
     if "--changed" in argv:
         print_changed(design_dir)
@@ -980,14 +1063,14 @@ def main(argv: list[str]) -> int:
 
     # ---- workflow queue (已实装 / 待实装 / 待修改 / 待删除) ----
     src_dir = design_dir.parent / "src"
-    code_titles = scan_code_titles(src_dir)
+    code_index = scan_code_index(src_dir)
     items: list[tuple[str, dict]] = (
         [("cards", c) for c in cards]
         + [("powers", p) for p in powers]
         + [("mechanics", m) for m in mechs]
         + [("relics", r) for r in relics]
     )
-    queue_problems, queue_infos = build_queue(items, code_titles)
+    queue_problems, queue_infos = build_queue(items, code_index)
     problems += queue_problems
     infos += queue_infos
 
@@ -997,7 +1080,7 @@ def main(argv: list[str]) -> int:
     problems += check_text_matches(items, scan_code_descriptions(src_dir))
     problems += check_sentence_end(items)
 
-    print_queue(items, code_titles)
+    print_queue(items, {name: info["file"] for (_k, name), info in code_index.items()})
 
     for info in infos:
         print(f"提示: {info}")
