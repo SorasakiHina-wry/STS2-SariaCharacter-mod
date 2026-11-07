@@ -1,8 +1,12 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using BaseLib.Abstracts;
 using BaseLib.Utils;
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Relics;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using Probe.Pools;
+using Probe.Powers;
 
 namespace Probe.Relics;
 
@@ -14,7 +18,10 @@ namespace Probe.Relics;
 ///
 /// The game has no post-multiplicative hook (ModifyDamageHookType is only Additive /
 /// Multiplicative / Cap), so the bonus is applied by <see cref="Probe.Patches.BrittleCraftDamagePatch"/>,
-/// a postfix on Hook.ModifyDamage. This model is therefore data + localization only.
+/// a postfix on Hook.ModifyDamage.
+///
+/// It also seeds 钙铠 at 0 stacks when combat starts, so the character's signature bar is always
+/// present and - being the first power applied - sits leftmost in the power row.
 /// </summary>
 [Pool(typeof(ProbeRelicPool))]
 public sealed class BrittleCraft : CustomRelicModel
@@ -22,6 +29,12 @@ public sealed class BrittleCraft : CustomRelicModel
     public override RelicRarity Rarity => RelicRarity.Starter;
 
     protected override string IconBaseName => "burning_blood";
+
+    public override async Task BeforeCombatStart()
+    {
+        await PowerCmd.Apply<CalciumArmorPower>(
+            new ThrowingPlayerChoiceContext(), Owner.Creature, 0m, Owner.Creature, null);
+    }
 
     public override List<(string, string)>? Localization => new()
     {

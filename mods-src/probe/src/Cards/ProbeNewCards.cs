@@ -94,7 +94,8 @@ public sealed class ProbePowderize : CustomCardModel
         var power = Owner.Creature.GetPower<CalciumArmorPower>();
         if (armour > 0 && power != null)
         {
-            await PowerCmd.Remove(power);
+            // 把层数清零而不是移除能力：钙铠要常驻显示
+            await PowerCmd.ModifyAmount(ctx, power, -armour, Owner.Creature, this);
             await CreatureCmd.GainBlock(Owner.Creature, armour, ValueProp.Unpowered, play);
         }
 

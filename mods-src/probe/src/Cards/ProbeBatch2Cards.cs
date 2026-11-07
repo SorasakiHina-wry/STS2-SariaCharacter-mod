@@ -67,7 +67,7 @@ public sealed class ProbeDetonate : CustomCardModel
         if (armour <= 0 || power == null)
             return;
 
-        await PowerCmd.Remove(power);
+        await PowerCmd.ModifyAmount(ctx, power, -armour, Owner.Creature, this);
         await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
             .FromCard(this, play)
             .TargetingAllOpponents(CombatState)
