@@ -187,28 +187,31 @@ public sealed class ProbeDistract : CustomCardModel
     };
 }
 
-/// <summary>凝神 — power: turn start spends one armour stack for Vigor.</summary>
+/// <summary>凝神 — power: turn start spends armour, grants Vigor.</summary>
 [Pool(typeof(ProbeCardPool))]
 public sealed class ProbeFocusMind : CustomCardModel
 {
-    public ProbeFocusMind() : base(2, CardType.Power, CardRarity.Uncommon, TargetType.Self) { }
+    public ProbeFocusMind() : base(1, CardType.Power, CardRarity.Uncommon, TargetType.Self) { }
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new PowerVar<ProbeFocusMindPower>(1m),
+        // 施加的层数 = 每回合获得的活力（4 / 升级 6）
+        new PowerVar<ProbeFocusMindPower>(4m),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
-        await PowerCmd.Apply<ProbeFocusMindPower>(ctx, Owner.Creature, DynamicVars["ProbeFocusMindPower"].BaseValue, Owner.Creature, this);
+        var power = await PowerCmd.Apply<ProbeFocusMindPower>(
+            ctx, Owner.Creature, DynamicVars["ProbeFocusMindPower"].BaseValue, Owner.Creature, this);
+        power?.IncrementArmorLose();   // 每打出一次 → 回合开始时多失去 1 层钙铠（内部计数器）
     }
 
-    protected override void OnUpgrade() => EnergyCost.UpgradeBy(-1);
+    protected override void OnUpgrade() => DynamicVars["ProbeFocusMindPower"].UpgradeValueBy(2m);
 
     public override string? CustomPortraitPath => ProbeCardKit.InflamePortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "凝神"),
-        ("description", "在你的回合开始时，失去1层钙铠，获得4点活力。"),
+        ("description", "在你的回合开始时，失去1层钙铠，获得{ProbeFocusMindPower:diff()}点活力。"),
     };
 }

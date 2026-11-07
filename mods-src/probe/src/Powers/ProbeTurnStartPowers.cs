@@ -77,12 +77,15 @@ public sealed class ProbeDistractPower : CustomPowerModel
     };
 }
 
-/// <summary>凝神: turn start spends armour stacks, gains Vigor (permanent now - no end-of-turn strip).</summary>
+/// <summary>
+/// 凝神 — vanilla-style single power (see docs 9.3 / 9.4).
+///
+///   Amount     = 回合开始时获得的活力（图标显示；每次「凝神」+4，「凝神+」+6）
+///   ArmorLose  = 打出次数（内部计数器，每次打出 +1，不显示在图标上）
+///   Turn start : 失去 min(ArmorLose, 当前钙铠) 层钙铠，获得 Amount 点活力
+/// </summary>
 public sealed class ProbeFocusMindPower : CustomPowerModel
 {
-    /// <summary>Vigor granted per stack of this power (see design/powers.md: 4×层数).</summary>
-    private const int VigorPerStack = 4;
-
     public override PowerType Type => PowerType.Buff;
 
     public override PowerStackType StackType => PowerStackType.Counter;
@@ -92,8 +95,15 @@ public sealed class ProbeFocusMindPower : CustomPowerModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new MultipliedAmountVar("VigorGain", VigorPerStack),
+        new IntVar("ArmorLose", 0m),
     };
+
+    /// <summary>Called by 凝神 / 凝神+ after applying: one more play means one more 钙铠 consumed.</summary>
+    public void IncrementArmorLose()
+    {
+        AssertMutable();
+        DynamicVars["ArmorLose"].BaseValue++;
+    }
 
     public override async Task AfterPlayerTurnStart(PlayerChoiceContext choiceContext, Player player)
     {
@@ -103,19 +113,19 @@ public sealed class ProbeFocusMindPower : CustomPowerModel
         var armour = Owner.GetPower<CalciumArmorPower>();
         if (armour != null && armour.Amount > 0)
         {
-            int loss = Math.Min((int)Amount, armour.Amount);
+            int loss = Math.Min(DynamicVars["ArmorLose"].IntValue, armour.Amount);
             if (loss > 0)
                 await PowerCmd.ModifyAmount(choiceContext, armour, -loss, Owner, null);
         }
 
         Flash();
-        await PowerCmd.Apply<VigorPower>(choiceContext, Owner, (int)Amount * VigorPerStack, Owner, null);
+        await PowerCmd.Apply<VigorPower>(choiceContext, Owner, Amount, Owner, null);
     }
 
     public override List<(string, string)>? Localization => new()
     {
         ("title", "凝神"),
         ("description", "回合开始时，失去[gold]钙铠[/gold]，获得[gold]活力[/gold]。"),
-        ("smartDescription", "回合开始时，失去[blue]{Amount}[/blue]层[gold]钙铠[/gold]，获得[blue]{VigorGain}[/blue]点[gold]活力[/gold]。"),
+        ("smartDescription", "回合开始时，失去[blue]{ArmorLose}[/blue]层[gold]钙铠[/gold]，获得[blue]{Amount}[/blue]点[gold]活力[/gold]。"),
     };
 }
