@@ -45,7 +45,7 @@ public sealed class ProbeAmmoDose : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "针剂弹药"),
-        ("description", "造成 {Damage:diff()} 点伤害。\n获得 {CalciumArmorPower:diff()} 层钙铠。"),
+        ("description", "造成{Damage:diff()}点伤害。\n获得{CalciumArmorPower:diff()}层钙铠。"),
     };
 }
 
@@ -73,7 +73,7 @@ public sealed class ProbeDeploy : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "部署"),
-        ("description", "获得 {CalciumArmorPower:diff()} 点钙铠。\n抽 {Cards:diff()} 张牌。"),
+        ("description", "获得{CalciumArmorPower:diff()}点钙铠。\n抽{Cards:diff()}张牌。"),
     };
 }
 
@@ -110,7 +110,7 @@ public sealed class ProbePowderize : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "粉末化"),
-        ("description", "失去所有钙铠，获得 相同数值 的格挡。对所有敌人施加 {VulnerablePower:diff()} 层易伤。"),
+        ("description", "失去所有钙铠，获得相同数值的格挡。对所有敌人施加{VulnerablePower:diff()}层易伤。"),
     };
 }
 
@@ -143,7 +143,7 @@ public sealed class ProbePunch : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "拳击"),
-        ("description", "造成 {Damage:diff()} 点伤害 {Repeat:diff()} 次"),
+        ("description", "造成{Damage:diff()}点伤害{Repeat:diff()}次"),
     };
 }
 
@@ -174,7 +174,7 @@ public sealed class ProbeShieldBash : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "持盾打击"),
-        ("description", "对所有敌人造成 {Damage:diff()} 点伤害 2 次"),
+        ("description", "对所有敌人造成{Damage:diff()}点伤害2次"),
     };
 }
 
@@ -210,7 +210,7 @@ public sealed class ProbeInject : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "注射"),
-        ("description", "获得 {Block:diff()} 点格挡。\n获得 {CalciumArmorPower:diff()} 层钙铠。"),
+        ("description", "获得{Block:diff()}点格挡。\n获得{CalciumArmorPower:diff()}层钙铠。"),
     };
 }
 
@@ -239,6 +239,6 @@ public sealed class ProbeTightGuard : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "紧密防护"),
-        ("description", "你的钙铠在下个回合开始前不会因获得格挡而损失。获得 {Block:diff()} 点格挡"),
+        ("description", "你的钙铠在下个回合开始前不会因获得格挡而损失。获得{Block:diff()}点格挡"),
     };
 }

@@ -113,6 +113,6 @@ public sealed class ProbeFocusMindPower : CustomPowerModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "凝神"),
-        ("description", "回合开始时，失去 1 层钙铠，在本回合获得与层数相等的活力"),
+        ("description", "回合开始时，失去1层钙铠，在本回合获得与层数相等的活力"),
     };
 }

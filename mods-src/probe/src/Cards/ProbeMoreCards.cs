@@ -42,7 +42,7 @@ public sealed class ProbeOverload : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "Probe Overload"),
-        ("description", "造成 {Damage:diff()} 点伤害"),
+        ("description", "造成{Damage:diff()}点伤害"),
     };
 }
 
@@ -73,6 +73,6 @@ public sealed class ProbeBastion : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "Probe Bastion"),
-        ("description", "获得 {Block:diff()} 点格挡"),
+        ("description", "获得{Block:diff()}点格挡"),
     };
 }

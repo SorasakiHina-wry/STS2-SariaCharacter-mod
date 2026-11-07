@@ -45,7 +45,7 @@ public sealed class ProbeSteady : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "稳定"),
-        ("description", "获得 {Block:diff()} 点格挡。获得 {CalciumArmorPower:diff()} 层钙铠"),
+        ("description", "获得{Block:diff()}点格挡。获得{CalciumArmorPower:diff()}层钙铠"),
     };
 }
 
@@ -82,7 +82,7 @@ public sealed class ProbeDetonate : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "爆裂"),
-        ("description", "失去所有钙铠，每失去 1 层钙铠，就对所有敌人造成 {Damage:diff()} 点伤害"),
+        ("description", "失去所有钙铠，每失去1层钙铠，就对所有敌人造成{Damage:diff()}点伤害"),
     };
 }
 
@@ -122,7 +122,7 @@ public sealed class ProbeFullSalvo : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "全弹发射"),
-        ("description", "施加 {IfUpgraded:show:X+1|X} 层易伤。造成 {Damage:diff()} 点伤害 {IfUpgraded:show:X+1|X} 次"),
+        ("description", "施加{IfUpgraded:show:X+1|X}层易伤。造成{Damage:diff()}点伤害{IfUpgraded:show:X+1|X}次"),
     };
 }
 
@@ -154,7 +154,7 @@ public sealed class ProbeChargeUp : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "充能"),
-        ("description", "获得 {CalciumArmorPower:diff()} 点钙铠。获得 {VigorPower:diff()} 点活力"),
+        ("description", "获得{CalciumArmorPower:diff()}点钙铠。获得{VigorPower:diff()}点活力"),
     };
 }
 
@@ -181,7 +181,7 @@ public sealed class ProbeDistract : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "分神"),
-        ("description", "回合开始时，失去 {IfUpgraded:show:2|3} 点格挡，获得 {ProbeDistractPower:diff()} 层钙铠。"),
+        ("description", "回合开始时，失去{IfUpgraded:show:2|3}点格挡，获得{ProbeDistractPower:diff()}层钙铠。"),
     };
 }
 
@@ -207,6 +207,6 @@ public sealed class ProbeFocusMind : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "凝神"),
-        ("description", "回合开始时，失去 1 层钙铠，在本回合获得 {ProbeFocusMindPower:diff()} 点活力。"),
+        ("description", "回合开始时，失去1层钙铠，在本回合获得{ProbeFocusMindPower:diff()}点活力。"),
     };
 }

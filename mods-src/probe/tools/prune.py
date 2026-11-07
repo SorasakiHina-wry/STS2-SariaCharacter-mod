@@ -22,7 +22,8 @@ DONE_TAGS = ("待实装", "待修改")
 
 
 def process(
-    path: Path, titles: dict[str, str], retag: bool, dry_run: bool, blocked: set[str]
+    path: Path, titles: dict[str, str], retag: bool, dry_run: bool, blocked: set[str],
+    clean_notes: bool = False,
 ) -> list[str]:
     if not path.exists():
         return []
@@ -38,6 +39,12 @@ def process(
             log.append(f"{path.name}: 删除 [{name}]")
             return ""
 
+        if clean_notes:
+            stripped = re.sub(r"(已实装)[ \t]*[（(][^）)\n]*[）)]", r"\1", body)
+            if stripped != body:
+                log.append(f"{path.name}: {name} 去掉已实装后的括号说明")
+                return f"```{match.group(1)}\n{stripped}```"
+
         if retag and name and name in titles and any(t in body for t in DONE_TAGS):
             if name in blocked:
                 log.append(f"{path.name}: {name} 实现与描述仍不一致，保持标签不动")
@@ -45,6 +52,8 @@ def process(
             new_body = body
             for tag in DONE_TAGS:
                 new_body = new_body.replace(tag, "已实装")
+            # 去掉紧跟标签的中文括号说明，例如「待修改（修改了牌效数值）」->「已实装」
+            new_body = re.sub(r"(已实装)[ \t]*[（(][^）)\n]*[）)]", r"\1", new_body)
             if new_body != body:
                 log.append(f"{path.name}: {name} 待实装/待修改 -> 已实装")
                 return f"```{match.group(1)}\n{new_body}```"
@@ -62,6 +71,7 @@ def process(
 def main(argv: list[str]) -> int:
     dry_run = "--dry-run" in argv
     retag = "--retag" in argv
+    clean_notes = "--clean-notes" in argv
     design_dir = Path(__file__).resolve().parent.parent / "design"
     src_dir = design_dir.parent / "src"
     titles = cs.scan_code_titles(src_dir)
@@ -77,7 +87,7 @@ def main(argv: list[str]) -> int:
 
     logs: list[str] = []
     for name in DESIGN_FILES:
-        logs += process(design_dir / name, titles, retag, dry_run, blocked)
+        logs += process(design_dir / name, titles, retag, dry_run, blocked, clean_notes)
 
     for line in logs:
         print(("【预览】" if dry_run else "✔ ") + line)

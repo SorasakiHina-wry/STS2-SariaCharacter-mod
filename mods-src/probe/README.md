@@ -228,13 +228,20 @@ cards.md
 ```powershell
 & $exe D:\STS2\mods-src\probe\tools\tag_status.py --dry-run   # 给已实现的补 已实装
 & $exe D:\STS2\mods-src\probe\tools\tag_status.py
+& $exe D:\STS2\mods-src\probe\tools\normalize_spaces.py       # 去掉牌效文本里的空格（表和 C# 一起改）
 & $exe D:\STS2\mods-src\probe\tools\prune.py --dry-run        # 预览：删「待删除」条目 + 翻状态
 & $exe D:\STS2\mods-src\probe\tools\prune.py --retag
+& $exe D:\STS2\mods-src\probe\tools\prune.py --clean-notes    # 去掉「已实装（…）」里的残留说明
 ```
 
 `prune.py --retag` **不是无脑翻标签**：它先比对实现与描述是否一致（`<br>` 数量、`词条` 与
 `CanonicalKeywords`），不一致的条目会保持原标签并打印
-`实现与描述仍不一致，保持标签不动`，避免把没改完的卡误标成已实装。
+`实现与描述仍不一致，保持标签不动`，避免把没改完的卡误标成已实装；翻标签时会连带删掉紧跟的
+中文括号说明（`待修改（改了什么）` → `已实装`）。
+
+`normalize_spaces.py` 让牌面文本对齐原版中文排版：`造成 6 点伤害` → `造成6点伤害`。
+它同时改写 `design/*.md` 的 `基础/升级/描述/效果` 和 `src/**/*.cs` 的 `("description", …)` 字符串，
+每轮改完卡我都会跑一次。
 
 版本管理：工作区根目录已 `git init`，`.gitignore` 排除了 vendor/.cache/spine-1 等大目录，
 只跟踪 `docs/` 与 `mods-src/`。每次改动都提交一次，`--changed` 就是基于这条提交线做对比的。

@@ -27,6 +27,6 @@ public sealed class BrittleCraft : CustomRelicModel
     {
         ("title", "脆化技艺"),
         // 描述原样取自 design/relics.md，不做任何改写
-        ("description", "目标每有 1 层易伤，你的攻击就额外造成 1 点伤害"),
+        ("description", "目标每有1层易伤，你的攻击就额外造成1点伤害"),
     };
 }
