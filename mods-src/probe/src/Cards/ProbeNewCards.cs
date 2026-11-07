@@ -143,7 +143,7 @@ public sealed class ProbePunch : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "拳击"),
-        ("description", "造成{Damage:diff()}点伤害{Repeat:diff()}次"),
+        ("description", "造成{Damage:diff()}点伤害{Repeat:diff()}次。"),
     };
 }
 
@@ -174,7 +174,7 @@ public sealed class ProbeShieldBash : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "持盾打击"),
-        ("description", "对所有敌人造成{Damage:diff()}点伤害2次"),
+        ("description", "对所有敌人造成{Damage:diff()}点伤害2次。"),
     };
 }
 
@@ -239,6 +239,6 @@ public sealed class ProbeTightGuard : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "紧密防护"),
-        ("description", "你的钙铠在下个回合开始前不会因获得格挡而损失。获得{Block:diff()}点格挡"),
+        ("description", "你的钙铠在下个回合开始前不会因获得格挡而损失。获得{Block:diff()}点格挡。"),
     };
 }

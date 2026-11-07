@@ -36,15 +36,24 @@ def normalize_sheet(path: Path, dry_run: bool) -> list[str]:
     text = path.read_text(encoding="utf-8-sig")
     changed: list[str] = []
 
-    def repl(match: re.Match) -> str:
-        indent, field, colon, value = match.group(1), match.group(2), match.group(3), match.group(4)
-        new_value = strip_spaces(value)
-        if new_value != value:
-            changed.append(f"{path.name}: {field} 去空格")
-            return f"{indent}{field}{colon}{new_value}"
-        return match.group(0)
+    def repl_block(match: re.Match) -> str:
+        body = match.group(2)
+        name_m = ts.NAME_RE.search(body)
+        # 样板块（名称为空）不动，否则会把占位符里的空格也吃掉
+        if not name_m or not name_m.group(1).strip():
+            return match.group(0)
 
-    new_text = FIELD_RE.sub(repl, text)
+        def repl_field(fm: re.Match) -> str:
+            indent, field, colon, value = fm.group(1), fm.group(2), fm.group(3), fm.group(4)
+            new_value = strip_spaces(value)
+            if new_value != value:
+                changed.append(f"{path.name}: {name_m.group(1).strip()} {field} 去空格")
+                return f"{indent}{field}{colon}{new_value}"
+            return fm.group(0)
+
+        return f"```{match.group(1)}\n{FIELD_RE.sub(repl_field, body)}```"
+
+    new_text = ts.BLOCK_RE.sub(repl_block, text)
     if changed and not dry_run:
         path.write_text(new_text, encoding="utf-8")
     return changed

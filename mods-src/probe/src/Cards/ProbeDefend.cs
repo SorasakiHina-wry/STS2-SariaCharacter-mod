@@ -42,6 +42,6 @@ public sealed class ProbeDefend : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "防御"),
-        ("description", "获得{Block:diff()}点格挡"),
+        ("description", "获得{Block:diff()}点格挡。"),
     };
 }

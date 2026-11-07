@@ -802,12 +802,76 @@ def print_changed(design_dir: Path) -> None:
         print("设计表自上次提交以来没有变化")
 
 
+def scan_code_descriptions(src_dir: Path) -> dict[str, tuple[str, str]]:
+    """title -> (file, raw description literal) for every class that declares one."""
+    out: dict[str, tuple[str, str]] = {}
+    if not src_dir.exists():
+        return out
+    for path in src_dir.rglob("*.cs"):
+        try:
+            text = path.read_text(encoding="utf-8-sig")
+        except Exception:
+            continue
+        for chunk in text.split("[Pool("):
+            tm = TITLE_RE.search(chunk) or TITLE_HELPER_RE.search(chunk)
+            if not tm:
+                continue
+            dm = re.search(r'\("description"\s*,\s*"((?:[^"\\]|\\.)*)"\)', chunk)
+            if dm:
+                out.setdefault(tm.group(1).strip(), (str(path.relative_to(src_dir.parent)), dm.group(1)))
+    return out
+
+
+def _skeleton(text: str, from_code: bool) -> str:
+    """Reduce display text to its wording, dropping numbers/vars/breaks so both sides compare."""
+    t = re.sub(r"\{[^}]*\}", "", text) if from_code else text
+    t = re.sub(r"[|｜]", "，", t)          # 表里用 | 分隔多条效果，牌面用 ，
+    t = re.sub(r"<br>", "", t, flags=re.I)
+    t = t.replace("\\n", "").replace("\n", "")
+    t = re.sub(r"[0-9Xx]", "", t)          # 数值（含 X）两边都忽略
+    return re.sub(r"[ \t\u3000]", "", t)
+
+
+def _effect_part(raw: str) -> str:
+    """Drop the leading 「费用N｜」 segment of a card's 基础 field."""
+    parts = re.split(r"[|｜]", raw or "", maxsplit=1)
+    if len(parts) == 2 and re.search(r"费用", parts[0]):
+        return parts[1]
+    return raw or ""
+
+
+def check_text_matches(items: list[tuple[str, dict]], code_desc: dict[str, tuple[str, str]]) -> list[str]:
+    """The card text in the sheet and in C# must be the same sentence (numbers excepted)."""
+    problems: list[str] = []
+    for kind, item in items:
+        name = item["name"].strip()
+        if not name or item.get("status") == "待删除" or name not in code_desc:
+            continue
+        where = f"  {kind} 第 {item['line']} 行 [{name}]"
+        path, desc = code_desc[name]
+        if kind == "cards":
+            sheet = _effect_part(str(item.get("base_raw") or ""))
+        else:
+            sheet = str(item.get("description") or "")
+            if not sheet.strip():
+                continue
+        a, b = _skeleton(sheet, from_code=False), _skeleton(desc, from_code=True)
+        if a != b:
+            problems.append(
+                f"{where}: 文本与 {path} 不一致\n"
+                f"      设计表: {a}\n"
+                f"      代码里: {b}"
+            )
+    return problems
+
+
 def inconsistent_names(items: list[tuple[str, dict]], src_dir: Path) -> set[str]:
     """Names whose implementation does NOT yet match the sheet (bad line breaks / keywords)."""
     names: set[str] = set()
     messages = (
         check_line_breaks(items, scan_code_line_breaks(src_dir))
         + check_keywords(items, scan_code_keywords(src_dir))
+        + check_text_matches(items, scan_code_descriptions(src_dir))
     )
     for msg in messages:
         m = re.search(r"\[(.+?)\]", msg)
@@ -910,6 +974,7 @@ def main(argv: list[str]) -> int:
     problems += check_line_breaks(items, scan_code_line_breaks(src_dir))
     problems += check_stray_tokens(src_dir)
     problems += check_keywords(items, scan_code_keywords(src_dir))
+    problems += check_text_matches(items, scan_code_descriptions(src_dir))
 
     print_queue(items, code_titles)
 
