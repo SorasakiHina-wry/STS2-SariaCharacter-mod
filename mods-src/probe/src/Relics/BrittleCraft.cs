@@ -32,8 +32,13 @@ public sealed class BrittleCraft : CustomRelicModel
 
     public override async Task BeforeCombatStart()
     {
-        await PowerCmd.Apply<CalciumArmorPower>(
-            new ThrowingPlayerChoiceContext(), Owner.Creature, 0m, Owner.Creature, null);
+        // PowerCmd.Apply refuses amount 0 outright, so seed one stack silently and immediately
+        // drop it to 0 - the persist patch (CalciumArmorPersistPatch) keeps the 0-stack instance.
+        var ctx = new ThrowingPlayerChoiceContext();
+        var power = await PowerCmd.Apply<CalciumArmorPower>(
+            ctx, Owner.Creature, 1m, Owner.Creature, null, silent: true);
+        if (power != null)
+            await PowerCmd.ModifyAmount(ctx, power, -1m, Owner.Creature, null, silent: true);
     }
 
     public override List<(string, string)>? Localization => new()
