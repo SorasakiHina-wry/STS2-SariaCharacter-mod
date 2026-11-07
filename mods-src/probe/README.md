@@ -232,6 +232,10 @@ cards.md
 & $exe D:\STS2\mods-src\probe\tools\prune.py --retag
 ```
 
+`prune.py --retag` **不是无脑翻标签**：它先比对实现与描述是否一致（`<br>` 数量、`词条` 与
+`CanonicalKeywords`），不一致的条目会保持原标签并打印
+`实现与描述仍不一致，保持标签不动`，避免把没改完的卡误标成已实装。
+
 版本管理：工作区根目录已 `git init`，`.gitignore` 排除了 vendor/.cache/spine-1 等大目录，
 只跟踪 `docs/` 与 `mods-src/`。每次改动都提交一次，`--changed` 就是基于这条提交线做对比的。
 

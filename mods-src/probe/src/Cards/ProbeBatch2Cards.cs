@@ -25,7 +25,7 @@ public sealed class ProbeSteady : CustomCardModel
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
         new BlockVar(8m, ValueProp.Move),
-        new PowerVar<CalciumArmorPower>(4m),
+        new PowerVar<CalciumArmorPower>(3m),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -135,7 +135,7 @@ public sealed class ProbeChargeUp : CustomCardModel
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
         new PowerVar<CalciumArmorPower>(4m),
-        new PowerVar<VigorPower>(6m),
+        new PowerVar<VigorPower>(3m),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -147,7 +147,7 @@ public sealed class ProbeChargeUp : CustomCardModel
     protected override void OnUpgrade()
     {
         DynamicVars["CalciumArmorPower"].UpgradeValueBy(2m);
-        DynamicVars["VigorPower"].UpgradeValueBy(2m);
+        DynamicVars["VigorPower"].UpgradeValueBy(1m);
     }
 
     public override string? CustomPortraitPath => ProbeCardKit.InflamePortrait;
@@ -158,7 +158,7 @@ public sealed class ProbeChargeUp : CustomCardModel
     };
 }
 
-/// <summary>分神 — power: turn start loses 2 block, gains armour.</summary>
+/// <summary>分神 — power: turn start loses block, gains armour.</summary>
 [Pool(typeof(ProbeCardPool))]
 public sealed class ProbeDistract : CustomCardModel
 {
@@ -166,21 +166,22 @@ public sealed class ProbeDistract : CustomCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new PowerVar<ProbeDistractPower>(2m),
+        new PowerVar<ProbeDistractPower>(1m),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
-        await PowerCmd.Apply<ProbeDistractPower>(ctx, Owner.Creature, DynamicVars["ProbeDistractPower"].BaseValue, Owner.Creature, this);
+        var power = await PowerCmd.Apply<ProbeDistractPower>(
+            ctx, Owner.Creature, DynamicVars["ProbeDistractPower"].BaseValue, Owner.Creature, this);
+        if (power != null)
+            power.BlockLoss = IsUpgraded ? 2 : 3;
     }
-
-    protected override void OnUpgrade() => DynamicVars["ProbeDistractPower"].UpgradeValueBy(1m);
 
     public override string? CustomPortraitPath => ProbeCardKit.InflamePortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "分神"),
-        ("description", "回合开始时，失去 2 点格挡，获得 {ProbeDistractPower:diff()} 层钙铠"),
+        ("description", "回合开始时，失去 {IfUpgraded:show:2|3} 点格挡，获得 {ProbeDistractPower:diff()} 层钙铠。"),
     };
 }
 
@@ -206,6 +207,6 @@ public sealed class ProbeFocusMind : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "凝神"),
-        ("description", "回合开始时，失去 1 层钙铠，获得 {ProbeFocusMindPower:diff()} 点活力"),
+        ("description", "回合开始时，失去 1 层钙铠，在本回合获得 {ProbeFocusMindPower:diff()} 点活力。"),
     };
 }

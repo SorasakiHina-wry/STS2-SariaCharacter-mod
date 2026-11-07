@@ -802,6 +802,20 @@ def print_changed(design_dir: Path) -> None:
         print("设计表自上次提交以来没有变化")
 
 
+def inconsistent_names(items: list[tuple[str, dict]], src_dir: Path) -> set[str]:
+    """Names whose implementation does NOT yet match the sheet (bad line breaks / keywords)."""
+    names: set[str] = set()
+    messages = (
+        check_line_breaks(items, scan_code_line_breaks(src_dir))
+        + check_keywords(items, scan_code_keywords(src_dir))
+    )
+    for msg in messages:
+        m = re.search(r"\[(.+?)\]", msg)
+        if m:
+            names.add(m.group(1))
+    return names
+
+
 # --------------------------------------------------------------------------- main
 
 

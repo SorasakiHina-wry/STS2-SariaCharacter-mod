@@ -21,7 +21,9 @@ DESIGN_FILES = ("cards.md", "relics.md", "powers.md", "mechanics.md")
 DONE_TAGS = ("待实装", "待修改")
 
 
-def process(path: Path, titles: dict[str, str], retag: bool, dry_run: bool) -> list[str]:
+def process(
+    path: Path, titles: dict[str, str], retag: bool, dry_run: bool, blocked: set[str]
+) -> list[str]:
     if not path.exists():
         return []
     text = path.read_text(encoding="utf-8-sig")
@@ -37,6 +39,9 @@ def process(path: Path, titles: dict[str, str], retag: bool, dry_run: bool) -> l
             return ""
 
         if retag and name and name in titles and any(t in body for t in DONE_TAGS):
+            if name in blocked:
+                log.append(f"{path.name}: {name} 实现与描述仍不一致，保持标签不动")
+                return match.group(0)
             new_body = body
             for tag in DONE_TAGS:
                 new_body = new_body.replace(tag, "已实装")
@@ -58,11 +63,21 @@ def main(argv: list[str]) -> int:
     dry_run = "--dry-run" in argv
     retag = "--retag" in argv
     design_dir = Path(__file__).resolve().parent.parent / "design"
-    titles = cs.scan_code_titles(design_dir.parent / "src")
+    src_dir = design_dir.parent / "src"
+    titles = cs.scan_code_titles(src_dir)
+
+    # Only flip a tag when the code actually matches the sheet: same line breaks and same keywords.
+    items: list[tuple[str, dict]] = (
+        [("cards", c) for c in cs.parse_cards(design_dir / "cards.md")]
+        + [("powers", p) for p in cs.parse_powers(design_dir / "powers.md")]
+        + [("relics", r) for r in cs.parse_relics(design_dir / "relics.md")]
+        + [("mechanics", m) for m in cs.parse_mechanics(design_dir / "mechanics.md")]
+    )
+    blocked = cs.inconsistent_names(items, src_dir)
 
     logs: list[str] = []
     for name in DESIGN_FILES:
-        logs += process(design_dir / name, titles, retag, dry_run)
+        logs += process(design_dir / name, titles, retag, dry_run, blocked)
 
     for line in logs:
         print(("【预览】" if dry_run else "✔ ") + line)

@@ -45,7 +45,7 @@ public sealed class ProbeAmmoDose : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "针剂弹药"),
-        ("description", "造成 {Damage:diff()} 点伤害。\n获得 {CalciumArmorPower:diff()} 层钙铠"),
+        ("description", "造成 {Damage:diff()} 点伤害。\n获得 {CalciumArmorPower:diff()} 层钙铠。"),
     };
 }
 
@@ -73,7 +73,7 @@ public sealed class ProbeDeploy : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "部署"),
-        ("description", "获得 {CalciumArmorPower:diff()} 点钙铠。\n抽 {Cards:diff()} 张牌"),
+        ("description", "获得 {CalciumArmorPower:diff()} 点钙铠。\n抽 {Cards:diff()} 张牌。"),
     };
 }
 
@@ -85,7 +85,7 @@ public sealed class ProbePowderize : CustomCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new PowerVar<VulnerablePower>(1m),
+        new PowerVar<VulnerablePower>(2m),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -110,7 +110,7 @@ public sealed class ProbePowderize : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "粉末化"),
-        ("description", "失去所有钙铠，获得 相同数值 的格挡。对所有敌人施加 {VulnerablePower:diff()} 层易伤"),
+        ("description", "失去所有钙铠，获得 相同数值 的格挡。对所有敌人施加 {VulnerablePower:diff()} 层易伤。"),
     };
 }
 
@@ -178,13 +178,15 @@ public sealed class ProbeShieldBash : CustomCardModel
     };
 }
 
-/// <summary>注射 — cheap block at the cost of one armour stack.</summary>
+/// <summary>注射 — cheap block plus armour.</summary>
 [Pool(typeof(ProbeCardPool))]
 public sealed class ProbeInject : CustomCardModel
 {
     public ProbeInject() : base(0, CardType.Skill, CardRarity.Common, TargetType.Self) { }
 
     public override bool GainsBlock => true;
+
+    public override IEnumerable<CardKeyword> CanonicalKeywords => new[] { CardKeyword.Exhaust };
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
