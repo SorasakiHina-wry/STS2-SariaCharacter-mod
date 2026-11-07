@@ -352,6 +352,27 @@ CRIMSON_MANTLE_POWER.smartDescription = 在你的回合开始时，失去[blue]{
 > 卡牌不需要这套：原版卡面直接写 `{Damage:diff()}`，不加 `[blue]`。
 > `{N*Amount}` 只支持「层数 × 常数」；加/减/取半之类的算式请写进 `备注`，我加专用变量。
 
+### 9.2 同回合触发的先后顺序（踩过的坑）
+
+引擎把「回合开始」拆成 **三个独立阶段**，每个阶段都会把所有监听者完整跑一遍：
+
+```
+AfterPlayerTurnStartEarly  →  AfterPlayerTurnStart  →  AfterPlayerTurnStartLate
+```
+
+所以**不要靠能力图标的左右顺序**来控制先后（那是不保证的）。要「A 先于 B 结算」，把 A 放早一档：
+
+| 需求 | 做法 |
+|---|---|
+| 钙铠先给格挡，分神/凝神再结算 | 钙铠用 `AfterPlayerTurnStartEarly`，分神/凝神用 `AfterPlayerTurnStart` ✓ 已实装 |
+| 需要「被其它能力结算完之后」再触发 | 用 `AfterPlayerTurnStartLate` |
+
+判定「层数降为 0 是否移除」是 `PowerModel.ShouldRemoveDueToAmount()`，它不是 virtual：
+- 默认：层数 ≤0 移除；
+- `AllowNegative = true`：只在等于 0 时移除（力量/敏捷这类可负数的）。
+
+所以「0 层也保留、且永不为负」需要额外打补丁，一般不建议——用上面的阶段拆分就够。
+
 ## 10. 卡牌专属机制 / 关键字写在 `design/mechanics.md`
 
 ```mechanic

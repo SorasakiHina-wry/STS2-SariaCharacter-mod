@@ -39,24 +39,16 @@ public sealed class CalciumArmorPower : CustomPowerModel
     public override string? CustomBigIconPath => "res://images/powers/thorns_power.png";
 
     /// <summary>
-    /// Start of the player's side turn: block == stacks, and 紧密防护's protection lapses.
-    /// This lives in AfterSideTurnStart (the hook vanilla turn-start powers use) so card-side
-    /// turn-start effects like 分神 / 凝神, which hook AfterPlayerTurnStart, always resolve after it.
+    /// Early start of the player's turn: block == stacks, and 紧密防护's protection lapses.
+    ///
+    /// The engine runs every turn-start listener three times in separate passes - Early, normal,
+    /// then Late (see Hook.AfterPlayerTurnStart) - so placing this power in the Early pass makes it
+    /// resolve before any card-side turn-start power that uses the normal pass (分神 / 凝神),
+    /// regardless of icon order.
     /// </summary>
-    public override async Task AfterSideTurnStart(
-        CombatSide side, IReadOnlyList<Creature> participants, ICombatState combatState)
+    public override async Task AfterPlayerTurnStartEarly(PlayerChoiceContext choiceContext, Player player)
     {
-        bool ours = false;
-        for (int i = 0; i < participants.Count; i++)
-        {
-            if (participants[i] == Owner)
-            {
-                ours = true;
-                break;
-            }
-        }
-
-        if (!ours)
+        if (player != Owner.Player)
             return;
 
         Suppressed.Remove(Owner);
