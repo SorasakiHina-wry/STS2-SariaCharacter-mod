@@ -91,7 +91,8 @@ public sealed class CalciumArmorPower : CustomPowerModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "钙铠"),
-        // 描述原样取自 design/powers.md；{Amount} 由引擎替换为当前层数
-        ("description", "回合开始时，获得{Amount}点格挡。当你从卡牌中获得格挡时，失去获得格挡数值一半的钙铠。"),
+        // 原版范式：description 不带数字，smartDescription 用 [blue]{Amount}[/blue]
+        ("description", "在你的回合开始时，获得[gold]格挡[/gold]。当你从卡牌中获得格挡时，失去获得格挡数值一半的钙铠。"),
+        ("smartDescription", "在你的回合开始时，获得[blue]{Amount}[/blue]点[gold]格挡[/gold]。当你从卡牌中获得格挡时，失去获得格挡数值一半的钙铠。"),
     };
 }

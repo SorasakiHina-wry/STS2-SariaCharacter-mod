@@ -64,9 +64,9 @@ public sealed class ProbeDistractPower : ProbeBlockToArmorPower
     public override List<(string, string)>? Localization => new()
     {
         ("title", "分神"),
-        // 不可变上下文（如图鉴）用文字版；战斗中走 smartDescription，显示实时数字
-        ("description", "回合开始时，失去3倍层数的格挡，获得与层数相等的钙铠。"),
-        ("smartDescription", "回合开始时，失去{BlockCost}层格挡，获得{Amount}点钙铠。"),
+        // 原版范式：description 不带数字（图鉴等不可变场景），smartDescription 用 [blue]{变量}[/blue]
+        ("description", "在你的回合开始时，失去[gold]格挡[/gold]并获得[gold]钙铠[/gold]。"),
+        ("smartDescription", "在你的回合开始时，失去[blue]{BlockCost}[/blue]层[gold]格挡[/gold]并获得[blue]{Amount}[/blue]点[gold]钙铠[/gold]。"),
     };
 }
 
@@ -77,8 +77,8 @@ public sealed class ProbeDistractPlusPower : ProbeBlockToArmorPower
     public override List<(string, string)>? Localization => new()
     {
         ("title", "分神+"),
-        ("description", "回合开始时，失去2倍层数的格挡，获得与层数相等的钙铠。"),
-        ("smartDescription", "回合开始时，失去{BlockCost}层格挡，获得{Amount}点钙铠。"),
+        ("description", "在你的回合开始时，失去[gold]格挡[/gold]并获得[gold]钙铠[/gold]。"),
+        ("smartDescription", "在你的回合开始时，失去[blue]{BlockCost}[/blue]层[gold]格挡[/gold]并获得[blue]{Amount}[/blue]点[gold]钙铠[/gold]。"),
     };
 }
 
@@ -156,7 +156,7 @@ public sealed class ProbeFocusMindPower : CustomPowerModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "凝神"),
-        ("description", "回合开始时，失去与层数相等的钙铠，在本回合获得7倍层数的活力。"),
-        ("smartDescription", "回合开始时，失去{Amount}层钙铠，在本回合获得{VigorGain}点活力。"),
+        ("description", "在你的回合开始时，失去[gold]钙铠[/gold]，并在本回合获得[gold]活力[/gold]。"),
+        ("smartDescription", "在你的回合开始时，失去[blue]{Amount}[/blue]层[gold]钙铠[/gold]，并在本回合获得[blue]{VigorGain}[/blue]点[gold]活力[/gold]。"),
     };
 }

@@ -321,29 +321,36 @@ design/cards.md       ← 卡牌，引用上面两表里定义的名字
 | `图标` | | 留空我借用原版图标（先跑通，后换图） |
 | `备注` | | 特殊说明 |
 
-### 9.1 描述里的变量写法（重要）
+### 9.1 描述里的变量写法（已用原版数据验证）
 
-引擎只认 `{Amount}`（当前层数），**没有算术能力**，`{3*层数}` 直接写会原样显示成文字。所以：
+引擎只认 `{Amount}`（当前层数），SmartFormat 没有算术扩展，`{3*层数}` 这种写法会原样显示成文字。所以：
 
-| 你在文档里写 | 含义 | 游戏内效果 |
+| 你在文档里写 | 含义 | 游戏内 |
 |---|---|---|
-| `{Amount}` | 当前层数 | 原样显示数字，随层数实时变化 |
-| `{N*Amount}` | N 倍层数（如 `{3*Amount}`） | 我生成一个专用变量（如 `{BlockCost}`）并在渲染时计算，显示**算好的数字** |
+| `{Amount}` | 当前层数 | 显示数字，随层数实时变化 |
+| `{N*Amount}` | N 倍层数（如 `{3*Amount}`） | 我生成专用变量（如 `{BlockCost}`）实时计算，显示**算好的数字** |
 
-举例（分神）：
+**原版就是这么做的**（已从游戏 PCK 的 `localization/zhs/powers.json` 核对）：
 
 ```
-描述：回合开始时，失去{3*Amount}层格挡，获得{Amount}点钙铠。
+CRIMSON_MANTLE_POWER.description     = 在你的回合开始时，失去生命并获得[gold]格挡[/gold]。
+CRIMSON_MANTLE_POWER.smartDescription = 在你的回合开始时，失去[blue]{SelfDamage}[/blue]点生命并获得[blue]{Amount}[/blue]点[gold]格挡[/gold]。
 ```
 
-- 1 层时游戏内显示：`回合开始时，失去3层格挡，获得1点钙铠。`
-- 3 层时游戏内显示：`回合开始时，失去9层格挡，获得3点钙铠。`
+- 266 个能力有 `smartDescription`，其中 227 个用 `[blue]{变量}[/blue]` 高亮数字；
+- `{SelfDamage}` 就是自定义变量（`new DamageVar("SelfDamage", 0m, …)`），和我们的 `{BlockCost}` 同一套路。
 
-实现上我会给该 power 加一个派生变量（`MultipliedAmountVar`），并在 `smartDescription` 里使用它；
-不可变上下文（如图鉴）退回到文字版描述。
+所以你会看到我在代码里写两份：
 
-> 注意：`{N*Amount}` 只支持「层数 × 常数」。需要更复杂的算式（加/减/取半）时，先把公式写进 `备注`，
-> 我按同样方式加一个专用变量。
+```csharp
+("description",      "在你的回合开始时，失去[gold]格挡[/gold]并获得[gold]钙铠[/gold]。"),           // 无数字（图鉴）
+("smartDescription", "…失去[blue]{BlockCost}[/blue]层[gold]格挡[/gold]…获得[blue]{Amount}[/blue]点…"), // 战斗中
+```
+
+**你只管写文字和 `{Amount}` / `{N*Amount}`**，`[blue]` 数字高亮和 `[gold]` 关键字高亮我自动加。
+
+> 卡牌不需要这套：原版卡面直接写 `{Damage:diff()}`，不加 `[blue]`。
+> `{N*Amount}` 只支持「层数 × 常数」；加/减/取半之类的算式请写进 `备注`，我加专用变量。
 
 ## 10. 卡牌专属机制 / 关键字写在 `design/mechanics.md`
 
