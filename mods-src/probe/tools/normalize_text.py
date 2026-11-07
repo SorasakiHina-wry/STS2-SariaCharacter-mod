@@ -26,6 +26,9 @@ SPACES_RE = re.compile(r"[ \t\u3000]+")
 SENTENCE_END = ("。", "！", "？", "!", "?", "…", "...")
 CJK = ("\u4e00", "\u9fff")
 
+# 钙铠 is measured in 层, never 点 — fix "点钙铠" wherever it shows up in display text.
+UNIT_FIXES = (("点钙铠", "层钙铠"),)
+
 
 def _is_cjk(ch: str) -> bool:
     return bool(ch) and CJK[0] <= ch <= CJK[1]
@@ -52,10 +55,12 @@ def strip_cjk_spaces(text: str) -> str:
 
 
 def normalize(text: str) -> str:
-    """Chinese display text: no spaces, closed with 。. English text is left alone."""
+    """Chinese display text: no spaces, closed with 。, unit fixes. English text is left alone."""
     if not _has_cjk(text):
         return text
     text = strip_cjk_spaces(text).rstrip()
+    for wrong, right in UNIT_FIXES:
+        text = text.replace(wrong, right)
     if not text or text.endswith(SENTENCE_END):
         return text
     return text + "。"

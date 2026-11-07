@@ -73,7 +73,7 @@ public sealed class ProbeDeploy : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "部署"),
-        ("description", "获得{CalciumArmorPower:diff()}点钙铠。\n抽{Cards:diff()}张牌。"),
+        ("description", "获得{CalciumArmorPower:diff()}层钙铠。\n抽{Cards:diff()}张牌。"),
     };
 }
 

@@ -294,6 +294,26 @@ def check_keywords(items: list[tuple[str, dict]], code_keywords: dict[tuple[str,
 
 LINE_BREAK_TOKEN = "<br>"
 
+# 钙铠 is measured in 层; "点钙铠" is always a typo (normalize_text.py fixes it automatically).
+WRONG_UNITS = (("点钙铠", "层钙铠"),)
+
+
+def check_units(items: list[tuple[str, dict]]) -> list[str]:
+    problems: list[str] = []
+    for kind, item in items:
+        name = item["name"].strip()
+        if not name or item.get("status") == "待删除":
+            continue
+        fields = ("base_raw", "upgrade_raw") if kind == "cards" else ("description", "effect")
+        for field in fields:
+            value = str(item.get(field) or "")
+            for wrong, right in WRONG_UNITS:
+                if wrong in value:
+                    problems.append(
+                        f"  {kind} 第 {item['line']} 行 [{name}]: 「{field}」里的「{wrong}」应写成「{right}」"
+                    )
+    return problems
+
 
 def check_line_breaks(items: list[tuple[str, dict]], code_breaks: dict[tuple[str, str], tuple[str, int]]) -> list[str]:
     """The sheet writes <br>; the .cs must contain the same number of \\n escapes.
@@ -1079,6 +1099,7 @@ def main(argv: list[str]) -> int:
     problems += check_keywords(items, scan_code_keywords(src_dir))
     problems += check_text_matches(items, scan_code_descriptions(src_dir))
     problems += check_sentence_end(items)
+    problems += check_units(items)
 
     print_queue(items, {name: info["file"] for (_k, name), info in code_index.items()})
 
