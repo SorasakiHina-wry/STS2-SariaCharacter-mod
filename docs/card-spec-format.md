@@ -373,6 +373,103 @@ AfterPlayerTurnStartEarly  →  AfterPlayerTurnStart  →  AfterPlayerTurnStartL
 
 所以「0 层也保留、且永不为负」需要额外打补丁，一般不建议——用上面的阶段拆分就够。
 
+### 9.3 原版 power 范式：一个机制 = 一个 power（含内部计数器）
+
+> 依据：反编译 + 中文语料核对原版「狱火 / INFERNO」的实现。
+
+原版**不会**为一个机制的升级版单独建一个 power。狱火的基础版和升级版喂的是**同一个**
+`InfernoPower`，图标上只显示一个总层数，另外用一个「不显示在图标上」的内部计数器区分细节。
+
+#### 狱火是怎么做的
+
+卡牌（`Inferno.cs`）：
+
+```csharp
+protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
+{
+    new PowerVar<InfernoPower>(6m),          // 施加 6 层（= 卡面写的 6 点伤害）
+};
+
+protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
+{
+    var power = await PowerCmd.Apply<InfernoPower>(
+        ctx, Owner.Creature, DynamicVars["InfernoPower"].BaseValue, Owner.Creature, this);
+    power?.IncrementSelfDamage();             // ★ 额外记一次「打出次数」
+}
+
+protected override void OnUpgrade() => DynamicVars["InfernoPower"].UpgradeValueBy(3m);
+//                                         ↑ 升级只是多给 3 层（6→9），不新建 power
+```
+
+能力（`InfernoPower.cs`）：
+
+```csharp
+private const string _selfDamageKey = "SelfDamage";
+
+protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
+{
+    new DamageVar("SelfDamage", 0m, ValueProp.Unblockable | ValueProp.Unpowered),  // ★ 内部计数器
+};
+
+// 卡牌调用它来累加，图标上的数字不变
+public void IncrementSelfDamage()
+{
+    AssertMutable();
+    DynamicVars["SelfDamage"].BaseValue++;
+}
+```
+
+文本：
+
+```
+description      = 在你的回合开始时，失去[blue]1[/blue]点生命。…造成[blue]4[/blue]点伤害。
+smartDescription = 在你的回合开始时，失去[blue]{SelfDamage}[/blue]点生命。…造成[blue]{Amount}[/blue]点伤害。
+```
+
+结论（实测：同时打出狱火 + 狱火+ → 图标显示 **15** = 6+9，`SelfDamage` = 2，回合开始失去 2 点生命）：
+
+| 元素 | 职责 |
+|---|---|
+| `Amount`（图标上的数字） | **总层数**，基础版 + 升级版叠加在一起 |
+| `DynamicVar` 内部计数器 | 记录「打出了几次」「其中几次是升级版」这类细节，**不显示在图标上** |
+| `IncrementXxx()` 公开方法 | 卡牌施加完 power 后调用，用来累加内部计数器 |
+| `description` / `smartDescription` | 静态文字（无数字）/ 战斗中文字（`{Amount}` + 内部计数器变量） |
+
+#### 编写规范（以后所有 power 按这个来）
+
+1. **一个机制只建一个 power 类**，不要 `XPower` / `XPlusPower` 并存。
+2. 卡牌的 `PowerVar<XPower>` = **施加多少层**；升级只改层数（`UpgradeValueBy`）或改费用。
+3. 需要「升级版行为不同」时，**用内部计数器**表达，而不是新建能力：
+   - 在 power 里声明 `new IntVar("XxxCount", 0m)` 之类的 `DynamicVar`（名字自己定）；
+   - 提供 `public void IncrementXxx()`（内部先 `AssertMutable()`）供卡牌调用；
+   - 结算时用 `Amount` 和这些计数器一起算出结果。
+4. 图标数字**永远只表示层数**；任何「次数/比例/额外状态」都放内部计数器。
+5. 文本写两份：`description`（不含数字）+ `smartDescription`（`[blue]{Amount}[/blue]`、`[blue]{内部计数器}[/blue]`）。
+   卡牌文本用 `{Power:diff()}` 显示「本次施加多少层」。
+6. 结算顺序靠钩子阶段控制（见 9.2），不要靠图标顺序。
+
+#### 按此规范重写「分神」的方案（待你确认后我再改代码）
+
+现状：`分神` / `分神+` 两个 power 类（升级版每层只吃 2 点格挡）。改成单类：
+
+```
+power: 分神
+  Amount              = 总层数（图标显示，来自基础版 + 升级版的叠加）
+  内部计数器 Upgraded  = 其中由「分神+」施加的层数
+  回合开始：消耗格挡 = 3 × (Amount − Upgraded) + 2 × Upgraded
+            获得钙铠 = Amount
+```
+
+对应：
+
+| 位置 | 写法 |
+|---|---|
+| `powers.md` 效果 | 回合开始时，失去 [基础版 3 / 升级版 2] 每层的格挡，获得与层数相等的钙铠 |
+| `powers.md` 描述 | 回合开始时，失去{BlockCost}层格挡，获得{Amount}点钙铠。 |
+| 卡牌 | 基础版施加 1 层；升级版施加 1 层并调用 `IncrementUpgraded()`（费用也按你的设定） |
+
+这样图标只有一个「分神」，基础版和升级版叠加在同一层数里，和狱火一致。
+
 ## 10. 卡牌专属机制 / 关键字写在 `design/mechanics.md`
 
 ```mechanic
