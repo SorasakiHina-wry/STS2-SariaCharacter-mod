@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using BaseLib.Abstracts;
 using MegaCrit.Sts2.Core.Combat;
-using MegaCrit.Sts2.Core.Commands;
-using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Commands;using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -39,10 +38,25 @@ public sealed class CalciumArmorPower : CustomPowerModel
     public override string? CustomPackedIconPath => "res://images/atlases/power_atlas.sprites/thorns_power.tres";
     public override string? CustomBigIconPath => "res://images/powers/thorns_power.png";
 
-    /// <summary>Start of the player's turn: block == stacks, and 紧密防护's protection lapses.</summary>
-    public override async Task AfterPlayerTurnStart(PlayerChoiceContext choiceContext, Player player)
+    /// <summary>
+    /// Start of the player's side turn: block == stacks, and 紧密防护's protection lapses.
+    /// This lives in AfterSideTurnStart (the hook vanilla turn-start powers use) so card-side
+    /// turn-start effects like 分神 / 凝神, which hook AfterPlayerTurnStart, always resolve after it.
+    /// </summary>
+    public override async Task AfterSideTurnStart(
+        CombatSide side, IReadOnlyList<Creature> participants, ICombatState combatState)
     {
-        if (player != Owner.Player)
+        bool ours = false;
+        for (int i = 0; i < participants.Count; i++)
+        {
+            if (participants[i] == Owner)
+            {
+                ours = true;
+                break;
+            }
+        }
+
+        if (!ours)
             return;
 
         Suppressed.Remove(Owner);

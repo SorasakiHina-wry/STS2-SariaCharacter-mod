@@ -297,8 +297,9 @@ def parse_relics(path: Path) -> list[dict]:
 # --------------------------------------------------------------------------- validation
 
 
-def validate_cards(cards: list[dict]) -> list[str]:
+def validate_cards(cards: list[dict]) -> tuple[list[str], list[str]]:
     problems: list[str] = []
+    infos: list[str] = []
     seen: dict[str, int] = {}
 
     for c in cards:
@@ -310,8 +311,8 @@ def validate_cards(cards: list[dict]) -> list[str]:
                 problems.append(f"{where}: 缺少必填字段「{field}」")
         if c["rarity_raw"] and not c["rarity"]:
             problems.append(f"{where}: 稀有度「{c['rarity_raw']}」无法识别（用 基础/普通/罕见/稀有）")
-        if c["cost_base"] is None:
-            problems.append(f"{where}: 「基础」里没找到「费用 N」")
+        if c["cost_base"] is None and not re.search(r"费用\s*X", c["base_raw"] or "", re.I):
+            problems.append(f"{where}: 「基础」里没找到「费用 N」或「费用 X」")
         seen[c["name"]] = seen.get(c["name"], 0) + 1
         if seen[c["name"]] > 1:
             problems.append(f"{where}: 卡名重复")
@@ -327,10 +328,18 @@ def validate_cards(cards: list[dict]) -> list[str]:
             counts[c["rarity"]] = counts.get(c["rarity"], 0) + 1
         types[c["type"]] = types.get(c["type"], 0) + 1
 
+    # Reward rolls walk upward to the next rarity that still has cards (CardFactory.GetNextAllowedRarity),
+    # so a thin single tier is survivable as long as SOME tier still has cards; the crash happens when
+    # every non-basic tier is exhausted at once.
+    non_basic_total = sum(counts.get(r, 0) for r in ("Common", "Uncommon", "Rare"))
+    if non_basic_total < 12:
+        problems.append(
+            f"  卡池: 非基础卡共 {non_basic_total} 张，太少（奖励抽干且上位稀有度也空时会抛异常）"
+        )
     for rarity in ("Common", "Uncommon", "Rare"):
         if counts.get(rarity, 0) < 6:
-            problems.append(
-                f"  卡池: {rarity} 只有 {counts.get(rarity, 0)} 张，至少需要 6 张（奖励抽干会抛异常）"
+            infos.append(
+                f"卡池: {rarity} 只有 {counts.get(rarity, 0)} 张，建议 ≥6（抽干后奖励会向上串档）"
             )
     non_basic: dict[str, int] = {}
     for c in cards:
@@ -342,7 +351,7 @@ def validate_cards(cards: list[dict]) -> list[str]:
             problems.append(
                 f"  卡池: 非基础 {t} 只有 {non_basic.get(t, 0)} 张，至少需要 {need} 张（商店五槽会卡死）"
             )
-    return problems
+    return problems, infos
 
 
 def validate_powers(powers: list[dict]) -> list[str]:
@@ -693,10 +702,12 @@ def main(argv: list[str]) -> int:
     print()
 
     relic_problems, relic_infos = validate_relics(relics)
-    problems = validate_cards(cards) + validate_powers(powers) + validate_mechanics(mechs) + relic_problems
+    card_problems, card_infos = validate_cards(cards)
+    problems = card_problems + validate_powers(powers) + validate_mechanics(mechs) + relic_problems
     cross_problems, infos = cross_check(cards, powers, mechs, relics)
     problems += cross_problems
     infos += relic_infos
+    infos += card_infos
 
     # ---- workflow queue (已实装 / 待实装 / 待修改 / 待删除) ----
     src_dir = design_dir.parent / "src"
