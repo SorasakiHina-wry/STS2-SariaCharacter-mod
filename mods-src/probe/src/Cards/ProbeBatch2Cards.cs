@@ -182,7 +182,7 @@ public sealed class ProbeDistract : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "分神"),
-        ("description", "回合开始时，失去{IfUpgraded:show:2|3}点格挡，获得{ProbeDistractPower:diff()}层钙铠。"),
+        ("description", "在你的回合开始时，失去{IfUpgraded:show:2|3}点格挡并获得1层钙铠。"),
     };
 }
 
@@ -208,6 +208,6 @@ public sealed class ProbeFocusMind : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "凝神"),
-        ("description", "回合开始时，失去1层钙铠，在本回合获得7点活力。"),
+        ("description", "在你的回合开始时，失去1层钙铠，获得4点活力。"),
     };
 }

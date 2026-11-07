@@ -239,6 +239,6 @@ public sealed class ProbeTightGuard : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "紧密防护"),
-        ("description", "你的钙铠在下个回合开始前不会因获得格挡而损失。获得{Block:diff()}点格挡。"),
+        ("description", "你的钙铠在下个回合开始前不会因获得格挡而损失。\n获得{Block:diff()}点格挡。"),
     };
 }

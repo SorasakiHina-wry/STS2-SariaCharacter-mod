@@ -64,9 +64,9 @@ public sealed class ProbeDistractPower : ProbeBlockToArmorPower
     public override List<(string, string)>? Localization => new()
     {
         ("title", "分神"),
-        // 原版范式：description 不带数字（图鉴等不可变场景），smartDescription 用 [blue]{变量}[/blue]
-        ("description", "在你的回合开始时，失去[gold]格挡[/gold]并获得[gold]钙铠[/gold]。"),
-        ("smartDescription", "在你的回合开始时，失去[blue]{BlockCost}[/blue]层[gold]格挡[/gold]并获得[blue]{Amount}[/blue]点[gold]钙铠[/gold]。"),
+        // 原版范式：description 不带数字（图鉴），smartDescription 用 [blue]{变量}[/blue] 显示实时数字
+        ("description", "回合开始时，失去[gold]格挡[/gold]，获得[gold]钙铠[/gold]。"),
+        ("smartDescription", "回合开始时，失去[blue]{BlockCost}[/blue]层[gold]格挡[/gold]，获得[blue]{Amount}[/blue]点[gold]钙铠[/gold]。"),
     };
 }
 
@@ -77,18 +77,16 @@ public sealed class ProbeDistractPlusPower : ProbeBlockToArmorPower
     public override List<(string, string)>? Localization => new()
     {
         ("title", "分神+"),
-        ("description", "在你的回合开始时，失去[gold]格挡[/gold]并获得[gold]钙铠[/gold]。"),
-        ("smartDescription", "在你的回合开始时，失去[blue]{BlockCost}[/blue]层[gold]格挡[/gold]并获得[blue]{Amount}[/blue]点[gold]钙铠[/gold]。"),
+        ("description", "回合开始时，失去[gold]格挡[/gold]，获得[gold]钙铠[/gold]。"),
+        ("smartDescription", "回合开始时，失去[blue]{BlockCost}[/blue]层[gold]格挡[/gold]，获得[blue]{Amount}[/blue]点[gold]钙铠[/gold]。"),
     };
 }
 
-/// <summary>凝神: spend one 钙铠 stack, gain Vigor that expires at the end of this turn.</summary>
+/// <summary>凝神: turn start spends armour stacks, gains Vigor (permanent now - no end-of-turn strip).</summary>
 public sealed class ProbeFocusMindPower : CustomPowerModel
 {
-    private int _grantedThisTurn;
-
-    /// <summary>Vigor granted per stack of this power (see design/powers.md: 7×层数).</summary>
-    private const int VigorPerStack = 7;
+    /// <summary>Vigor granted per stack of this power (see design/powers.md: 4×层数).</summary>
+    private const int VigorPerStack = 4;
 
     public override PowerType Type => PowerType.Buff;
 
@@ -115,48 +113,14 @@ public sealed class ProbeFocusMindPower : CustomPowerModel
                 await PowerCmd.ModifyAmount(choiceContext, armour, -loss, Owner, null);
         }
 
-        int vigor = (int)Amount * VigorPerStack;
         Flash();
-        await PowerCmd.Apply<VigorPower>(choiceContext, Owner, vigor, Owner, null);
-        _grantedThisTurn = vigor;
-    }
-
-    /// <summary>"在本回合获得": strip whatever Vigor this power handed out once the turn ends.</summary>
-    public override async Task AfterSideTurnEnd(
-        PlayerChoiceContext choiceContext, CombatSide side, IEnumerable<Creature> participants)
-    {
-        if (_grantedThisTurn <= 0)
-            return;
-
-        int granted = _grantedThisTurn;
-        _grantedThisTurn = 0;
-
-        bool ours = false;
-        foreach (var creature in participants)
-        {
-            if (creature == Owner)
-            {
-                ours = true;
-                break;
-            }
-        }
-
-        if (!ours)
-            return;
-
-        var vigor = Owner.GetPower<VigorPower>();
-        if (vigor == null)
-            return;
-
-        int loss = Math.Min(granted, vigor.Amount);
-        if (loss > 0)
-            await PowerCmd.ModifyAmount(choiceContext, vigor, -loss, Owner, null);
+        await PowerCmd.Apply<VigorPower>(choiceContext, Owner, (int)Amount * VigorPerStack, Owner, null);
     }
 
     public override List<(string, string)>? Localization => new()
     {
         ("title", "凝神"),
-        ("description", "在你的回合开始时，失去[gold]钙铠[/gold]，并在本回合获得[gold]活力[/gold]。"),
-        ("smartDescription", "在你的回合开始时，失去[blue]{Amount}[/blue]层[gold]钙铠[/gold]，并在本回合获得[blue]{VigorGain}[/blue]点[gold]活力[/gold]。"),
+        ("description", "回合开始时，失去[gold]钙铠[/gold]，获得[gold]活力[/gold]。"),
+        ("smartDescription", "回合开始时，失去[blue]{Amount}[/blue]层[gold]钙铠[/gold]，获得[blue]{VigorGain}[/blue]点[gold]活力[/gold]。"),
     };
 }
