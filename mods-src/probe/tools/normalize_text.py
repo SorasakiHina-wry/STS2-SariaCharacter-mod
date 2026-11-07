@@ -1,15 +1,14 @@
 #!/usr/bin/env python3
-"""Strip spaces from card/power/relic display text, in both the design sheets and the C# strings.
+"""Normalise display text in the design sheets and in the C# localization strings.
 
-Chinese card text in the vanilla game has no spaces around numbers ("造成6点伤害"), so this tool
-normalises:
+Two rules, applied to 基础 / 升级 / 描述 / 效果 fields and to every ("description", "...") literal:
 
-  * design sheets: the 基础 / 升级 fields of cards, and 描述 / 效果 of powers & relics
-  * src/**.cs: every ("description", "...") literal
+  1. no spaces      — Chinese card text has no spaces around numbers: 造成6点伤害
+  2. ends with 。   — every effect sentence is closed; missing periods are appended
 
 Usage:
-    python tools/normalize_spaces.py --dry-run
-    python tools/normalize_spaces.py
+    python tools/normalize_text.py --dry-run
+    python tools/normalize_text.py
 """
 from __future__ import annotations
 
@@ -20,14 +19,46 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import tag_status as ts  # noqa: E402
 
-DESIGN_FIELDS = ("基础", "升级", "描述", "效果")
+DESIGN_FILES = ("cards.md", "relics.md", "powers.md", "mechanics.md")
 FIELD_RE = re.compile(r"^([ \t]*)(基础|升级|描述|效果)([:：])(.*)$", re.M)
 DESC_LITERAL_RE = re.compile(r'(\("description"\s*,\s*")((?:[^"\\]|\\.)*)("\))')
 SPACES_RE = re.compile(r"[ \t\u3000]+")
+SENTENCE_END = ("。", "！", "？", "!", "?", "…", "...")
+CJK = ("\u4e00", "\u9fff")
 
 
-def strip_spaces(text: str) -> str:
-    return SPACES_RE.sub("", text)
+def _is_cjk(ch: str) -> bool:
+    return bool(ch) and CJK[0] <= ch <= CJK[1]
+
+
+def _has_cjk(text: str) -> bool:
+    return any(_is_cjk(ch) for ch in text)
+
+
+def strip_cjk_spaces(text: str) -> str:
+    """Remove a space only when it touches a Chinese character ("造成 6 点伤害" -> "造成6点伤害").
+
+    English sentences keep their spaces - the character blurb, for instance, must not be squashed.
+    """
+    out: list[str] = []
+    for i, ch in enumerate(text):
+        if ch in " \t\u3000":
+            prev = text[i - 1] if i else ""
+            nxt = text[i + 1] if i + 1 < len(text) else ""
+            if _is_cjk(prev) or _is_cjk(nxt):
+                continue
+        out.append(ch)
+    return "".join(out)
+
+
+def normalize(text: str) -> str:
+    """Chinese display text: no spaces, closed with 。. English text is left alone."""
+    if not _has_cjk(text):
+        return text
+    text = strip_cjk_spaces(text).rstrip()
+    if not text or text.endswith(SENTENCE_END):
+        return text
+    return text + "。"
 
 
 def normalize_sheet(path: Path, dry_run: bool) -> list[str]:
@@ -42,12 +73,13 @@ def normalize_sheet(path: Path, dry_run: bool) -> list[str]:
         # 样板块（名称为空）不动，否则会把占位符里的空格也吃掉
         if not name_m or not name_m.group(1).strip():
             return match.group(0)
+        name = name_m.group(1).strip()
 
         def repl_field(fm: re.Match) -> str:
             indent, field, colon, value = fm.group(1), fm.group(2), fm.group(3), fm.group(4)
-            new_value = strip_spaces(value)
+            new_value = normalize(value)
             if new_value != value:
-                changed.append(f"{path.name}: {name_m.group(1).strip()} {field} 去空格")
+                changed.append(f"{path.name}: {name} {field}")
                 return f"{indent}{field}{colon}{new_value}"
             return fm.group(0)
 
@@ -67,16 +99,16 @@ def normalize_code(path: Path, dry_run: bool) -> list[str]:
 
         def repl(match: re.Match) -> str:
             body = match.group(2)
-            new_body = strip_spaces(body)
+            new_body = normalize(body)
             if new_body != body:
-                hits.append(cs.name)
+                hits.append(new_body)
             return match.group(1) + new_body + match.group(3)
 
         new_text = DESC_LITERAL_RE.sub(repl, text)
         if hits and not dry_run:
             cs.write_text(new_text, encoding="utf-8")
         if hits:
-            changed.append(f"{cs.name}: description 去空格")
+            changed.append(f"{cs.name}: {len(hits)} 处描述")
     return changed
 
 
@@ -87,7 +119,7 @@ def main(argv: list[str]) -> int:
     src = root / "src"
 
     logs: list[str] = []
-    for name in ts.__dict__.get("DESIGN_FILES", ()) or ("cards.md", "relics.md", "powers.md", "mechanics.md"):
+    for name in DESIGN_FILES:
         logs += normalize_sheet(design / name, dry_run)
     logs += normalize_code(src, dry_run)
 

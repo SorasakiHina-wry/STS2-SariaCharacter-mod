@@ -42,13 +42,13 @@ internal static class ProbeCardKit
     internal static List<(string, string)> DamageLoc(string title) => new()
     {
         ("title", title),
-        ("description", "造成{Damage:diff()}点伤害"),
+        ("description", "造成{Damage:diff()}点伤害。"),
     };
 
     internal static List<(string, string)> BlockLoc(string title) => new()
     {
         ("title", title),
-        ("description", "获得{Block:diff()}点格挡"),
+        ("description", "获得{Block:diff()}点格挡。"),
     };
 }
 
@@ -98,7 +98,7 @@ public sealed class ProbeNova : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "Probe Nova"),
-        ("description", "造成{Damage:diff()}点伤害，施加{VulnerablePower:diff()}层易伤"),
+        ("description", "造成{Damage:diff()}点伤害，施加{VulnerablePower:diff()}层易伤。"),
     };
 }
 
@@ -116,6 +116,6 @@ public sealed class ProbeResonance : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "Probe Resonance"),
-        ("description", "获得{StrengthPower:diff()}点力量"),
+        ("description", "获得{StrengthPower:diff()}点力量。"),
     };
 }

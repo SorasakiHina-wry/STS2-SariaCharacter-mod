@@ -48,7 +48,7 @@ public sealed class ProbeDistractPower : CustomPowerModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "分神"),
-        ("description", "回合开始时，失去格挡，获得与层数相等的钙铠"),
+        ("description", "回合开始时，失去格挡，获得与层数相等的钙铠。"),
     };
 }
 
@@ -113,6 +113,6 @@ public sealed class ProbeFocusMindPower : CustomPowerModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "凝神"),
-        ("description", "回合开始时，失去1层钙铠，在本回合获得与层数相等的活力"),
+        ("description", "回合开始时，失去1层钙铠，在本回合获得与层数相等的活力。"),
     };
 }

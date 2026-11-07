@@ -46,7 +46,7 @@ public sealed class SignalAmplifier : CustomRelicModel
     {
         ("title", "Signal Amplifier"),
         // 描述留空时回退到 effects.md 的「效果」原文，不拼接触发条件
-        ("description", "获得1点力量"),
+        ("description", "获得1点力量。"),
     };
 }
 
@@ -78,7 +78,7 @@ public sealed class StaticLantern : CustomRelicModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "Static Lantern"),
-        ("description", "获得1点敏捷"),
+        ("description", "获得1点敏捷。"),
     };
 }
 
@@ -108,6 +108,6 @@ public sealed class RecursionEngine : CustomRelicModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "Recursion Engine"),
-        ("description", "获得2点力量，获得2点敏捷"),
+        ("description", "获得2点力量，获得2点敏捷。"),
     };
 }

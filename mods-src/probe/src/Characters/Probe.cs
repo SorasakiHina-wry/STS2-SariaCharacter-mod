@@ -67,7 +67,7 @@ public sealed class Probe : PlaceholderCharacterModel
         ("pronounObject", "it"),
         ("possessiveAdjective", "its"),
         ("pronounPossessive", "its"),
-        ("description", "Afragmentofsomethingthatwasnevermeanttowake.\nCopiestheshapesofviolenceandhandsthemback."),
+        ("description", "A fragment of something that was never meant to wake.\nCopies the shapes of violence and hands them back."),
         ("bestiaryQuote", "This thing has not been measured yet."),
         ("eventDeathPrevention", "I have not finished observing."),
         ("cardsModifierTitle", "Probe Cards"),

@@ -865,6 +865,26 @@ def check_text_matches(items: list[tuple[str, dict]], code_desc: dict[str, tuple
     return problems
 
 
+def check_sentence_end(items: list[tuple[str, dict]]) -> list[str]:
+    """Every Chinese display sentence must be closed with 。 (English text is exempt)."""
+    problems: list[str] = []
+    enders = ("。", "！", "？", "!", "?", "…")
+    for kind, item in items:
+        name = item["name"].strip()
+        if not name or item.get("status") == "待删除":
+            continue
+        fields = ("base_raw", "upgrade_raw") if kind == "cards" else ("description", "effect")
+        for field in fields:
+            value = str(item.get(field) or "").strip()
+            if not value or not any("\u4e00" <= ch <= "\u9fff" for ch in value):
+                continue
+            if not value.endswith(enders):
+                problems.append(
+                    f"  {kind} 第 {item['line']} 行 [{name}]: 「{field}」没有以句号结尾（跑 normalize_text.py）"
+                )
+    return problems
+
+
 def inconsistent_names(items: list[tuple[str, dict]], src_dir: Path) -> set[str]:
     """Names whose implementation does NOT yet match the sheet (bad line breaks / keywords)."""
     names: set[str] = set()
@@ -975,6 +995,7 @@ def main(argv: list[str]) -> int:
     problems += check_stray_tokens(src_dir)
     problems += check_keywords(items, scan_code_keywords(src_dir))
     problems += check_text_matches(items, scan_code_descriptions(src_dir))
+    problems += check_sentence_end(items)
 
     print_queue(items, code_titles)
 
