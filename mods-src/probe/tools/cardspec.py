@@ -144,6 +144,73 @@ def scan_code_titles(src_dir: Path) -> dict[str, str]:
     return titles
 
 
+def scan_code_line_breaks(src_dir: Path) -> dict[str, tuple[str, int]]:
+    """title -> (file, number of line breaks in its description literal).
+
+    A card's class is treated as one chunk ([Pool(...)] delimited), so files holding several
+    classes still pair each title with its own description.
+    """
+    out: dict[str, tuple[str, int]] = {}
+    if not src_dir.exists():
+        return out
+    for path in src_dir.rglob("*.cs"):
+        try:
+            text = path.read_text(encoding="utf-8-sig")
+        except Exception:
+            continue
+        for chunk in text.split("[Pool("):
+            tm = TITLE_RE.search(chunk) or TITLE_HELPER_RE.search(chunk)
+            if not tm:
+                continue
+            dm = re.search(r'\("description"\s*,\s*"((?:[^"\\]|\\.)*)"\)', chunk)
+            breaks = dm.group(1).count("\\n") if dm else 0
+            out.setdefault(tm.group(1).strip(), (str(path.relative_to(src_dir.parent)), breaks))
+    return out
+
+
+LINE_BREAK_TOKEN = "<br>"
+
+
+def check_line_breaks(items: list[tuple[str, dict]], code_breaks: dict[str, tuple[str, int]]) -> list[str]:
+    """The sheet writes <br>; the .cs must contain the same number of \\n escapes."""
+    problems: list[str] = []
+    for kind, item in items:
+        name = item["name"].strip()
+        if not name or item.get("status") == "待删除":
+            continue
+        text = " ".join(
+            str(item.get(key, "")) for key in ("base_raw", "upgrade_raw", "effect", "description")
+        )
+        wanted = text.lower().count(LINE_BREAK_TOKEN)
+        if wanted == 0:
+            continue
+        where = f"  {kind} 第 {item['line']} 行 [{name}]"
+        if name not in code_breaks:
+            problems.append(f"{where}: 写了 {LINE_BREAK_TOKEN}，但 src 里找不到同名本地化")
+            continue
+        path, actual = code_breaks[name]
+        if actual != wanted:
+            problems.append(
+                f"{where}: 设计表有 {wanted} 个 {LINE_BREAK_TOKEN}，{path} 里只有 {actual} 个 \\n"
+            )
+    return problems
+
+
+def check_stray_tokens(src_dir: Path) -> list[str]:
+    """<br> must never reach C# - it has to be a real \\n escape there."""
+    problems: list[str] = []
+    if not src_dir.exists():
+        return problems
+    for path in src_dir.rglob("*.cs"):
+        try:
+            text = path.read_text(encoding="utf-8-sig")
+        except Exception:
+            continue
+        if LINE_BREAK_TOKEN in text.lower():
+            problems.append(f"  {path.name}: 出现了 {LINE_BREAK_TOKEN}，C# 里必须写成 \\n")
+    return problems
+
+
 def _normalise_type(raw: str, effects: list[str]) -> str:
     r = (raw or "").strip().lower()
     if r in ("攻击", "attack"):
@@ -721,6 +788,9 @@ def main(argv: list[str]) -> int:
     queue_problems, queue_infos = build_queue(items, code_titles)
     problems += queue_problems
     infos += queue_infos
+
+    problems += check_line_breaks(items, scan_code_line_breaks(src_dir))
+    problems += check_stray_tokens(src_dir)
 
     print_queue(items, code_titles)
 
