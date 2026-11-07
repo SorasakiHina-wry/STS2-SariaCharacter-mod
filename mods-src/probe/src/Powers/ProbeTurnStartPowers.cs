@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 
@@ -32,6 +33,11 @@ public abstract class ProbeBlockToArmorPower : CustomPowerModel
 
     public override string? CustomPackedIconPath => "res://images/atlases/power_atlas.sprites/thorns_power.tres";
     public override string? CustomBigIconPath => "res://images/powers/thorns_power.png";
+
+    protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
+    {
+        new MultipliedAmountVar("BlockCost", BlockMultiplier),
+    };
 
     public override async Task AfterPlayerTurnStart(PlayerChoiceContext choiceContext, Player player)
     {
@@ -58,7 +64,9 @@ public sealed class ProbeDistractPower : ProbeBlockToArmorPower
     public override List<(string, string)>? Localization => new()
     {
         ("title", "分神"),
+        // 不可变上下文（如图鉴）用文字版；战斗中走 smartDescription，显示实时数字
         ("description", "回合开始时，失去3倍层数的格挡，获得与层数相等的钙铠。"),
+        ("smartDescription", "回合开始时，失去{BlockCost}层格挡，获得{Amount}点钙铠。"),
     };
 }
 
@@ -70,6 +78,7 @@ public sealed class ProbeDistractPlusPower : ProbeBlockToArmorPower
     {
         ("title", "分神+"),
         ("description", "回合开始时，失去2倍层数的格挡，获得与层数相等的钙铠。"),
+        ("smartDescription", "回合开始时，失去{BlockCost}层格挡，获得{Amount}点钙铠。"),
     };
 }
 
@@ -88,6 +97,11 @@ public sealed class ProbeFocusMindPower : CustomPowerModel
     public override string? CustomPackedIconPath => "res://images/atlases/power_atlas.sprites/thorns_power.tres";
     public override string? CustomBigIconPath => "res://images/powers/thorns_power.png";
 
+    protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
+    {
+        new MultipliedAmountVar("VigorGain", VigorPerStack),
+    };
+
     public override async Task AfterPlayerTurnStart(PlayerChoiceContext choiceContext, Player player)
     {
         if (player != Owner.Player || Amount <= 0)
@@ -95,7 +109,11 @@ public sealed class ProbeFocusMindPower : CustomPowerModel
 
         var armour = Owner.GetPower<CalciumArmorPower>();
         if (armour != null && armour.Amount > 0)
-            await PowerCmd.Decrement(armour);
+        {
+            int loss = Math.Min((int)Amount, armour.Amount);
+            if (loss > 0)
+                await PowerCmd.ModifyAmount(choiceContext, armour, -loss, Owner, null);
+        }
 
         int vigor = (int)Amount * VigorPerStack;
         Flash();
@@ -138,6 +156,7 @@ public sealed class ProbeFocusMindPower : CustomPowerModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "凝神"),
-        ("description", "回合开始时，失去1层钙铠，在本回合获得7倍层数的活力。"),
+        ("description", "回合开始时，失去与层数相等的钙铠，在本回合获得7倍层数的活力。"),
+        ("smartDescription", "回合开始时，失去{Amount}层钙铠，在本回合获得{VigorGain}点活力。"),
     };
 }
