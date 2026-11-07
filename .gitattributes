@@ -1,0 +1,5 @@
+# 统一行尾，避免每次用不同工具写文件就产生整篇 diff
+* text=auto eol=lf
+*.png binary
+*.dll binary
+*.pck binary
