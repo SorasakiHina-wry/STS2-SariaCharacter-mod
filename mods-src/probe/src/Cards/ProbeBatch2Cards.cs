@@ -154,7 +154,7 @@ public sealed class ProbeChargeUp : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "充能"),
-        ("description", "获得{CalciumArmorPower:diff()}层钙铠。获得{VigorPower:diff()}点活力。"),
+        ("description", "获得{CalciumArmorPower:diff()}层钙铠。\n获得{VigorPower:diff()}点活力。"),
     };
 }
 

@@ -22,6 +22,9 @@ namespace Probe.Patches;
 [HarmonyPatch(typeof(Hook), "ModifyDamage")]
 public static class BrittleCraftDamagePatch
 {
+    /// <summary>Flat bonus applied when the target has any Vulnerable (see design/relics.md).</summary>
+    private const int BonusDamage = 2;
+
     [HarmonyPostfix]
     private static void Postfix(Creature? target, Creature? dealer, ValueProp props, ref decimal __result)
     {
@@ -51,6 +54,6 @@ public static class BrittleCraftDamagePatch
 
         int stacks = target.GetPowerAmount<VulnerablePower>();
         if (stacks > 0)
-            __result += stacks;
+            __result += BonusDamage;
     }
 }
