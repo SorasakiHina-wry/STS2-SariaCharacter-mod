@@ -525,7 +525,49 @@ power: 分神
 2. 只有 `smartDescription` 能拿到 `DynamicVar`；`{Amount}` 两边都能用。
 3. 变量是**每个能力实例一份**，可以随时 `BaseValue++`，所以「打出次数」这类计数天然可表达。
 
-这样图标只有一个「分神」，基础版和升级版叠加在同一层数里，和狱火一致。
+### 9.5 能量（以及其他图标）怎么写
+
+能量在原版卡面里会渲染成**能量图标**，不是文字。原版写法（已从语料核对）：
+
+```
+BLOODLETTING.description = 失去{HpLoss:diff()}点生命。
+                           获得{Energy:energyIcons()}。
+```
+
+对应代码：
+
+```csharp
+new EnergyVar(2),                                  // 数值
+await PlayerCmd.GainEnergy(DynamicVars.Energy.BaseValue, Owner);
+```
+
+#### 你以后在文档里写
+
+**就写自然语言，不要加花括号**：
+
+```
+基础:费用0|失去所有钙铠。<br>获得2点能量。<br>抽2张牌。
+```
+
+我会把它实现成 `new EnergyVar(2)` + 卡面 `获得{Energy:energyIcons()}。`，游戏里显示为 2 个能量图标。
+
+#### 不要写
+
+| 错误写法 | 问题 |
+|---|---|
+| `获得{2点能量}` | 花括号里必须是变量名，这样会原样显示 |
+| `获得2点能量` 但想显示图标 | 这个写法没问题，只是**交给我翻译**；我会换成 `{Energy:energyIcons()}` |
+| `获得{Amount}点能量` | 卡牌没有 `Amount`，要用 `{Energy:…}` |
+
+#### 其他已知的图标格式化器
+
+| 写法 | 效果 |
+|---|---|
+| `{Energy:energyIcons()}` | 获得/消耗的能量（N 个能量图标） |
+| `{energyPrefix:energyIcons(1)}` | 用于「0 费牌」这类描述里的费用图标 |
+| `{singleStarIcon}` | 星星图标（部分角色） |
+
+需要新的图标写法时告诉我，我核对原版后补进这张表。
 
 ## 10. 卡牌专属机制 / 关键字写在 `design/mechanics.md`
 
