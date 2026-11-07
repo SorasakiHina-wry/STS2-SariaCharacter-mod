@@ -252,6 +252,10 @@ cards.md
 
 ## 卡牌设计流程（你 ↔ 我）
 
+> 只想**自己调数值**、不想每次都叫智能体？看
+> [docs/card-code-guide.md](D:\STS2\docs\card-code-guide.md)：里面有卡牌代码结构、常见改动配方、
+> 一键编译部署脚本 `tools/apply.ps1`。
+
 1. 你在 [design/cards.md](D:\STS2\mods-src\probe\design\cards.md) 里按格式写卡（格式说明见
    [docs/card-spec-format.md](D:\STS2\docs\card-spec-format.md)）。
    每张卡只要写：**名称 / 稀有度 / 基础（费用+效果）/ 升级（费用+效果）**，类型和目标可以留空让我推断。
