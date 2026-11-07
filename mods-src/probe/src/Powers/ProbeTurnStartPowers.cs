@@ -19,14 +19,16 @@ namespace Probe.Powers;
 // holds regardless of model iteration order.
 
 /// <summary>
-/// 分神 / 分神+ — turn start: spend block to gain 钙铠.
-/// Base consumes 3 block per stack, the upgraded version consumes 2.
+/// 分神 — vanilla-style single power with an internal counter.
+///
+///   Amount        = 回合开始时将失去的格挡总量（分神每次 +3，分神+ 每次 +2）
+///   ArmorGain     = 打出次数（内部计数器，不显示在图标上；每次打出 +1）
+///   Turn start    : 失去 min(Amount, 当前格挡) 点格挡，获得 ArmorGain 层钙铠
+///
+/// The card bumps ArmorGain through IncrementArmorGain(), exactly like vanilla InfernoPower.
 /// </summary>
-public abstract class ProbeBlockToArmorPower : CustomPowerModel
+public sealed class ProbeDistractPower : CustomPowerModel
 {
-    /// <summary>How much block each stack of this power consumes.</summary>
-    protected abstract int BlockMultiplier { get; }
-
     public override PowerType Type => PowerType.Buff;
 
     public override PowerStackType StackType => PowerStackType.Counter;
@@ -36,8 +38,15 @@ public abstract class ProbeBlockToArmorPower : CustomPowerModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new MultipliedAmountVar("BlockCost", BlockMultiplier),
+        new IntVar("ArmorGain", 0m),
     };
+
+    /// <summary>Called by 分神 / 分神+ after applying: one more play means one more 钙铠 next turn.</summary>
+    public void IncrementArmorGain()
+    {
+        AssertMutable();
+        DynamicVars["ArmorGain"].BaseValue++;
+    }
 
     public override async Task AfterPlayerTurnStart(PlayerChoiceContext choiceContext, Player player)
     {
@@ -46,39 +55,25 @@ public abstract class ProbeBlockToArmorPower : CustomPowerModel
 
         if (Owner.Block > 0)
         {
-            decimal cost = Amount * BlockMultiplier;
-            decimal loss = Math.Min(cost, Owner.Block);
+            decimal loss = Math.Min(Amount, Owner.Block);
             if (loss > 0)
                 await CreatureCmd.LoseBlock(choiceContext, Owner, loss, null);
         }
 
-        Flash();
-        await PowerCmd.Apply<CalciumArmorPower>(choiceContext, Owner, Amount, Owner, null);
-    }
-}
+        int armour = DynamicVars["ArmorGain"].IntValue;
+        if (armour <= 0)
+            return;
 
-public sealed class ProbeDistractPower : ProbeBlockToArmorPower
-{
-    protected override int BlockMultiplier => 3;
+        Flash();
+        await PowerCmd.Apply<CalciumArmorPower>(choiceContext, Owner, armour, Owner, null);
+    }
 
     public override List<(string, string)>? Localization => new()
     {
         ("title", "分神"),
         // 原版范式：description 不带数字（图鉴），smartDescription 用 [blue]{变量}[/blue] 显示实时数字
         ("description", "回合开始时，失去[gold]格挡[/gold]，获得[gold]钙铠[/gold]。"),
-        ("smartDescription", "回合开始时，失去[blue]{BlockCost}[/blue]层[gold]格挡[/gold]，获得[blue]{Amount}[/blue]点[gold]钙铠[/gold]。"),
-    };
-}
-
-public sealed class ProbeDistractPlusPower : ProbeBlockToArmorPower
-{
-    protected override int BlockMultiplier => 2;
-
-    public override List<(string, string)>? Localization => new()
-    {
-        ("title", "分神+"),
-        ("description", "回合开始时，失去[gold]格挡[/gold]，获得[gold]钙铠[/gold]。"),
-        ("smartDescription", "回合开始时，失去[blue]{BlockCost}[/blue]层[gold]格挡[/gold]，获得[blue]{Amount}[/blue]点[gold]钙铠[/gold]。"),
+        ("smartDescription", "回合开始时，失去[blue]{Amount}[/blue]层[gold]格挡[/gold]，获得[blue]{ArmorGain}[/blue]点[gold]钙铠[/gold]。"),
     };
 }
 

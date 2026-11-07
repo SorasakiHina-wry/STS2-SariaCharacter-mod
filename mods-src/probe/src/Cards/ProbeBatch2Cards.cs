@@ -166,17 +166,18 @@ public sealed class ProbeDistract : CustomCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new PowerVar<ProbeDistractPower>(1m),
+        // 施加的层数 = 回合开始时要失去的格挡量（分神 3，分神+ 2）
+        new PowerVar<ProbeDistractPower>(3m),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
-        // 升级前后分别提供 分神 / 分神+（见 design/powers.md）
-        if (IsUpgraded)
-            await PowerCmd.Apply<ProbeDistractPlusPower>(ctx, Owner.Creature, 1m, Owner.Creature, this);
-        else
-            await PowerCmd.Apply<ProbeDistractPower>(ctx, Owner.Creature, 1m, Owner.Creature, this);
+        var power = await PowerCmd.Apply<ProbeDistractPower>(
+            ctx, Owner.Creature, DynamicVars["ProbeDistractPower"].BaseValue, Owner.Creature, this);
+        power?.IncrementArmorGain();   // 每打出一次 +1 层钙铠（内部计数器，不显示在图标上）
     }
+
+    protected override void OnUpgrade() => DynamicVars["ProbeDistractPower"].UpgradeValueBy(-1m);
 
     public override string? CustomPortraitPath => ProbeCardKit.InflamePortrait;
     public override List<(string, string)>? Localization => new()
