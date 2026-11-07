@@ -49,6 +49,18 @@ RARITY_RELIC = {
 VANILLA_STATUS = {"易伤", "虚弱", "脆弱", "中毒", "荆棘", "力量", "敏捷"}
 VANILLA_EN = {"vulnerable", "weak", "frail", "poison", "thorns", "strength", "dexterity"}
 
+# CardKeyword enum values, and the sheet spellings that map onto them.
+CARD_KEYWORDS = {
+    "消耗": "Exhaust", "exhaust": "Exhaust",
+    "虚无": "Ethereal", "ethereal": "Ethereal",
+    "固有": "Innate", "innate": "Innate",
+    "不可打出": "Unplayable", "unplayable": "Unplayable",
+    "保留": "Retain", "retain": "Retain",
+    "永恒": "Eternal", "eternal": "Eternal",
+    "sly": "Sly",
+}
+KEYWORD_FIELD_NAMES = ("词条", "关键词")
+
 DAMAGE_RE = re.compile(r"造成|伤害")
 BLOCK_RE = re.compile(r"格挡")
 SKILL_HINT_RE = re.compile(r"抽|施加|回复|能量|失去生命|丢弃|消耗")
@@ -168,22 +180,83 @@ def scan_code_line_breaks(src_dir: Path) -> dict[str, tuple[str, int]]:
     return out
 
 
+def scan_code_keywords(src_dir: Path) -> dict[str, set[str]]:
+    """title -> set of CardKeyword names declared by that class."""
+    out: dict[str, set[str]] = {}
+    if not src_dir.exists():
+        return out
+    for path in src_dir.rglob("*.cs"):
+        try:
+            text = path.read_text(encoding="utf-8-sig")
+        except Exception:
+            continue
+        for chunk in text.split("[Pool("):
+            tm = TITLE_RE.search(chunk) or TITLE_HELPER_RE.search(chunk)
+            if not tm:
+                continue
+            idx = chunk.find("CanonicalKeywords")
+            kws = set(re.findall(r"CardKeyword\.(\w+)", chunk[idx:idx + 400])) if idx >= 0 else set()
+            out.setdefault(tm.group(1).strip(), kws)
+    return out
+
+
+def check_keywords(items: list[tuple[str, dict]], code_keywords: dict[str, set[str]]) -> list[str]:
+    """The sheet's 词条 field and the class's CanonicalKeywords must agree."""
+    problems: list[str] = []
+    for kind, card in items:
+        if kind != "cards":
+            continue
+        name = card["name"].strip()
+        if not name or card.get("status") == "待删除":
+            continue
+        sheet = set(card.get("keywords") or [])
+        code = set(code_keywords.get(name, set()))
+        if sheet == code:
+            continue
+        where = f"  cards 第 {card['line']} 行 [{name}]"
+        if sheet and not code:
+            problems.append(f"{where}: 设计表写词条 {sorted(sheet)}，但代码里没有 CanonicalKeywords")
+        elif code and not sheet:
+            problems.append(f"{where}: 代码里有词条 {sorted(code)}，设计表没写")
+        else:
+            problems.append(
+                f"{where}: 词条不一致——设计表 {sorted(sheet)} vs 代码 {sorted(code)}"
+            )
+    return problems
+
+
 LINE_BREAK_TOKEN = "<br>"
 
 
 def check_line_breaks(items: list[tuple[str, dict]], code_breaks: dict[str, tuple[str, int]]) -> list[str]:
-    """The sheet writes <br>; the .cs must contain the same number of \\n escapes."""
+    """The sheet writes <br>; the .cs must contain the same number of \\n escapes.
+
+    A card shares one description literal between its base and upgraded versions, so only 基础 is
+    compared against the code - but 基础 and 升级 must agree with each other on the break count.
+    """
     problems: list[str] = []
     for kind, item in items:
         name = item["name"].strip()
         if not name or item.get("status") == "待删除":
             continue
-        text = " ".join(
-            str(item.get(key, "")) for key in ("base_raw", "upgrade_raw", "effect", "description")
-        )
-        wanted = text.lower().count(LINE_BREAK_TOKEN)
+
+        if kind == "cards":
+            base_text = str(item.get("base_raw") or "")
+            upg_text = str(item.get("upgrade_raw") or "")
+            b = base_text.lower().count(LINE_BREAK_TOKEN)
+            u = upg_text.lower().count(LINE_BREAK_TOKEN)
+            where = f"  {kind} 第 {item['line']} 行 [{name}]"
+            if b != u:
+                problems.append(f"{where}: 基础有 {b} 个 {LINE_BREAK_TOKEN}，升级有 {u} 个（应一致）")
+            wanted = b
+            text = base_text
+        else:
+            text = " ".join(str(item.get(key, "")) for key in ("description", "effect"))
+            wanted = text.lower().count(LINE_BREAK_TOKEN)
+
         if wanted == 0:
             continue
+
         where = f"  {kind} 第 {item['line']} 行 [{name}]"
         if name not in code_breaks:
             problems.append(f"{where}: 写了 {LINE_BREAK_TOKEN}，但 src 里找不到同名本地化")
@@ -232,8 +305,31 @@ def _normalise_target(raw: str, card_type: str) -> str:
     return TARGET.get(r.lower(), TARGET.get(r, "AnyEnemy" if card_type == "Attack" else "Self"))
 
 
+def _parse_keywords(raw: dict) -> tuple[list[str], list[str]]:
+    """Return (recognised CardKeyword names, unrecognised terms) from the 词条 field."""
+    text = ""
+    for field in KEYWORD_FIELD_NAMES:
+        if raw.get(field):
+            text = raw[field]
+            break
+    found: list[str] = []
+    unknown: list[str] = []
+    for part in re.split(r"[,，、/；;|\s]+", text):
+        term = part.strip()
+        if not term or term in ("无", "none", "None"):
+            continue
+        mapped = CARD_KEYWORDS.get(term) or CARD_KEYWORDS.get(term.lower())
+        if mapped:
+            if mapped not in found:
+                found.append(mapped)
+        else:
+            unknown.append(term)
+    return found, unknown
+
+
 def _build_card(raw: dict, line_no: int) -> dict:
     status, notes = _extract_status(raw.get("备注", ""))
+    keywords, unknown_keywords = _parse_keywords(raw)
     card = {
         "name": raw.get("名称", ""),
         "rarity_raw": raw.get("稀有度", ""),
@@ -244,6 +340,8 @@ def _build_card(raw: dict, line_no: int) -> dict:
         "english": raw.get("英文名", ""),
         "notes": notes,
         "status": status,
+        "keywords": keywords,
+        "unknown_keywords": unknown_keywords,
         "disabled": raw.get("停用", "").strip() in ("是", "yes", "true", "y"),
         "line": line_no,
         "_raw": raw,
@@ -380,6 +478,11 @@ def validate_cards(cards: list[dict]) -> tuple[list[str], list[str]]:
             problems.append(f"{where}: 稀有度「{c['rarity_raw']}」无法识别（用 基础/普通/罕见/稀有）")
         if c["cost_base"] is None and not re.search(r"费用\s*X", c["base_raw"] or "", re.I):
             problems.append(f"{where}: 「基础」里没找到「费用 N」或「费用 X」")
+        if c["unknown_keywords"]:
+            problems.append(
+                f"{where}: 无法识别的词条 {c['unknown_keywords']}"
+                f"（可用：{'、'.join(sorted(set(CARD_KEYWORDS)))}）"
+            )
         seen[c["name"]] = seen.get(c["name"], 0) + 1
         if seen[c["name"]] > 1:
             problems.append(f"{where}: 卡名重复")
@@ -600,8 +703,9 @@ def _spec_line(kind: str, item: dict) -> str:
     """One compact line containing everything needed to implement the entry."""
     name = item["name"]
     if kind == "cards":
+        kws = f" | 词条: {','.join(item['keywords'])}" if item.get("keywords") else ""
         return (f"{name} | {item['rarity'] or '?'} | {item['type']} | {item['target']} | "
-                f"基础: {item['base_raw']} | 升级: {item['upgrade_raw']}"
+                f"基础: {item['base_raw']} | 升级: {item['upgrade_raw']}{kws}"
                 + (f" | 备注: {item['notes']}" if item["notes"] else ""))
     if kind == "powers":
         bits = [f"{name}", item["kind"] or "?"]
@@ -791,6 +895,7 @@ def main(argv: list[str]) -> int:
 
     problems += check_line_breaks(items, scan_code_line_breaks(src_dir))
     problems += check_stray_tokens(src_dir)
+    problems += check_keywords(items, scan_code_keywords(src_dir))
 
     print_queue(items, code_titles)
 

@@ -37,15 +37,15 @@ public sealed class ProbeAmmoDose : CustomCardModel
 
     protected override void OnUpgrade()
     {
-        DynamicVars.Damage.UpgradeValueBy(1m);
-        DynamicVars["CalciumArmorPower"].UpgradeValueBy(2m);
+        DynamicVars.Damage.UpgradeValueBy(2m);
+        DynamicVars["CalciumArmorPower"].UpgradeValueBy(1m);
     }
 
     public override string? CustomPortraitPath => ProbeCardKit.StrikePortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "针剂弹药"),
-        ("description", "造成 {Damage:diff()} 点伤害。获得 {CalciumArmorPower:diff()} 层钙铠"),
+        ("description", "造成 {Damage:diff()} 点伤害。\n获得 {CalciumArmorPower:diff()} 层钙铠"),
     };
 }
 
@@ -73,7 +73,7 @@ public sealed class ProbeDeploy : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "部署"),
-        ("description", "获得 {CalciumArmorPower:diff()} 点钙铠。抽 {Cards:diff()} 张牌"),
+        ("description", "获得 {CalciumArmorPower:diff()} 点钙铠。\n抽 {Cards:diff()} 张牌"),
     };
 }
 
@@ -189,24 +189,26 @@ public sealed class ProbeInject : CustomCardModel
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
         new BlockVar(7m, ValueProp.Move),
+        new PowerVar<CalciumArmorPower>(2m),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
-        var armour = Owner.Creature.GetPower<CalciumArmorPower>();
-        if (armour != null && armour.Amount > 0)
-            await PowerCmd.Decrement(armour);
-
         await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, play);
+        await PowerCmd.Apply<CalciumArmorPower>(ctx, Owner.Creature, DynamicVars["CalciumArmorPower"].BaseValue, Owner.Creature, this);
     }
 
-    protected override void OnUpgrade() => DynamicVars.Block.UpgradeValueBy(3m);
+    protected override void OnUpgrade()
+    {
+        DynamicVars.Block.UpgradeValueBy(3m);
+        DynamicVars["CalciumArmorPower"].UpgradeValueBy(1m);
+    }
 
     public override string? CustomPortraitPath => ProbeCardKit.DefendPortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "注射"),
-        ("description", "失去 1 层钙铠。获得 {Block:diff()} 点格挡"),
+        ("description", "获得 {Block:diff()} 点格挡。\n获得 {CalciumArmorPower:diff()} 层钙铠。"),
     };
 }
 
