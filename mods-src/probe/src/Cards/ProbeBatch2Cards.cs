@@ -57,7 +57,7 @@ public sealed class ProbeDetonate : CustomCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new DamageVar(6m, ValueProp.Move),
+        new DamageVar(4m, ValueProp.Move),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -76,7 +76,7 @@ public sealed class ProbeDetonate : CustomCardModel
             .Execute(ctx);
     }
 
-    protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(2m);
+    protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(3m);
 
     public override string? CustomPortraitPath => ProbeCardKit.BludgeonPortrait;
     public override List<(string, string)>? Localization => new()

@@ -64,7 +64,7 @@ KEYWORD_FIELD_NAMES = ("词条", "关键词")
 DAMAGE_RE = re.compile(r"造成|伤害")
 BLOCK_RE = re.compile(r"格挡")
 SKILL_HINT_RE = re.compile(r"抽|施加|回复|能量|失去生命|丢弃|消耗")
-STATUS_RE = re.compile(r"(?:施加|获得)\s*(\d+)\s*层([^\s|｜，,。.；;、]+)")
+STATUS_RE = re.compile(r"(?:施加|获得)\s*(\d+)\s*层([^\s|｜，,。.；;、\d]+)")
 
 # Workflow tags the author puts inside 备注. 已实装 = implemented, leave it alone.
 STATUS_TAGS = ("已实装", "待实装", "待修改", "待删除")
@@ -914,7 +914,12 @@ def scan_code_descriptions(src_dir: Path) -> dict[str, tuple[str, str]]:
 
 def _skeleton(text: str, from_code: bool) -> str:
     """Reduce display text to its wording, dropping numbers/vars/breaks so both sides compare."""
-    t = re.sub(r"\{[^}]*\}", "", text) if from_code else text
+    if from_code:
+        # 能量以图标渲染：把 {Energy:energyIcons()} 视作表里写的「N点能量」
+        text = re.sub(r"\{Energy:energyIcons\(\)\}", "点能量", text)
+        t = re.sub(r"\{[^}]*\}", "", text)
+    else:
+        t = text
     t = re.sub(r"[|｜]", "，", t)          # 表里用 | 分隔多条效果，牌面用 ，
     t = re.sub(r"<br>", "", t, flags=re.I)
     t = t.replace("\\n", "").replace("\n", "")
