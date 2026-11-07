@@ -18,13 +18,13 @@ namespace Probe.Powers;
 // holds regardless of model iteration order.
 
 /// <summary>
-/// 分神 / 分神+ — turn start: spend 钙铠 stacks to gain block.
-/// Base consumes 3 armour per stack, the upgraded version consumes 2.
+/// 分神 / 分神+ — turn start: spend block to gain 钙铠.
+/// Base consumes 3 block per stack, the upgraded version consumes 2.
 /// </summary>
-public abstract class ProbeArmorToBlockPower : CustomPowerModel
+public abstract class ProbeBlockToArmorPower : CustomPowerModel
 {
-    /// <summary>How many 钙铠 stacks each stack of this power consumes.</summary>
-    protected abstract int ArmorMultiplier { get; }
+    /// <summary>How much block each stack of this power consumes.</summary>
+    protected abstract int BlockMultiplier { get; }
 
     public override PowerType Type => PowerType.Buff;
 
@@ -38,39 +38,38 @@ public abstract class ProbeArmorToBlockPower : CustomPowerModel
         if (player != Owner.Player || Amount <= 0)
             return;
 
-        int cost = (int)Amount * ArmorMultiplier;
-        var armour = Owner.GetPower<CalciumArmorPower>();
-        if (armour != null && armour.Amount > 0)
+        if (Owner.Block > 0)
         {
-            int loss = Math.Min(cost, armour.Amount);
+            decimal cost = Amount * BlockMultiplier;
+            decimal loss = Math.Min(cost, Owner.Block);
             if (loss > 0)
-                await PowerCmd.ModifyAmount(choiceContext, armour, -loss, Owner, null);
+                await CreatureCmd.LoseBlock(choiceContext, Owner, loss, null);
         }
 
         Flash();
-        await CreatureCmd.GainBlock(Owner, Amount, ValueProp.Unpowered, null);
+        await PowerCmd.Apply<CalciumArmorPower>(choiceContext, Owner, Amount, Owner, null);
     }
 }
 
-public sealed class ProbeDistractPower : ProbeArmorToBlockPower
+public sealed class ProbeDistractPower : ProbeBlockToArmorPower
 {
-    protected override int ArmorMultiplier => 3;
+    protected override int BlockMultiplier => 3;
 
     public override List<(string, string)>? Localization => new()
     {
         ("title", "分神"),
-        ("description", "回合开始时，失去3倍层数的钙铠，获得与层数相等的格挡。"),
+        ("description", "回合开始时，失去3倍层数的格挡，获得与层数相等的钙铠。"),
     };
 }
 
-public sealed class ProbeDistractPlusPower : ProbeArmorToBlockPower
+public sealed class ProbeDistractPlusPower : ProbeBlockToArmorPower
 {
-    protected override int ArmorMultiplier => 2;
+    protected override int BlockMultiplier => 2;
 
     public override List<(string, string)>? Localization => new()
     {
         ("title", "分神+"),
-        ("description", "回合开始时，失去2倍层数的钙铠，获得与层数相等的格挡。"),
+        ("description", "回合开始时，失去2倍层数的格挡，获得与层数相等的钙铠。"),
     };
 }
 
@@ -78,6 +77,9 @@ public sealed class ProbeDistractPlusPower : ProbeArmorToBlockPower
 public sealed class ProbeFocusMindPower : CustomPowerModel
 {
     private int _grantedThisTurn;
+
+    /// <summary>Vigor granted per stack of this power (see design/powers.md: 7×层数).</summary>
+    private const int VigorPerStack = 7;
 
     public override PowerType Type => PowerType.Buff;
 
@@ -95,9 +97,10 @@ public sealed class ProbeFocusMindPower : CustomPowerModel
         if (armour != null && armour.Amount > 0)
             await PowerCmd.Decrement(armour);
 
+        int vigor = (int)Amount * VigorPerStack;
         Flash();
-        await PowerCmd.Apply<VigorPower>(choiceContext, Owner, Amount, Owner, null);
-        _grantedThisTurn = (int)Amount;
+        await PowerCmd.Apply<VigorPower>(choiceContext, Owner, vigor, Owner, null);
+        _grantedThisTurn = vigor;
     }
 
     /// <summary>"在本回合获得": strip whatever Vigor this power handed out once the turn ends.</summary>
@@ -135,6 +138,6 @@ public sealed class ProbeFocusMindPower : CustomPowerModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "凝神"),
-        ("description", "回合开始时，失去1层钙铠，在本回合获得与层数相等的活力。"),
+        ("description", "回合开始时，失去1层钙铠，在本回合获得7倍层数的活力。"),
     };
 }

@@ -45,7 +45,7 @@ public sealed class ProbeSteady : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "稳定"),
-        ("description", "获得{Block:diff()}点格挡。获得{CalciumArmorPower:diff()}层钙铠。"),
+        ("description", "获得{Block:diff()}点格挡。\n获得{CalciumArmorPower:diff()}层钙铠。"),
     };
 }
 
@@ -190,11 +190,11 @@ public sealed class ProbeDistract : CustomCardModel
 [Pool(typeof(ProbeCardPool))]
 public sealed class ProbeFocusMind : CustomCardModel
 {
-    public ProbeFocusMind() : base(1, CardType.Power, CardRarity.Uncommon, TargetType.Self) { }
+    public ProbeFocusMind() : base(2, CardType.Power, CardRarity.Uncommon, TargetType.Self) { }
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new PowerVar<ProbeFocusMindPower>(5m),
+        new PowerVar<ProbeFocusMindPower>(1m),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -202,12 +202,12 @@ public sealed class ProbeFocusMind : CustomCardModel
         await PowerCmd.Apply<ProbeFocusMindPower>(ctx, Owner.Creature, DynamicVars["ProbeFocusMindPower"].BaseValue, Owner.Creature, this);
     }
 
-    protected override void OnUpgrade() => DynamicVars["ProbeFocusMindPower"].UpgradeValueBy(2m);
+    protected override void OnUpgrade() => EnergyCost.UpgradeBy(-1);
 
     public override string? CustomPortraitPath => ProbeCardKit.InflamePortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "凝神"),
-        ("description", "回合开始时，失去1层钙铠，在本回合获得{ProbeFocusMindPower:diff()}点活力。"),
+        ("description", "回合开始时，失去1层钙铠，在本回合获得7点活力。"),
     };
 }
