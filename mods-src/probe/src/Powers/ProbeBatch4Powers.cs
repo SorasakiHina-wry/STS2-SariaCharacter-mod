@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
@@ -148,12 +149,30 @@ public sealed class ProbeSpiritRecoveryPower : CustomPowerModel
     /// <summary>每 18 层钙铠换 1 点能量（与 design/powers.md 一致）。</summary>
     public const int Threshold = 18;
 
+    private const string BASE_ARMOR_KEY = "BaseArmor";
+
+    /// <summary>与原版「自动化」一致：图标显示的是「还差多少层」，而不是能量数。</summary>
+    private sealed class Data
+    {
+        public int armorLeft = Threshold;
+    }
+
     public override PowerType Type => PowerType.Buff;
 
     public override PowerStackType StackType => PowerStackType.Counter;
 
+    /// <summary>图标数字 = 剩余进度（原版 AutomationPower.DisplayAmount 同款）。</summary>
+    public override int DisplayAmount => GetInternalData<Data>().armorLeft;
+
     public override string? CustomPackedIconPath => "res://images/atlases/power_atlas.sprites/thorns_power.tres";
     public override string? CustomBigIconPath => "res://images/powers/thorns_power.png";
+
+    protected override object? InitInternalData() => new Data();
+
+    protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
+    {
+        new DynamicVar(BASE_ARMOR_KEY, Threshold),
+    };
 
     public override async Task AfterPowerAmountChanged(
         PlayerChoiceContext choiceContext, PowerModel power, decimal amount, Creature? applier, CardModel? cardSource)
@@ -161,32 +180,26 @@ public sealed class ProbeSpiritRecoveryPower : CustomPowerModel
         if (power is not CalciumArmorPower || power.Owner != Owner || amount <= 0 || Owner.Player == null)
             return;
 
-        int remaining = Amount - (int)amount;
-        int gained = 0;
-        while (remaining <= 0)
-        {
-            remaining += Threshold;
-            gained++;
-        }
+        var data = GetInternalData<Data>();
+        data.armorLeft -= (int)amount;
+        InvokeDisplayAmountChanged();
 
-        if (gained > 0)
+        while (data.armorLeft <= 0)
         {
+            data.armorLeft += Threshold;
             Flash();
-            for (int i = 0; i < gained; i++)
-                await PlayerCmd.GainEnergy(1m, Owner.Player);
+            await PlayerCmd.GainEnergy(Amount, Owner.Player);   // Amount = 层数 = 每次触发的能量
+            InvokeDisplayAmountChanged();
         }
-
-        SetAmount(remaining);
     }
 
     public override List<(string, string)>? Localization => new()
     {
         ("title", "精神回复"),
-        ("description", "你每获得18层钙铠时，获得{energyPrefix:energyIcons(1)}。"),
-        ("smartDescription", "你每获得[blue]18[/blue]层[gold]钙铠[/gold]，获得{energyPrefix:energyIcons(1)}。还需[blue]{Amount}[/blue]层。"),
+        ("description", "你每获得[blue]18[/blue]层[gold]钙铠[/gold]时，获得[gold]能量[/gold]。"),
+        ("smartDescription", "你每获得[blue]{" + BASE_ARMOR_KEY + "}[/blue]层[gold]钙铠[/gold]时，获得{Amount:energyIcons()}。"),
     };
 }
-
 /// <summary>“科技新星” — Amount = 额外获得的力量；排除所有同名 power 造成的获得，避免递归。</summary>
 public sealed class ProbeTechNovaPower : CustomPowerModel
 {

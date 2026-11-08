@@ -156,8 +156,8 @@ def _chunk_kind(chunk: str) -> str:
 
 
 CLASS_START_RE = re.compile(
-    r"(?:^|\n)\s*(?:public|internal|private)?\s*"
-    r"(?:sealed\s+|abstract\s+|static\s+|partial\s+)*class\s+\w+"
+    r"(?m)^(?:public|internal|private)?[ \t]*"
+    r"(?:sealed[ \t]+|abstract[ \t]+|static[ \t]+|partial[ \t]+)*class[ \t]+\w+"
 )
 
 
