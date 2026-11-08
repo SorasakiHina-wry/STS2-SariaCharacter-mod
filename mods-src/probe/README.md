@@ -236,6 +236,7 @@ cards.md
 & $exe D:\STS2\mods-src\probe\tools\prune.py --dry-run        # 预览：删「待删除」条目 + 翻状态
 & $exe D:\STS2\mods-src\probe\tools\prune.py --retag
 & $exe D:\STS2\mods-src\probe\tools\prune.py --clean-notes    # 去掉「已实装（…）」里的残留说明
+& $exe D:\STS2\mods-src\probe\tools\sort_powers.py           # 按 cards.md 里的顺序重排 powers.md（钙铠恒在首位）
 ```
 
 `prune.py --retag` **不是无脑翻标签**：它先比对实现与描述是否一致（`<br>` 数量、`词条` 与
