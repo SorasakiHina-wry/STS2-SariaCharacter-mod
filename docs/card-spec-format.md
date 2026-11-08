@@ -561,13 +561,41 @@ await PlayerCmd.GainEnergy(DynamicVars.Energy.BaseValue, Owner);
 
 #### 其他已知的图标格式化器
 
-| 写法 | 效果 |
-|---|---|
-| `{Energy:energyIcons()}` | 获得/消耗的能量（N 个能量图标） |
-| `{energyPrefix:energyIcons(1)}` | 用于「0 费牌」这类描述里的费用图标 |
-| `{singleStarIcon}` | 星星图标（部分角色） |
+| 写法 | 用在 | 效果 |
+|---|---|---|
+| `{Energy:energyIcons()}` | 卡牌（卡面会注入 DynamicVar） | 按 `EnergyVar` 数值渲染能量图标 |
+| `{energyPrefix:energyIcons(N)}` | **能力**的普通描述（没有 DynamicVar） | 直接渲染 N 个能量图标 |
+| `{singleStarIcon}` | 星星相关 | 星星图标 |
 
-需要新的图标写法时告诉我，我核对原版后补进这张表。
+渲染规则（`EnergyIconsFormatter`）：
+
+- `0 < N < 4` → 直接画 N 个图标；
+- `N ≥ 4` → 显示「N + 一个图标」。
+
+#### 能力的能量文本（踩过的坑）
+
+`精神回复` 之前写成纯文字「获得1点能量」，游戏里就真的显示文字。原因是：
+
+- **卡牌**的描述会注入全部 DynamicVar，所以 `{Energy:energyIcons()}` 能用；
+- **能力**只有 `smartDescription` 注入 DynamicVar，普通 `description` 只额外提供 `{Amount}` / `{energyPrefix}` / `{singleStarIcon}`。
+
+所以能力文本里写能量，统一用**固定数值形式**：
+
+```csharp
+("description",      "你每获得18层钙铠时，获得{energyPrefix:energyIcons(1)}。"),
+("smartDescription", "你每获得[blue]18[/blue]层[gold]钙铠[/gold]，获得{energyPrefix:energyIcons(1)}。还需[blue]{Amount}[/blue]层。"),
+```
+
+#### 你以后在文档里写
+
+**一律写自然语言，不加花括号**：
+
+```
+获得1点能量。        → 我译成 {energyPrefix:energyIcons(1)}（能力）或 {Energy:energyIcons()}（卡牌）
+失去2点能量。        → 同上，文案保持「失去」
+```
+
+校验器比对文本时，会把上面两种图标写法都视同「点能量」，所以文档和代码不会互相误报。
 
 ## 10. 卡牌专属机制 / 关键字写在 `design/mechanics.md`
 

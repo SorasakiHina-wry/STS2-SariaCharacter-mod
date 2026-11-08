@@ -918,7 +918,7 @@ def _skeleton(text: str, from_code: bool) -> str:
         # 能量以图标渲染：把 {Energy:energyIcons()} 视作表里写的「N点能量」
         # {IfUpgraded:show:A|B} 在卡面基础版显示 B，比对时取 B
         text = re.sub(r"\{IfUpgraded:show:([^{}|]*)\|([^{}]*)\}", r"\2", text)
-        text = re.sub(r"\{Energy:energyIcons\(\)\}", "点能量", text)
+        text = re.sub(r"\{(?:Energy:energyIcons\(\)|energyPrefix:energyIcons\(\d+\))\}", "点能量", text)
         t = re.sub(r"\{[^}]*\}", "", text)
     else:
         t = text

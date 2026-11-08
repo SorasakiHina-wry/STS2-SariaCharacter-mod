@@ -182,8 +182,8 @@ public sealed class ProbeSpiritRecoveryPower : CustomPowerModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "精神回复"),
-        ("description", "你每获得18层钙铠时，获得1点能量。"),
-        ("smartDescription", "你每获得[blue]18[/blue]层[gold]钙铠[/gold]，获得[blue]1[/blue]点能量。还需[blue]{Amount}[/blue]层。"),
+        ("description", "你每获得18层钙铠时，获得{energyPrefix:energyIcons(1)}。"),
+        ("smartDescription", "你每获得[blue]18[/blue]层[gold]钙铠[/gold]，获得{energyPrefix:energyIcons(1)}。还需[blue]{Amount}[/blue]层。"),
     };
 }
 
