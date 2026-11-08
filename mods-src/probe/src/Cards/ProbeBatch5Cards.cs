@@ -28,7 +28,11 @@ public sealed class ProbeCycle : CustomCardModel
 
     /// <summary>详情里展示将要生成的「升温」（原版 Begone → MinionStrike 同款做法）。</summary>
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
-        new[] { HoverTipFactory.FromCard<ProbeWarmUp>(IsUpgraded) };
+        new IHoverTip[]
+        {
+            HoverTipFactory.FromCard<ProbeWarmUp>(IsUpgraded),
+            HoverTipFactory.FromCard<ProbeCapture>(IsUpgraded),
+        };
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
@@ -100,6 +104,11 @@ public sealed class ProbeElectrum : CustomCardModel
 
     protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(2m);
 
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
+    {
+        HoverTipFactory.FromPower<CalciumArmorPower>(),
+    };
+
     public override string? CustomPortraitPath => ProbeCardKit.BashPortrait;
     public override List<(string, string)>? Localization => new()
     {
@@ -129,6 +138,12 @@ public sealed class ProbeInduce : CustomCardModel
 
     protected override void OnUpgrade() => DynamicVars["VigorPower"].UpgradeValueBy(2m);
 
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
+    {
+        HoverTipFactory.FromPower<StrengthPower>(),
+        HoverTipFactory.FromPower<VigorPower>(),
+    };
+
     public override string? CustomPortraitPath => ProbeCardKit.InflamePortrait;
     public override List<(string, string)>? Localization => new()
     {
@@ -156,6 +171,11 @@ public sealed class ProbeReshape : CustomCardModel
     }
 
     protected override void OnUpgrade() => EnergyCost.UpgradeBy(-1);
+
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
+    {
+        HoverTipFactory.FromPower<DexterityPower>(),
+    };
 
     public override string? CustomPortraitPath => ProbeCardKit.DefendPortrait;
     public override List<(string, string)>? Localization => new()
@@ -192,6 +212,11 @@ public sealed class ProbeRefine : CustomCardModel
         return location;
     }
 
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
+    {
+        HoverTipFactory.FromPower<CalciumArmorPower>(),
+    };
+
     public override string? CustomPortraitPath => ProbeCardKit.DefendPortrait;
     public override List<(string, string)>? Localization => new()
     {
@@ -220,6 +245,12 @@ public sealed class ProbeEnamel : CustomCardModel
     }
 
     protected override void OnUpgrade() => AddKeyword(CardKeyword.Retain);
+
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
+    {
+        HoverTipFactory.FromPower<CalciumArmorPower>(),
+        HoverTipFactory.Static(StaticHoverTip.Block),
+    };
 
     public override string? CustomPortraitPath => ProbeCardKit.DefendPortrait;
     public override List<(string, string)>? Localization => new()
@@ -300,7 +331,11 @@ public sealed class ProbeCapture : CustomCardModel
     public ProbeCapture() : base(0, CardType.Skill, CardRarity.Token, TargetType.Self) { }
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
-        new[] { HoverTipFactory.FromCard<ProbeWarmUp>(IsUpgraded) };
+        new IHoverTip[]
+        {
+            HoverTipFactory.FromCard<ProbeWarmUp>(IsUpgraded),
+            HoverTipFactory.FromCard<ProbeCapture>(IsUpgraded),
+        };
 
     public override IEnumerable<CardKeyword> CanonicalKeywords => new[] { CardKeyword.Exhaust };
 

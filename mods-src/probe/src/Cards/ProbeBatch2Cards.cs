@@ -6,6 +6,7 @@ using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
@@ -40,6 +41,12 @@ public sealed class ProbeSteady : CustomCardModel
         DynamicVars.Block.UpgradeValueBy(2m);
         DynamicVars["CalciumArmorPower"].UpgradeValueBy(1m);
     }
+
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
+    {
+        HoverTipFactory.FromPower<CalciumArmorPower>(),
+        HoverTipFactory.Static(StaticHoverTip.Block),
+    };
 
     public override string? CustomPortraitPath => ProbeCardKit.DefendPortrait;
     public override List<(string, string)>? Localization => new()
@@ -77,6 +84,11 @@ public sealed class ProbeDetonate : CustomCardModel
     }
 
     protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(1m);
+
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
+    {
+        HoverTipFactory.FromPower<CalciumArmorPower>(),
+    };
 
     public override string? CustomPortraitPath => ProbeCardKit.BludgeonPortrait;
     public override List<(string, string)>? Localization => new()
@@ -118,6 +130,11 @@ public sealed class ProbeFullSalvo : CustomCardModel
             .Execute(ctx);
     }
 
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
+    {
+        HoverTipFactory.FromPower<VulnerablePower>(),
+    };
+
     public override string? CustomPortraitPath => ProbeCardKit.StrikePortrait;
     public override List<(string, string)>? Localization => new()
     {
@@ -150,6 +167,12 @@ public sealed class ProbeChargeUp : CustomCardModel
         DynamicVars["VigorPower"].UpgradeValueBy(1m);
     }
 
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
+    {
+        HoverTipFactory.FromPower<VigorPower>(),
+        HoverTipFactory.FromPower<CalciumArmorPower>(),
+    };
+
     public override string? CustomPortraitPath => ProbeCardKit.InflamePortrait;
     public override List<(string, string)>? Localization => new()
     {
@@ -179,6 +202,12 @@ public sealed class ProbeDistract : CustomCardModel
 
     protected override void OnUpgrade() => DynamicVars["ProbeDistractPower"].UpgradeValueBy(-1m);
 
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
+    {
+        HoverTipFactory.FromPower<CalciumArmorPower>(),
+        HoverTipFactory.Static(StaticHoverTip.Block),
+    };
+
     public override string? CustomPortraitPath => ProbeCardKit.InflamePortrait;
     public override List<(string, string)>? Localization => new()
     {
@@ -207,6 +236,12 @@ public sealed class ProbeFocusMind : CustomCardModel
     }
 
     protected override void OnUpgrade() => DynamicVars["ProbeFocusMindPower"].UpgradeValueBy(2m);
+
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
+    {
+        HoverTipFactory.FromPower<VigorPower>(),
+        HoverTipFactory.FromPower<CalciumArmorPower>(),
+    };
 
     public override string? CustomPortraitPath => ProbeCardKit.InflamePortrait;
     public override List<(string, string)>? Localization => new()

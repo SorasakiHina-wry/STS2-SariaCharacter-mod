@@ -6,6 +6,7 @@ using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Probe.Pools;
@@ -38,6 +39,11 @@ public sealed class ProbeHardening : CustomCardModel
     }
 
     protected override void OnUpgrade() => DynamicVars["CalciumArmorPower"].UpgradeValueBy(2m);
+
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
+    {
+        HoverTipFactory.FromPower<CalciumArmorPower>(),
+    };
 
     public override string? CustomPortraitPath => "res://images/packed/card_portraits/ironclad/defend_ironclad.png";
 
@@ -83,6 +89,12 @@ public sealed class ProbeIgnite : CustomCardModel
     }
 
     protected override void OnUpgrade() => DynamicVars.Vulnerable.UpgradeValueBy(1m);
+
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
+    {
+        HoverTipFactory.FromPower<VulnerablePower>(),
+        HoverTipFactory.FromPower<CalciumArmorPower>(),
+    };
 
     public override string? CustomPortraitPath => "res://images/packed/card_portraits/ironclad/bash.png";
 

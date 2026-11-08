@@ -5,6 +5,7 @@ using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
 using Probe.Pools;
@@ -36,6 +37,11 @@ public sealed class ProbeDefend : CustomCardModel
     {
         DynamicVars.Block.UpgradeValueBy(3m);
     }
+
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
+    {
+        HoverTipFactory.Static(StaticHoverTip.Block),
+    };
 
     public override string? CustomPortraitPath => "res://images/packed/card_portraits/ironclad/defend_ironclad.png";
 
