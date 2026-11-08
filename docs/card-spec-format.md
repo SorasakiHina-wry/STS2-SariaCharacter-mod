@@ -624,6 +624,33 @@ await PlayerCmd.GainEnergy(DynamicVars.Energy.BaseValue, Owner);
 我会把它实现成 `CardRarity.Token` + `[Pool(typeof(TokenCardPool))]`，并给生成它的卡加上 `ExtraHoverTips`，
 这样它只在你悬停「循环 / 升温 / 捕集」时出现在详情里。
 
+### 9.7 黄色高亮（`[gold]`）——沿用原版约定
+
+原版卡面会把「有详情提示的词」标成黄色，鼠标悬停能看到解释：
+
+```
+获得{Block:diff()}点[gold]格挡[/gold]。
+获得{StrengthPower:diff()}点[gold]力量[/gold]。
+给予{VulnerablePower:diff()}层[gold]易伤[/gold]。
+将一张[gold]{IfUpgraded:show:仆从打击+|仆从打击}[/gold]放到你的[gold]抽牌堆[/gold]的顶部。
+```
+
+本项目沿用该约定，`tools/gold_tags.py` 会为卡牌描述里的这些词加 `[gold]`：
+
+| 类别 | 词 |
+|---|---|
+| 原版状态 | 格挡、力量、敏捷、虚弱、易伤、活力、脆弱、中毒、荆棘 |
+| 角色专属 power | 钙铠、分神、凝神、煅烧、骨矿化、技艺超载、精神回复、牵引、充能护服、钙质化、再塑型、洞察、急救、紧密防护、持械、腿甲、科技新星 |
+| 区域 | 手牌、抽牌堆、弃牌堆、消耗堆 |
+| 生成的卡牌 | 升温、捕集（含 `{IfUpgraded:…}` 时整段包） |
+
+**你在设计表里仍然只写纯文本**（`获得6层钙铠`），高亮由脚本/我加；校验器比对时会忽略 `[gold]`，
+所以表和代码不会互相误报。
+
+```powershell
+python tools/gold_tags.py --dry-run   # 预览
+python tools/gold_tags.py             # 写入
+```
 ## 10. 卡牌专属机制 / 关键字写在 `design/mechanics.md`
 
 ```mechanic
