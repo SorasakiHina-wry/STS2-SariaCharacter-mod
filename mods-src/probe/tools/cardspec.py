@@ -1073,7 +1073,7 @@ def main(argv: list[str]) -> int:
     for c in active_cards:
         counts[c["rarity"] or "?"] = counts.get(c["rarity"] or "?", 0) + 1
         types[c["type"]] = types.get(c["type"], 0) + 1
-    print("稀有度: " + "  ".join(f"{r}={counts.get(r, 0)}" for r in ("Basic", "Common", "Uncommon", "Rare")))
+    print("稀有度: " + "  ".join(f"{r}={counts.get(r, 0)}" for r in ("Basic", "Common", "Uncommon", "Rare", "Token")))
     print("类型  : " + "  ".join(f"{t}={n}" for t, n in sorted(types.items())))
 
     if active_relics:

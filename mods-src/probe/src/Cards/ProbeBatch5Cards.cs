@@ -11,6 +11,8 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using Probe.Pools;
+using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Models.CardPools;
 using Probe.Powers;
 
 namespace Probe.Cards;
@@ -23,6 +25,10 @@ namespace Probe.Cards;
 public sealed class ProbeCycle : CustomCardModel
 {
     public ProbeCycle() : base(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy) { }
+
+    /// <summary>详情里展示将要生成的「升温」（原版 Begone → MinionStrike 同款做法）。</summary>
+    protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+        new[] { HoverTipFactory.FromCard<ProbeWarmUp>(IsUpgraded) };
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
@@ -250,11 +256,14 @@ public sealed class ProbeInsight : CustomCardModel
     };
 }
 
-/// <summary>升温 — token card: block, then seed 捕集.</summary>
-[Pool(typeof(ProbeCardPool))]
+/// <summary>升温 — token card: block, then seed 捕集. Registered in the vanilla Token pool so it never shows in the compendium.</summary>
+[Pool(typeof(TokenCardPool))]
 public sealed class ProbeWarmUp : CustomCardModel
 {
     public ProbeWarmUp() : base(0, CardType.Skill, CardRarity.Token, TargetType.Self) { }
+
+    protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+        new[] { HoverTipFactory.FromCard<ProbeCapture>(IsUpgraded) };
 
     public override bool GainsBlock => true;
 
@@ -284,11 +293,14 @@ public sealed class ProbeWarmUp : CustomCardModel
     };
 }
 
-/// <summary>捕集 — token card: armour, then seed 升温.</summary>
-[Pool(typeof(ProbeCardPool))]
+/// <summary>捕集 — token card: armour, then seed 升温. Registered in the vanilla Token pool.</summary>
+[Pool(typeof(TokenCardPool))]
 public sealed class ProbeCapture : CustomCardModel
 {
     public ProbeCapture() : base(0, CardType.Skill, CardRarity.Token, TargetType.Self) { }
+
+    protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+        new[] { HoverTipFactory.FromCard<ProbeWarmUp>(IsUpgraded) };
 
     public override IEnumerable<CardKeyword> CanonicalKeywords => new[] { CardKeyword.Exhaust };
 

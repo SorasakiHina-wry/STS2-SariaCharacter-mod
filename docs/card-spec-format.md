@@ -597,6 +597,33 @@ await PlayerCmd.GainEnergy(DynamicVars.Energy.BaseValue, Owner);
 
 校验器比对文本时，会把上面两种图标写法都视同「点能量」，所以文档和代码不会互相误报。
 
+### 9.6 无色 / Token 卡（只能由别的卡生成的牌）
+
+有些牌不该被玩家抽到或买到，只由别的牌生成，例如原版「下去！」生成的「仆从打击」。
+
+**原版做法**（已核对 `Begone.cs` / `MinionStrike.cs`）：
+
+1. 卡牌稀有度用 `CardRarity.Token`，注册在 `TokenCardPool`（不是角色池/无色池）；
+2. 因此它在**牌库百科里完全不显示**；
+3. 生成它的卡用悬停提示把它显示出来：
+
+   ```csharp
+   protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+       new[] { HoverTipFactory.FromCard<MinionStrike>(IsUpgraded) };
+   ```
+
+4. 生成时：`CombatState.CreateCard<T>(Owner)` + `CardPileCmd.AddGeneratedCardToCombat(..., PileType.Draw, ..., CardPilePosition.Top)`，升级版再 `CardCmd.Upgrade(card)`。
+
+**你在文档里怎么写**：
+
+```
+稀有度: 无色
+备注：（该牌仅会被"循环(+)""捕集(+)"提供，不会出现在无色奖励或无色药水）
+```
+
+我会把它实现成 `CardRarity.Token` + `[Pool(typeof(TokenCardPool))]`，并给生成它的卡加上 `ExtraHoverTips`，
+这样它只在你悬停「循环 / 升温 / 捕集」时出现在详情里。
+
 ## 10. 卡牌专属机制 / 关键字写在 `design/mechanics.md`
 
 ```mechanic
