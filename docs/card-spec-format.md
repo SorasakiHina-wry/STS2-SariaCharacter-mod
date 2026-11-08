@@ -676,6 +676,35 @@ python tools/hover_tips.py             # 写入
 它按卡牌描述里出现的关键词（易伤/虚弱/力量/敏捷/活力/钙铠/…/格挡）自动补 `ExtraHoverTips`。
 **你在 powers.md 里写的 `描述` 就是悬停时显示的那段文字**，所以想让钙铠等能力显示更详细的内容，
 直接改进 `powers.md` 的 `描述` / `smartDescription` 即可。
+### 9.9 「每张牌各自计时」的能力：`PowerInstanceType.Instanced`
+
+原版「自动化」(AutomationPower) 的形态是：**每打出一张，就多一个独立实例**，各自有图标、各自倒计时。
+
+```csharp
+public override PowerInstanceType InstanceType => PowerInstanceType.Instanced;
+
+public override int DisplayAmount => GetInternalData<Data>().cardsLeft;  // 图标 = 剩余进度
+public override PowerStackType StackType => PowerStackType.Counter;      // 单实例内仍是层数
+
+protected override object? InitInternalData() => new Data();             // 进度存在内部数据里
+protected override IEnumerable<DynamicVar> CanonicalVars =>
+    new DynamicVar[] { new DynamicVar("BaseCards", 10m) };               // 阈值（固定值）
+
+// 卡牌侧：每次施加 1 层（= 每次触发 1 点能量）
+await PowerCmd.Apply<XPower>(ctx, Owner.Creature, 1m, Owner.Creature, this);
+```
+
+要点：
+
+| 元素 | 含义 |
+|---|---|
+| `InstanceType = Instanced` | `PowerCmd.Apply` 不走「叠到已有实例」，而是新建一个（源码里 `Instanced => null`） |
+| `DisplayAmount` | 图标上的数字（这里放剩余进度，而不是 `Amount`） |
+| `InitInternalData` / `GetInternalData` | 每个实例自己的倒计时数据 |
+| `Amount` | 每次触发要给的东西（如能量点数），所以卡牌只施加 1 层 |
+| 多个实例叠加时 | 各算各的进度；触发时各自给 `Amount` |
+
+对比：**没有** `Instanced` 的 power（如 钙铠、凝神）是「所有来源叠成一个实例」，图标只有一个、层数相加。
 ## 10. 卡牌专属机制 / 关键字写在 `design/mechanics.md`
 
 ```mechanic

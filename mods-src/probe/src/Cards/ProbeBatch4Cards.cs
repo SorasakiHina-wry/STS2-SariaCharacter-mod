@@ -251,7 +251,7 @@ public sealed class ProbeSpiritRecovery : CustomCardModel
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
         await PowerCmd.Apply<ProbeSpiritRecoveryPower>(
-            ctx, Owner.Creature, ProbeSpiritRecoveryPower.Threshold, Owner.Creature, this);
+            ctx, Owner.Creature, 1m, Owner.Creature, this);   // 1 层 = 每次触发 1 点能量
     }
 
     protected override void OnUpgrade() => EnergyCost.UpgradeBy(-1);

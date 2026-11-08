@@ -161,6 +161,9 @@ public sealed class ProbeSpiritRecoveryPower : CustomPowerModel
 
     public override PowerStackType StackType => PowerStackType.Counter;
 
+    /// <summary>每张「精神回复」一个独立实例，各自倒计时、各自图标（原版 AutomationPower 同款）。</summary>
+    public override PowerInstanceType InstanceType => PowerInstanceType.Instanced;
+
     /// <summary>图标数字 = 剩余进度（原版 AutomationPower.DisplayAmount 同款）。</summary>
     public override int DisplayAmount => GetInternalData<Data>().armorLeft;
 
