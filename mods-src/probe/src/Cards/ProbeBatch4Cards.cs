@@ -147,7 +147,7 @@ public sealed class ProbeLegArmor : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "腿甲"),
-        ("description", "获得{CalciumArmorPower:diff()}层钙铠。\n在下个回合开始时抽1张牌。"),
+        ("description", "获得{CalciumArmorPower:diff()}层钙铠。\n{IfUpgraded:show:在下2个回合开始时抽1张牌。|在下个回合开始时抽1张牌。}"),
     };
 }
 
