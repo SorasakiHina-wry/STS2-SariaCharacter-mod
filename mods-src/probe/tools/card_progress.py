@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""维护 cards.md 顶部的「卡牌进度」指示块。
+"""维护 cards.md 顶部的一行「卡牌进度」指示（已实装数量/需求总量）。
 
 目标规格：普通 20 / 罕见 35 / 稀有 25（基础牌不计）。
 
@@ -24,37 +24,16 @@ ANCHOR = "## 当前配比"
 
 def build_block(cards: list[dict]) -> str:
     done = {key: 0 for key, _label, _target in TARGETS}
-    pending = {key: 0 for key, _label, _target in TARGETS}
 
     for card in cards:
         rarity = card.get("rarity")
         if rarity not in done or card.get("disabled") or card.get("status") == "待删除":
             continue
-        if not card["name"].strip():
-            continue
-        if card.get("status") == "已实装":
+        if card["name"].strip() and card.get("status") == "已实装":
             done[rarity] += 1
-        else:
-            pending[rarity] += 1
 
-    lines = [START, "**卡牌进度**（目标：普通 20 / 罕见 35 / 稀有 25，基础牌不计）", ""]
-    total_left = 0
-    total_done = 0
-    for key, label, target in TARGETS:
-        left = max(0, target - done[key])
-        total_left += left
-        total_done += done[key]
-        extra = ""
-        if pending[key]:
-            extra = f"，未实装 {pending[key]}"
-        if done[key] > target:
-            extra += f"（超出目标 {done[key] - target}）"
-        lines.append(f"- **{label}**：已实装 {done[key]} / {target} → 还差 **{left}**{extra}")
-    lines.append("")
-    lines.append(f"合计：已实装 {total_done}，还差 **{total_left}** 张")
-    lines.append(END)
-    return "\n".join(lines)
-
+    parts = [f"{label} {done[key]}/{target}" for key, label, target in TARGETS]
+    return START + "\n**卡牌进度**（已实装 / 需求）：" + " · ".join(parts) + "\n" + END
 
 def main(argv: list[str]) -> int:
     dry_run = "--dry-run" in argv
