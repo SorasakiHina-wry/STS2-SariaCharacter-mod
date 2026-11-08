@@ -651,6 +651,31 @@ await PlayerCmd.GainEnergy(DynamicVars.Energy.BaseValue, Owner);
 python tools/gold_tags.py --dry-run   # 预览
 python tools/gold_tags.py             # 写入
 ```
+### 9.8 悬停详情：`ExtraHoverTips`
+
+卡面里写到的状态/能力，**必须在卡牌代码里登记**才能在详情里悬停查看（原版 `Bash.cs` 就是这么做的）：
+
+```csharp
+protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
+{
+    HoverTipFactory.FromPower<VulnerablePower>(),   // 原版状态
+    HoverTipFactory.FromPower<CalciumArmorPower>(), // 角色专属 power
+    HoverTipFactory.Static(StaticHoverTip.Block),   // 格挡
+};
+```
+
+生成别的牌时用 `HoverTipFactory.FromCard<T>(IsUpgraded)`（见 9.6）。
+
+这件事也由脚本维护：
+
+```powershell
+python tools/hover_tips.py --dry-run   # 预览
+python tools/hover_tips.py             # 写入
+```
+
+它按卡牌描述里出现的关键词（易伤/虚弱/力量/敏捷/活力/钙铠/…/格挡）自动补 `ExtraHoverTips`。
+**你在 powers.md 里写的 `描述` 就是悬停时显示的那段文字**，所以想让钙铠等能力显示更详细的内容，
+直接改进 `powers.md` 的 `描述` / `smartDescription` 即可。
 ## 10. 卡牌专属机制 / 关键字写在 `design/mechanics.md`
 
 ```mechanic
