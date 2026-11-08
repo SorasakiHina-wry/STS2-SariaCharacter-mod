@@ -122,7 +122,7 @@ public sealed class ProbeFullSalvo : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "全弹发射"),
-        ("description", "施加2层易伤。\n造成{Damage:diff()}点伤害{IfUpgraded:show:X+1|X}次。"),
+        ("description", "给予2层易伤。\n造成{Damage:diff()}点伤害{IfUpgraded:show:X+1|X}次。"),
     };
 }
 

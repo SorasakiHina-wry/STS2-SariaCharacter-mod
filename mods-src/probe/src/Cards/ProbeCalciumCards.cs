@@ -89,6 +89,6 @@ public sealed class ProbeIgnite : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "激发"),
-        ("description", "若拥有大于等于1层钙铠，则失去1层钙铠，并施加{VulnerablePower:diff()}层易伤。"),
+        ("description", "若拥有大于等于1层钙铠，则失去1层钙铠，并给予{VulnerablePower:diff()}层易伤。"),
     };
 }

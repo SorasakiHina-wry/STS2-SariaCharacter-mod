@@ -46,7 +46,7 @@ public sealed class ProbeSoften : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "软化"),
-        ("description", "若拥有大于等于2层钙铠，则失去2层钙铠，并施加{WeakPower:diff()}层虚弱。"),
+        ("description", "若拥有大于等于2层钙铠，则失去2层钙铠，并给予{WeakPower:diff()}层虚弱。"),
     };
 }
 
@@ -226,7 +226,7 @@ public sealed class ProbeNerveJamming : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "神经干扰"),
-        ("description", "失去3层钙铠。\n对所有敌人施加{WeakPower:diff()}层虚弱3次。"),
+        ("description", "失去3层钙铠。\n对所有敌人给予{WeakPower:diff()}层虚弱3次。"),
     };
 }
 

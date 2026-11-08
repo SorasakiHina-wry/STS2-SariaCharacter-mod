@@ -111,7 +111,7 @@ public sealed class ProbePowderize : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "粉末化"),
-        ("description", "失去所有钙铠，获得相同数值的格挡。\n对所有敌人施加{VulnerablePower:diff()}层易伤。"),
+        ("description", "失去所有钙铠，获得相同数值的格挡。\n对所有敌人给予{VulnerablePower:diff()}层易伤。"),
     };
 }
 

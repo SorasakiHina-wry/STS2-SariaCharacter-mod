@@ -29,6 +29,9 @@ CJK = ("\u4e00", "\u9fff")
 # 钙铠 is measured in 层, never 点 — fix "点钙铠" wherever it shows up in display text.
 UNIT_FIXES = (("点钙铠", "层钙铠"),)
 
+# 统一用词：状态一律「给予」，不再用「施加」
+WORD_FIXES = (("施加", "给予"),)
+
 
 def _is_cjk(ch: str) -> bool:
     return bool(ch) and CJK[0] <= ch <= CJK[1]
@@ -59,10 +62,12 @@ def normalize(text: str) -> str:
     if not _has_cjk(text):
         return text
     text = strip_cjk_spaces(text).rstrip()
-    for wrong, right in UNIT_FIXES:
+    for wrong, right in UNIT_FIXES + WORD_FIXES:
         text = text.replace(wrong, right)
     if not text or text.endswith(SENTENCE_END):
         return text
+    if text.endswith("}") and "。" in text:
+        return text   # {IfUpgraded:...} 结尾，句号在各分支里
     return text + "。"
 
 
@@ -91,6 +96,11 @@ def normalize_sheet(path: Path, dry_run: bool) -> list[str]:
         return f"```{match.group(1)}\n{FIELD_RE.sub(repl_field, body)}```"
 
     new_text = ts.BLOCK_RE.sub(repl_block, text)
+    # 用词替换也覆盖表头/说明等非块文本（只改中文用词，不动结构）
+    for wrong, right in WORD_FIXES:
+        if wrong in new_text:
+            new_text = new_text.replace(wrong, right)
+            changed.append(f"{path.name}: 全文「{wrong}」→「{right}」")
     if changed and not dry_run:
         path.write_text(new_text, encoding="utf-8")
     return changed
