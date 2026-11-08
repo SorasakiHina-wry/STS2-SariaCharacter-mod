@@ -46,7 +46,7 @@ public sealed class ProbeSoften : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "软化"),
-        ("description", "若拥有大于等于2层钙铠，则失去2层钙铠，并给予{WeakPower:diff()}层虚弱。"),
+        ("description", "若拥有大于等于2层[gold]钙铠[/gold]，则失去2层[gold]钙铠[/gold]，并给予{WeakPower:diff()}层[gold]虚弱[/gold]。"),
     };
 }
 
@@ -116,7 +116,7 @@ public sealed class ProbeCoverGen : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "掩体生成"),
-        ("description", "获得{CalciumArmorPower:diff()}层钙铠。\n获得{Block:diff()}点格挡。\n你的下一回合开始时格挡不会消失。"),
+        ("description", "获得{CalciumArmorPower:diff()}层[gold]钙铠[/gold]。\n获得{Block:diff()}点[gold]格挡[/gold]。\n你的下一回合开始时[gold]格挡[/gold]不会消失。"),
     };
 }
 
@@ -150,7 +150,7 @@ public sealed class ProbeCondense : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "凝结"),
-        ("description", "失去所有钙铠。\n获得{Energy:energyIcons()}。\n抽{Cards:diff()}张牌。"),
+        ("description", "失去所有[gold]钙铠[/gold]。\n获得{Energy:energyIcons()}。\n抽{Cards:diff()}张牌。"),
     };
 }
 
@@ -183,7 +183,7 @@ public sealed class ProbeThermalRecovery : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "钙热还原"),
-        ("description", "消耗所有手牌，每张获得{CalciumArmorPower:diff()}层钙铠。"),
+        ("description", "消耗所有[gold]手牌[/gold]，每张获得{CalciumArmorPower:diff()}层[gold]钙铠[/gold]。"),
     };
 }
 
@@ -226,7 +226,7 @@ public sealed class ProbeNerveJamming : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "神经干扰"),
-        ("description", "失去3层钙铠。\n对所有敌人给予{WeakPower:diff()}层虚弱3次。"),
+        ("description", "失去3层[gold]钙铠[/gold]。\n对所有敌人给予{WeakPower:diff()}层[gold]虚弱[/gold]3次。"),
     };
 }
 
@@ -254,7 +254,7 @@ public sealed class ProbeBurn : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "煅烧"),
-        ("description", "在你的回合开始时，失去1层钙铠并对所有敌人造成{ProbeBurnPower:diff()}点伤害。"),
+        ("description", "在你的回合开始时，失去1层[gold]钙铠[/gold]并对所有敌人造成{ProbeBurnPower:diff()}点伤害。"),
     };
 }
 
@@ -275,7 +275,7 @@ public sealed class ProbeFirstAid : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "急救"),
-        ("description", "回合结束时，若生命小于等于25，则仅一次失去至多15层钙铠，并回复相同数值的生命。"),
+        ("description", "回合结束时，若生命小于等于25，则仅一次失去至多15层[gold]钙铠[/gold]，并回复相同数值的生命。"),
     };
 }
 
@@ -302,7 +302,7 @@ public sealed class ProbeCalcify : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "钙质化"),
-        ("description", "目标每有1层易伤，你的攻击就额外造成1点伤害。"),
+        ("description", "目标每有1层[gold]易伤[/gold]，你的攻击就额外造成1点伤害。"),
     };
 }
 
@@ -329,7 +329,7 @@ public sealed class ProbeTraction : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "牵引"),
-        ("description", "每当你失去钙铠时，获得3点格挡。"),
+        ("description", "每当你失去[gold]钙铠[/gold]时，获得3点[gold]格挡[/gold]。"),
     };
 }
 
@@ -356,6 +356,6 @@ public sealed class ProbeChargeSuit : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "充能护服"),
-        ("description", "在你的下5个回合开始时，获得1点力量与1点敏捷。"),
+        ("description", "在你的下5个回合开始时，获得1点[gold]力量[/gold]与1点[gold]敏捷[/gold]。"),
     };
 }

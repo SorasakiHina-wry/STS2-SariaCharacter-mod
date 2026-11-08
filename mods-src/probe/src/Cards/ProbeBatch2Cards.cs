@@ -45,7 +45,7 @@ public sealed class ProbeSteady : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "稳定"),
-        ("description", "获得{Block:diff()}点格挡。\n获得{CalciumArmorPower:diff()}层钙铠。"),
+        ("description", "获得{Block:diff()}点[gold]格挡[/gold]。\n获得{CalciumArmorPower:diff()}层[gold]钙铠[/gold]。"),
     };
 }
 
@@ -82,7 +82,7 @@ public sealed class ProbeDetonate : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "爆裂"),
-        ("description", "失去所有钙铠，每失去1层钙铠，就对所有敌人造成{Damage:diff()}点伤害。"),
+        ("description", "失去所有[gold]钙铠[/gold]，每失去1层[gold]钙铠[/gold]，就对所有敌人造成{Damage:diff()}点伤害。"),
     };
 }
 
@@ -122,7 +122,7 @@ public sealed class ProbeFullSalvo : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "全弹发射"),
-        ("description", "给予1层易伤。\n造成{Damage:diff()}点伤害{IfUpgraded:show:X+1|X}次。"),
+        ("description", "给予1层[gold]易伤[/gold]。\n造成{Damage:diff()}点伤害{IfUpgraded:show:X+1|X}次。"),
     };
 }
 
@@ -154,7 +154,7 @@ public sealed class ProbeChargeUp : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "充能"),
-        ("description", "获得{CalciumArmorPower:diff()}层钙铠。\n获得{VigorPower:diff()}点活力。"),
+        ("description", "获得{CalciumArmorPower:diff()}层[gold]钙铠[/gold]。\n获得{VigorPower:diff()}点[gold]活力[/gold]。"),
     };
 }
 
@@ -183,7 +183,7 @@ public sealed class ProbeDistract : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "分神"),
-        ("description", "在你的回合开始时，失去{IfUpgraded:show:2|3}点格挡并获得1层钙铠。"),
+        ("description", "在你的回合开始时，失去{IfUpgraded:show:2|3}点[gold]格挡[/gold]并获得1层[gold]钙铠[/gold]。"),
     };
 }
 
@@ -212,6 +212,6 @@ public sealed class ProbeFocusMind : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "凝神"),
-        ("description", "在你的回合开始时，失去1层钙铠，获得{ProbeFocusMindPower:diff()}点活力。"),
+        ("description", "在你的回合开始时，失去1层[gold]钙铠[/gold]，获得{ProbeFocusMindPower:diff()}点[gold]活力[/gold]。"),
     };
 }

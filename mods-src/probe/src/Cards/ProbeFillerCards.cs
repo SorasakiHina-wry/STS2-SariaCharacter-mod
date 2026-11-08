@@ -48,6 +48,6 @@ internal static class ProbeCardKit
     internal static List<(string, string)> BlockLoc(string title) => new()
     {
         ("title", title),
-        ("description", "获得{Block:diff()}点格挡。"),
+        ("description", "获得{Block:diff()}点[gold]格挡[/gold]。"),
     };
 }

@@ -78,7 +78,7 @@ public sealed class ProbeArm : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "持械"),
-        ("description", "失去1层钙铠。\n在本回合获得{ProbeArmPower:diff()}点活力。"),
+        ("description", "失去1层[gold]钙铠[/gold]。\n在本回合获得{ProbeArmPower:diff()}点[gold]活力[/gold]。"),
     };
 }
 
@@ -115,7 +115,7 @@ public sealed class ProbeCautious : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "谨慎"),
-        ("description", "造成{Damage:diff()}点伤害。\n获得{Block:diff()}点格挡。\n获得{CalciumArmorPower:diff()}层钙铠。"),
+        ("description", "造成{Damage:diff()}点伤害。\n获得{Block:diff()}点[gold]格挡[/gold]。\n获得{CalciumArmorPower:diff()}层[gold]钙铠[/gold]。"),
     };
 }
 
@@ -151,7 +151,7 @@ public sealed class ProbeLegArmor : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "腿甲"),
-        ("description", "获得{CalciumArmorPower:diff()}层钙铠。\n获得{Block:diff()}点格挡。\n{IfUpgraded:show:在下2个回合开始时抽1张牌。|在下个回合开始时抽1张牌。}"),
+        ("description", "获得{CalciumArmorPower:diff()}层[gold]钙铠[/gold]。\n获得{Block:diff()}点[gold]格挡[/gold]。\n{IfUpgraded:show:在下2个回合开始时抽1张牌。|在下个回合开始时抽1张牌。}"),
     };
 }
 
@@ -178,7 +178,7 @@ public sealed class ProbeBoneMineralize : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "骨矿化"),
-        ("description", "当你从卡牌中获得格挡时，获得1层钙铠。"),
+        ("description", "当你从卡牌中获得[gold]格挡[/gold]时，获得1层[gold]钙铠[/gold]。"),
     };
 }
 
@@ -208,7 +208,7 @@ public sealed class ProbeTechniqueOverload : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "技艺超载"),
-        ("description", "抽牌直到抽满手牌。\n在下个回合开始时，失去6层钙铠。"),
+        ("description", "抽牌直到抽满[gold]手牌[/gold]。\n在下个回合开始时，失去6层[gold]钙铠[/gold]。"),
     };
 }
 
@@ -230,7 +230,7 @@ public sealed class ProbeSpiritRecovery : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "精神回复"),
-        ("description", "你每获得18层钙铠，获得1点能量。"),
+        ("description", "你每获得18层[gold]钙铠[/gold]，获得1点能量。"),
     };
 }
 
@@ -257,7 +257,7 @@ public sealed class ProbeBoxingGloves : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "拳击手套"),
-        ("description", "失去1点敏捷。\n获得{StrengthPower:diff()}点力量。"),
+        ("description", "失去1点[gold]敏捷[/gold]。\n获得{StrengthPower:diff()}点[gold]力量[/gold]。"),
     };
 }
 
@@ -284,6 +284,6 @@ public sealed class ProbeTechNova : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "“科技新星”"),
-        ("description", "每当你以此卡以外的方式获得力量时，额外获得1点力量。"),
+        ("description", "每当你以此卡以外的方式获得[gold]力量[/gold]时，额外获得1点[gold]力量[/gold]。"),
     };
 }

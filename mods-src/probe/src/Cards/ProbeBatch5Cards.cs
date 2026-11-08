@@ -56,7 +56,7 @@ public sealed class ProbeCycle : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "循环"),
-        ("description", "造成{Damage:diff()}点伤害。\n将一张{IfUpgraded:show:升温+|升温}放到你的抽牌堆的顶部。"),
+        ("description", "造成{Damage:diff()}点伤害。\n将一张[gold]{IfUpgraded:show:升温+|升温}[/gold]放到你的[gold]抽牌堆[/gold]的顶部。"),
     };
 }
 
@@ -104,7 +104,7 @@ public sealed class ProbeElectrum : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "电石"),
-        ("description", "失去至多3层钙铠，每层失去的钙铠造成{Damage:diff()}点伤害。"),
+        ("description", "失去至多3层[gold]钙铠[/gold]，每层失去的[gold]钙铠[/gold]造成{Damage:diff()}点伤害。"),
     };
 }
 
@@ -133,7 +133,7 @@ public sealed class ProbeInduce : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "诱导"),
-        ("description", "失去1点力量。\n获得{VigorPower:diff()}点活力。"),
+        ("description", "失去1点[gold]力量[/gold]。\n获得{VigorPower:diff()}点[gold]活力[/gold]。"),
     };
 }
 
@@ -161,7 +161,7 @@ public sealed class ProbeReshape : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "再塑型"),
-        ("description", "抽{Cards:diff()}张牌。\n在本回合失去1点敏捷。"),
+        ("description", "抽{Cards:diff()}张牌。\n在本回合失去1点[gold]敏捷[/gold]。"),
     };
 }
 
@@ -196,7 +196,7 @@ public sealed class ProbeRefine : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "精炼"),
-        ("description", "若拥有大于等于{IfUpgraded:show:7|9}层钙铠，则失去{IfUpgraded:show:7|9}层钙铠，获得2点能量。\n将此牌返回你的手牌。"),
+        ("description", "若拥有大于等于{IfUpgraded:show:7|9}层[gold]钙铠[/gold]，则失去{IfUpgraded:show:7|9}层[gold]钙铠[/gold]，获得2点能量。\n将此牌返回你的[gold]手牌[/gold]。"),
     };
 }
 
@@ -225,7 +225,7 @@ public sealed class ProbeEnamel : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "珐琅质"),
-        ("description", "失去所有钙铠，获得等量于失去钙铠数值三倍的格挡。"),
+        ("description", "失去所有[gold]钙铠[/gold]，获得等量于失去[gold]钙铠[/gold]数值三倍的[gold]格挡[/gold]。"),
     };
 }
 
@@ -252,7 +252,7 @@ public sealed class ProbeInsight : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "洞察"),
-        ("description", "在本回合，你每次获得钙铠时，给予所有敌人1层易伤与1层虚弱。"),
+        ("description", "在本回合，你每次获得[gold]钙铠[/gold]时，给予所有敌人1层[gold]易伤[/gold]与1层[gold]虚弱[/gold]。"),
     };
 }
 
@@ -289,7 +289,7 @@ public sealed class ProbeWarmUp : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "升温"),
-        ("description", "获得{Block:diff()}点格挡。\n将一张{IfUpgraded:show:捕集+|捕集}放到你的抽牌堆的顶部。"),
+        ("description", "获得{Block:diff()}点[gold]格挡[/gold]。\n将一张[gold]{IfUpgraded:show:捕集+|捕集}[/gold]放到你的[gold]抽牌堆[/gold]的顶部。"),
     };
 }
 
@@ -325,6 +325,6 @@ public sealed class ProbeCapture : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "捕集"),
-        ("description", "获得{CalciumArmorPower:diff()}层钙铠。\n将一张{IfUpgraded:show:升温+|升温}放到你的抽牌堆的顶部。"),
+        ("description", "获得{CalciumArmorPower:diff()}层[gold]钙铠[/gold]。\n将一张[gold]{IfUpgraded:show:升温+|升温}[/gold]放到你的[gold]抽牌堆[/gold]的顶部。"),
     };
 }

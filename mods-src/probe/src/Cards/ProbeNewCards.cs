@@ -45,7 +45,7 @@ public sealed class ProbeAmmoDose : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "针剂弹药"),
-        ("description", "造成{Damage:diff()}点伤害。\n获得{CalciumArmorPower:diff()}层钙铠。"),
+        ("description", "造成{Damage:diff()}点伤害。\n获得{CalciumArmorPower:diff()}层[gold]钙铠[/gold]。"),
     };
 }
 
@@ -73,7 +73,7 @@ public sealed class ProbeDeploy : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "部署"),
-        ("description", "获得{CalciumArmorPower:diff()}层钙铠。\n抽{Cards:diff()}张牌。"),
+        ("description", "获得{CalciumArmorPower:diff()}层[gold]钙铠[/gold]。\n抽{Cards:diff()}张牌。"),
     };
 }
 
@@ -111,7 +111,7 @@ public sealed class ProbePowderize : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "粉末化"),
-        ("description", "失去所有钙铠，获得相同数值的格挡。\n对所有敌人给予{VulnerablePower:diff()}层易伤。"),
+        ("description", "失去所有[gold]钙铠[/gold]，获得相同数值的[gold]格挡[/gold]。\n对所有敌人给予{VulnerablePower:diff()}层[gold]易伤[/gold]。"),
     };
 }
 
@@ -211,7 +211,7 @@ public sealed class ProbeInject : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "注射"),
-        ("description", "获得{Block:diff()}点格挡。\n获得{CalciumArmorPower:diff()}层钙铠。"),
+        ("description", "获得{Block:diff()}点[gold]格挡[/gold]。\n获得{CalciumArmorPower:diff()}层[gold]钙铠[/gold]。"),
     };
 }
 
@@ -240,6 +240,6 @@ public sealed class ProbeTightGuard : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "紧密防护"),
-        ("description", "你的钙铠在下个回合开始前不会因获得格挡而损失。\n获得{Block:diff()}点格挡。"),
+        ("description", "你的[gold]钙铠[/gold]在下个回合开始前不会因获得[gold]格挡[/gold]而损失。\n获得{Block:diff()}点[gold]格挡[/gold]。"),
     };
 }
