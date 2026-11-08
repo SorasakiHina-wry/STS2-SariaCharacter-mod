@@ -314,7 +314,7 @@ public sealed class ProbeTraction : CustomCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new PowerVar<ProbeTractionPower>(2m),
+        new PowerVar<ProbeTractionPower>(3m),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -329,7 +329,7 @@ public sealed class ProbeTraction : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "牵引"),
-        ("description", "每当你失去钙铠时，获得2点格挡。"),
+        ("description", "每当你失去钙铠时，获得3点格挡。"),
     };
 }
 

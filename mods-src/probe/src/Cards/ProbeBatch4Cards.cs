@@ -125,16 +125,20 @@ public sealed class ProbeLegArmor : CustomCardModel
 {
     public ProbeLegArmor() : base(2, CardType.Skill, CardRarity.Common, TargetType.Self) { }
 
+    public override bool GainsBlock => true;
+
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
         new PowerVar<CalciumArmorPower>(10m),
         new PowerVar<ProbeLegArmorPower>(1m),
+        new BlockVar(8m, ValueProp.Move),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
         await PowerCmd.Apply<CalciumArmorPower>(ctx, Owner.Creature, DynamicVars["CalciumArmorPower"].BaseValue, Owner.Creature, this);
         await PowerCmd.Apply<ProbeLegArmorPower>(ctx, Owner.Creature, DynamicVars["ProbeLegArmorPower"].BaseValue, Owner.Creature, this);
+        await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, play);
     }
 
     protected override void OnUpgrade()
@@ -147,7 +151,7 @@ public sealed class ProbeLegArmor : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "腿甲"),
-        ("description", "获得{CalciumArmorPower:diff()}层钙铠。\n{IfUpgraded:show:在下2个回合开始时抽1张牌。|在下个回合开始时抽1张牌。}"),
+        ("description", "获得{CalciumArmorPower:diff()}层钙铠。\n获得{Block:diff()}点格挡。\n{IfUpgraded:show:在下2个回合开始时抽1张牌。|在下个回合开始时抽1张牌。}"),
     };
 }
 

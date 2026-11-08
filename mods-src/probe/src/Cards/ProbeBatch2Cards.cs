@@ -25,7 +25,7 @@ public sealed class ProbeSteady : CustomCardModel
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
         new BlockVar(8m, ValueProp.Move),
-        new PowerVar<CalciumArmorPower>(3m),
+        new PowerVar<CalciumArmorPower>(4m),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -76,7 +76,7 @@ public sealed class ProbeDetonate : CustomCardModel
             .Execute(ctx);
     }
 
-    protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(3m);
+    protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(1m);
 
     public override string? CustomPortraitPath => ProbeCardKit.BludgeonPortrait;
     public override List<(string, string)>? Localization => new()
@@ -96,7 +96,7 @@ public sealed class ProbeFullSalvo : CustomCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new DamageVar(6m, ValueProp.Move),
+        new DamageVar(7m, ValueProp.Move),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -109,7 +109,7 @@ public sealed class ProbeFullSalvo : CustomCardModel
 
         ArgumentNullException.ThrowIfNull(play.Target, "cardPlay.Target");
 
-        await PowerCmd.Apply<VulnerablePower>(ctx, play.Target, 2m, Owner.Creature, this);
+        await PowerCmd.Apply<VulnerablePower>(ctx, play.Target, 1m, Owner.Creature, this);
         await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
             .FromCard(this, play)
             .Targeting(play.Target)
@@ -122,7 +122,7 @@ public sealed class ProbeFullSalvo : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "全弹发射"),
-        ("description", "给予2层易伤。\n造成{Damage:diff()}点伤害{IfUpgraded:show:X+1|X}次。"),
+        ("description", "给予1层易伤。\n造成{Damage:diff()}点伤害{IfUpgraded:show:X+1|X}次。"),
     };
 }
 

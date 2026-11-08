@@ -26,7 +26,7 @@ public sealed class ProbeAmmoDose : CustomCardModel
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
         new DamageVar(8m, ValueProp.Move),
-        new PowerVar<CalciumArmorPower>(2m),
+        new PowerVar<CalciumArmorPower>(3m),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -57,7 +57,7 @@ public sealed class ProbeDeploy : CustomCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new PowerVar<CalciumArmorPower>(6m),
+        new PowerVar<CalciumArmorPower>(9m),
         new CardsVar(1),
     };
 
@@ -67,7 +67,7 @@ public sealed class ProbeDeploy : CustomCardModel
         await CardPileCmd.Draw(ctx, DynamicVars.Cards.BaseValue, Owner);
     }
 
-    protected override void OnUpgrade() => DynamicVars.Cards.UpgradeValueBy(1m);
+    protected override void OnUpgrade() => DynamicVars.Cards.UpgradeValueBy(1m);   // 钙铠固定 9，升级只加抽牌
 
     public override string? CustomPortraitPath => ProbeCardKit.DefendPortrait;
     public override List<(string, string)>? Localization => new()
@@ -191,8 +191,8 @@ public sealed class ProbeInject : CustomCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new BlockVar(7m, ValueProp.Move),
-        new PowerVar<CalciumArmorPower>(2m),
+        new BlockVar(6m, ValueProp.Move),
+        new PowerVar<CalciumArmorPower>(4m),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -203,7 +203,7 @@ public sealed class ProbeInject : CustomCardModel
 
     protected override void OnUpgrade()
     {
-        DynamicVars.Block.UpgradeValueBy(3m);
+        DynamicVars.Block.UpgradeValueBy(2m);
         DynamicVars["CalciumArmorPower"].UpgradeValueBy(1m);
     }
 
