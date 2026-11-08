@@ -96,7 +96,7 @@ public sealed class ProbeFullSalvo : CustomCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new DamageVar(5m, ValueProp.Move),
+        new DamageVar(6m, ValueProp.Move),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -109,7 +109,7 @@ public sealed class ProbeFullSalvo : CustomCardModel
 
         ArgumentNullException.ThrowIfNull(play.Target, "cardPlay.Target");
 
-        await PowerCmd.Apply<VulnerablePower>(ctx, play.Target, x, Owner.Creature, this);
+        await PowerCmd.Apply<VulnerablePower>(ctx, play.Target, 2m, Owner.Creature, this);
         await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
             .FromCard(this, play)
             .Targeting(play.Target)
@@ -122,7 +122,7 @@ public sealed class ProbeFullSalvo : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "全弹发射"),
-        ("description", "施加{IfUpgraded:show:X+1|X}层易伤。\n造成{Damage:diff()}点伤害{IfUpgraded:show:X+1|X}次。"),
+        ("description", "施加2层易伤。\n造成{Damage:diff()}点伤害{IfUpgraded:show:X+1|X}次。"),
     };
 }
 

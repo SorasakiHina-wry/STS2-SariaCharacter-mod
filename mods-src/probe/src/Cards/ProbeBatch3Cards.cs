@@ -130,7 +130,7 @@ public sealed class ProbeCondense : CustomCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new EnergyVar(2),
+        new EnergyVar(1),
         new CardsVar(2),
     };
 

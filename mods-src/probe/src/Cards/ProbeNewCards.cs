@@ -183,7 +183,7 @@ public sealed class ProbeShieldBash : CustomCardModel
 [Pool(typeof(ProbeCardPool))]
 public sealed class ProbeInject : CustomCardModel
 {
-    public ProbeInject() : base(0, CardType.Skill, CardRarity.Common, TargetType.Self) { }
+    public ProbeInject() : base(1, CardType.Skill, CardRarity.Common, TargetType.Self) { }
 
     public override bool GainsBlock => true;
 
@@ -230,7 +230,7 @@ public sealed class ProbeTightGuard : CustomCardModel
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
-        CalciumArmorPower.SuppressDecay(Owner.Creature);
+        await PowerCmd.Apply<ProbeTightGuardPower>(ctx, Owner.Creature, 1m, Owner.Creature, this);
         await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, play);
     }
 

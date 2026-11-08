@@ -920,6 +920,7 @@ def _skeleton(text: str, from_code: bool) -> str:
         t = re.sub(r"\{[^}]*\}", "", text)
     else:
         t = text
+    t = re.sub(r"\[/?[a-zA-Z]+\]", "", t)   # 富文本标记（[gold]/[blue]）不参与比对
     t = re.sub(r"[|｜]", "，", t)          # 表里用 | 分隔多条效果，牌面用 ，
     t = re.sub(r"<br>", "", t, flags=re.I)
     t = t.replace("\\n", "").replace("\n", "")

@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using BaseLib.Abstracts;
 using MegaCrit.Sts2.Core.Combat;
-using MegaCrit.Sts2.Core.Commands;using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -15,21 +16,16 @@ namespace Probe.Powers;
 /// <summary>
 /// 钙铠 — the character's signature defensive buff.
 ///
-///   At the start of your turn: gain Block equal to the stack count.
-///   Whenever you gain Block FROM A CARD: lose half that Block's value in stacks (rounded down).
+///   At the start of your turn: gain Block equal to the stack count (Early turn-start pass).
+///   Whenever you gain Block FROM A CARD: lose half that Block's value in stacks (rounded down),
+///   then 骨矿化 tops the armour back up.
 ///
 /// "From a card" mirrors how Dexterity scopes its bonus: block granted by powers, relics or the
 /// power's own turn-start payout (cardSource == null) never decays the armour.
-/// 紧密防护 suppresses the decay until the next turn starts (see SuppressDecay).
+/// 紧密防护 (ProbeTightGuardPower) suppresses the decay while it lasts.
 /// </summary>
 public sealed class CalciumArmorPower : CustomPowerModel
 {
-    /// <summary>Creatures whose armour ignores card-block decay until their next turn begins.</summary>
-    private static readonly HashSet<Creature> Suppressed = new();
-
-    /// <summary>Called by 紧密防护: stop card-block decay until the next player turn starts.</summary>
-    public static void SuppressDecay(Creature creature) => Suppressed.Add(creature);
-
     public override PowerType Type => PowerType.Buff;
 
     public override PowerStackType StackType => PowerStackType.Counter;
@@ -39,7 +35,7 @@ public sealed class CalciumArmorPower : CustomPowerModel
     public override string? CustomBigIconPath => "res://images/powers/thorns_power.png";
 
     /// <summary>
-    /// Early start of the player's turn: block == stacks, and 紧密防护's protection lapses.
+    /// Early start of the player's turn: block == stacks.
     ///
     /// The engine runs every turn-start listener three times in separate passes - Early, normal,
     /// then Late (see Hook.AfterPlayerTurnStart) - so placing this power in the Early pass makes it
@@ -51,8 +47,6 @@ public sealed class CalciumArmorPower : CustomPowerModel
         if (player != Owner.Player)
             return;
 
-        Suppressed.Remove(Owner);
-
         if (Amount <= 0)
             return;
 
@@ -60,24 +54,31 @@ public sealed class CalciumArmorPower : CustomPowerModel
         await CreatureCmd.GainBlock(Owner, Amount, ValueProp.Unpowered, null);
     }
 
-    /// <summary>Card-gained block costs half its value in stacks.</summary>
+    /// <summary>Card-gained block costs half its value in stacks, then 骨矿化 pays out.</summary>
     public override async Task AfterBlockGained(Creature creature, decimal amount, ValueProp props, CardModel? cardSource)
     {
-        if (creature != Owner || cardSource == null || Amount <= 0)
+        if (creature != Owner || cardSource == null)
             return; // not us, or not block from a card
 
-        if (Suppressed.Contains(Owner))
-            return; // 紧密防护 is active
+        bool guarded = Owner.GetPower<ProbeTightGuardPower>() != null;
 
-        int loss = (int)(amount / 2m); // 向下取整
-        if (loss <= 0)
-            return;
+        if (Amount > 0 && !guarded)
+        {
+            int loss = (int)(amount / 2m); // 向下取整
+            if (loss > Amount)
+                loss = Amount;
 
-        if (loss > Amount)
-            loss = Amount;
+            if (loss > 0)
+            {
+                Flash();
+                await PowerCmd.ModifyAmount(new ThrowingPlayerChoiceContext(), this, -loss, Owner, cardSource);
+            }
+        }
 
-        Flash();
-        await PowerCmd.ModifyAmount(new ThrowingPlayerChoiceContext(), this, -loss, Owner, cardSource);
+        // 骨矿化：先掉层，再补层（用户确认的结算顺序）
+        var bone = Owner.GetPower<ProbeBoneMineralizePower>();
+        if (bone != null && bone.Amount > 0)
+            await PowerCmd.Apply<CalciumArmorPower>(new ThrowingPlayerChoiceContext(), Owner, bone.Amount, Owner, cardSource);
     }
 
     public override List<(string, string)>? Localization => new()
