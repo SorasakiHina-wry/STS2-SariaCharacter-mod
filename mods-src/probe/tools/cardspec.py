@@ -432,7 +432,10 @@ def _build_card(raw: dict, line_no: int) -> dict:
         "status": status,
         "keywords": keywords,
         "unknown_keywords": unknown_keywords,
-        "disabled": raw.get("停用", "").strip() in ("是", "yes", "true", "y"),
+        "template": (not raw.get("名称", "").strip()) or ("空样板" in notes) or ("空样板" in raw.get("备注", "")),
+        "disabled": (raw.get("停用", "").strip() in ("是", "yes", "true", "y"))
+                    or (not raw.get("名称", "").strip())
+                    or ("空样板" in raw.get("备注", "")),
         "line": line_no,
         "_raw": raw,
     }
@@ -542,7 +545,10 @@ def parse_relics(path: Path) -> list[dict]:
             "icon": raw.get("图标", ""),
             "notes": notes,
             "status": status,
-            "disabled": raw.get("停用", "").strip() in ("是", "yes", "true", "y"),
+            "template": (not raw.get("名称", "").strip()) or ("空样板" in notes) or ("空样板" in raw.get("备注", "")),
+        "disabled": (raw.get("停用", "").strip() in ("是", "yes", "true", "y"))
+                    or (not raw.get("名称", "").strip())
+                    or ("空样板" in raw.get("备注", "")),
             "line": b["line"],
             "_raw": raw,
         })
