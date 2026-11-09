@@ -64,6 +64,8 @@ def normalize(text: str) -> str:
     text = strip_cjk_spaces(text).rstrip()
     for wrong, right in UNIT_FIXES + WORD_FIXES:
         text = text.replace(wrong, right)
+    if text.endswith(".") and any("\u4e00" <= ch <= "\u9fff" for ch in text):
+        text = text[:-1] + "。"   # 中文里用全角句号
     if not text or text.endswith(SENTENCE_END):
         return text
     if text.endswith("}") and "。" in text:

@@ -174,7 +174,7 @@ public sealed class ProbeShieldBash : CustomCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new DamageVar(2m, ValueProp.Move),
+        new DamageVar(3m, ValueProp.Move),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)

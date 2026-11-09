@@ -81,20 +81,9 @@ public sealed class ProbeFirstAidPower : CustomPowerModel
     public override string? CustomPackedIconPath => "res://images/atlases/power_atlas.sprites/thorns_power.tres";
     public override string? CustomBigIconPath => "res://images/powers/thorns_power.png";
 
-    public override async Task AfterSideTurnEnd(
-        PlayerChoiceContext choiceContext, CombatSide side, IEnumerable<Creature> participants)
+    public override async Task AfterPlayerTurnStart(PlayerChoiceContext choiceContext, Player player)
     {
-        bool ours = false;
-        foreach (var creature in participants)
-        {
-            if (creature == Owner)
-            {
-                ours = true;
-                break;
-            }
-        }
-
-        if (!ours || Amount <= 0 || Owner.CurrentHp > HpThreshold)
+        if (player != Owner.Player || Amount <= 0 || Owner.CurrentHp > HpThreshold)
             return;
 
         var armour = Owner.GetPower<CalciumArmorPower>();
@@ -113,8 +102,8 @@ public sealed class ProbeFirstAidPower : CustomPowerModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "急救"),
-        ("description", "回合结束时，若生命垂危，则用[gold]钙铠[/gold]换取等量治疗。"),
-        ("smartDescription", "回合结束时，若生命小于等于[blue]25[/blue]，则失去至多[blue]15[/blue]层[gold]钙铠[/gold]并回复等量生命，然后次数 -1。当前剩余[blue]{Amount}[/blue]次。"),
+        ("description", "回合开始时，若生命垂危，则用[gold]钙铠[/gold]换取等量治疗。"),
+        ("smartDescription", "回合开始时，若生命小于等于[blue]25[/blue]，则失去至多[blue]15[/blue]层[gold]钙铠[/gold]并回复等量生命，然后次数 -1。当前剩余[blue]{Amount}[/blue]次。"),
     };
 }
 

@@ -215,7 +215,7 @@ public sealed class ProbeThermalRecovery : CustomCardModel
 public sealed class ProbeNerveJamming : CustomCardModel
 {
     private const int WEAK_ROUNDS = 3;
-    private const int ARMOR_COST = 3;
+    private const int ARMOR_COST = 4;
 
     public ProbeNerveJamming() : base(2, CardType.Skill, CardRarity.Rare, TargetType.AllEnemies) { }
 
@@ -223,18 +223,16 @@ public sealed class ProbeNerveJamming : CustomCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new PowerVar<WeakPower>(2m),
+        new PowerVar<WeakPower>(1m),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
         var armour = Owner.Creature.GetPower<CalciumArmorPower>();
-        if (armour != null && armour.Amount > 0)
-        {
-            int loss = Math.Min(ARMOR_COST, armour.Amount);
-            if (loss > 0)
-                await PowerCmd.ModifyAmount(ctx, armour, -loss, Owner.Creature, this);
-        }
+        if (armour == null || armour.Amount < ARMOR_COST)
+            return; // 钙铠不足：可以打出，但没有效果
+
+        await PowerCmd.ModifyAmount(ctx, armour, -ARMOR_COST, Owner.Creature, this);
 
         for (int round = 0; round < WEAK_ROUNDS; round++)
         {
@@ -247,18 +245,17 @@ public sealed class ProbeNerveJamming : CustomCardModel
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
     {
-        HoverTipFactory.FromPower<WeakPower>(),
         HoverTipFactory.FromPower<CalciumArmorPower>(),
+        HoverTipFactory.FromPower<WeakPower>(),
     };
 
     public override string? CustomPortraitPath => ProbeCardKit.BashPortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "神经干扰"),
-        ("description", "失去3层[gold]钙铠[/gold]。\n对所有敌人给予{WeakPower:diff()}层[gold]虚弱[/gold]3次。"),
+        ("description", "若拥有大于等于4层[gold]钙铠[/gold]，则失去4层[gold]钙铠[/gold]，并对所有敌人给予{Weak:diff()}层[gold]虚弱[/gold]3次。"),
     };
 }
-
 /// <summary>煅烧 — power: damage each turn at the cost of armour.</summary>
 [Pool(typeof(ProbeCardPool))]
 public sealed class ProbeBurn : CustomCardModel
@@ -314,7 +311,7 @@ public sealed class ProbeFirstAid : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "急救"),
-        ("description", "回合结束时，若生命小于等于25，则仅一次失去至多15层[gold]钙铠[/gold]，并回复相同数值的生命。"),
+        ("description", "回合开始时，若生命小于等于25，则仅一次失去至多15层[gold]钙铠[/gold]，并回复相同数值的生命。"),
     };
 }
 

@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 
@@ -64,6 +65,12 @@ public sealed class ProbeInsightPower : CustomPowerModel
     public override string? CustomPackedIconPath => "res://images/atlases/power_atlas.sprites/thorns_power.tres";
     public override string? CustomBigIconPath => "res://images/powers/thorns_power.png";
 
+    protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
+    {
+        new MultipliedAmountVar("Vulnerable", 2m),   // 每层 = 2 易伤
+        new MultipliedAmountVar("Weak", 1m),         // 每层 = 1 虚弱
+    };
+
     public override async Task AfterPowerAmountChanged(
         PlayerChoiceContext choiceContext, PowerModel power, decimal amount, Creature? applier, CardModel? cardSource)
     {
@@ -73,7 +80,7 @@ public sealed class ProbeInsightPower : CustomPowerModel
         Flash();
         foreach (var enemy in CombatState.HittableEnemies)
         {
-            await PowerCmd.Apply<VulnerablePower>(choiceContext, enemy, Amount, Owner, null);
+            await PowerCmd.Apply<VulnerablePower>(choiceContext, enemy, Amount * 2m, Owner, null);
             await PowerCmd.Apply<WeakPower>(choiceContext, enemy, Amount, Owner, null);
         }
     }
@@ -95,6 +102,6 @@ public sealed class ProbeInsightPower : CustomPowerModel
     {
         ("title", "洞察"),
         ("description", "你在本回合每次获得[gold]钙铠[/gold]时，给予所有敌人[gold]易伤[/gold]与[gold]虚弱[/gold]。"),
-        ("smartDescription", "你在本回合每次获得[gold]钙铠[/gold]时，给予所有敌人[blue]{Amount}[/blue]层[gold]易伤[/gold]与[blue]{Amount}[/blue]层[gold]虚弱[/gold]。"),
+        ("smartDescription", "你在本回合每次获得[gold]钙铠[/gold]时，给予所有敌人[blue]{Vulnerable}[/blue]层[gold]易伤[/gold]与[blue]{Weak}[/blue]层[gold]虚弱[/gold]。"),
     };
 }

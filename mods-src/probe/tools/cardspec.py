@@ -66,7 +66,7 @@ KEYWORD_FIELD_NAMES = ("词条", "关键词")
 DAMAGE_RE = re.compile(r"造成|伤害")
 BLOCK_RE = re.compile(r"格挡")
 SKILL_HINT_RE = re.compile(r"抽|施加|回复|能量|失去生命|丢弃|消耗")
-STATUS_RE = re.compile(r"(?:施加|获得)\s*(\d+)\s*层([^\s|｜，,。.；;、\d]+)")
+STATUS_RE = re.compile(r"(?:施加|获得)\s*(\d+)\s*层([^\s|｜，,。.；;、\d与和及并]+)")
 
 # Workflow tags the author puts inside 备注. 已实装 = implemented, leave it alone.
 STATUS_TAGS = ("已实装", "待实装", "待修改", "待删除")
