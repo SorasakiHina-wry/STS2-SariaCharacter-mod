@@ -248,6 +248,11 @@ public sealed class ProbeSpiritRecovery : CustomCardModel
 {
     public ProbeSpiritRecovery() : base(1, CardType.Power, CardRarity.Uncommon, TargetType.Self) { }
 
+    protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
+    {
+        new EnergyVar(1),
+    };
+
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
         await PowerCmd.Apply<ProbeSpiritRecoveryPower>(
@@ -265,7 +270,7 @@ public sealed class ProbeSpiritRecovery : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "精神回复"),
-        ("description", "你每获得18层[gold]钙铠[/gold]，获得1点能量。"),
+        ("description", "你每获得18层[gold]钙铠[/gold]，获得{Energy:energyIcons()}。"),
     };
 }
 

@@ -194,7 +194,7 @@ public sealed class ProbePrecision : CustomCardModel
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
         new DamageVar(17m, ValueProp.Move),
-        new PowerVar<ProbePrecisionPower>(1m),
+        new EnergyVar(1),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -203,16 +203,16 @@ public sealed class ProbePrecision : CustomCardModel
 
         await ProbeCardKit.Hit(ctx, play, this, "vfx/vfx_attack_blunt");
         await PowerCmd.Apply<ProbePrecisionPower>(
-            ctx, Owner.Creature, DynamicVars["ProbePrecisionPower"].BaseValue, Owner.Creature, this);
+            ctx, Owner.Creature, DynamicVars.Energy.BaseValue, Owner.Creature, this);
     }
 
-    protected override void OnUpgrade() => DynamicVars["ProbePrecisionPower"].UpgradeValueBy(1m);
+    protected override void OnUpgrade() => DynamicVars.Energy.UpgradeValueBy(1m);
 
     public override string? CustomPortraitPath => ProbeCardKit.StrikePortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "精密操作"),
-        ("description", "造成{Damage:diff()}点伤害。\n在本回合你下一次获得[gold]钙铠[/gold]时，获得{ProbePrecisionPower:diff()}点能量。"),
+        ("description", "造成{Damage:diff()}点伤害。\n在本回合你下一次获得[gold]钙铠[/gold]时，获得{Energy:energyIcons()}。"),
     };
 }
 

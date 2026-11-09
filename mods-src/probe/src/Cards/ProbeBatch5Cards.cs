@@ -193,6 +193,11 @@ public sealed class ProbeRefine : CustomCardModel
 
     private int ArmorCost => IsUpgraded ? 7 : 9;
 
+    protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
+    {
+        new EnergyVar(2),
+    };
+
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
         var armour = Owner.Creature.GetPower<CalciumArmorPower>();
@@ -200,7 +205,7 @@ public sealed class ProbeRefine : CustomCardModel
             return; // 条件不足：可以打出，但没有效果
 
         await PowerCmd.ModifyAmount(ctx, armour, -ArmorCost, Owner.Creature, this);
-        await PlayerCmd.GainEnergy(2m, Owner);
+        await PlayerCmd.GainEnergy(DynamicVars.Energy.BaseValue, Owner);
     }
 
     /// <summary>粒子墙式回收：打出后不进弃牌堆，直接回手。</summary>
@@ -221,7 +226,7 @@ public sealed class ProbeRefine : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "精炼"),
-        ("description", "若拥有大于等于{IfUpgraded:show:7|9}层[gold]钙铠[/gold]，则失去{IfUpgraded:show:7|9}层[gold]钙铠[/gold]，获得2点能量。\n将此牌返回你的[gold]手牌[/gold]。"),
+        ("description", "若拥有大于等于{IfUpgraded:show:7|9}层[gold]钙铠[/gold]，则失去{IfUpgraded:show:7|9}层[gold]钙铠[/gold]，获得{Energy:energyIcons()}。\n将此牌返回你的[gold]手牌[/gold]。"),
     };
 }
 

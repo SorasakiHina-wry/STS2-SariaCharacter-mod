@@ -992,6 +992,24 @@ def check_var_names(src_dir: Path) -> list[str]:
     return problems
 
 
+def check_energy_icons(src_dir: Path) -> list[str]:
+    """描述里写「N点能量」时，必须用能量图标占位符，否则卡面会显示文字而不是图标。"""
+    problems: list[str] = []
+    desc_re = re.compile(r'\("(?:description|smartDescription)",\s*"((?:[^"\\]|\\.)*)"\)')
+    for path in sorted(src_dir.rglob("*.cs")):
+        text = path.read_text(encoding="utf-8-sig")
+        for m in desc_re.finditer(text):
+            body = m.group(1)
+            if "点能量" not in body or "energyIcons" in body:
+                continue
+            line = text.count("\n", 0, m.start()) + 1
+            problems.append(
+                f"  {path.name}:{line} 描述里的「点能量」没有用图标占位"
+                f"（应写 {{Energy:energyIcons()}} 或 {{energyPrefix:energyIcons(N)}}）"
+            )
+    return problems
+
+
 def check_text_matches(items: list[tuple[str, dict]], code_desc: dict[tuple[str, str], tuple[str, str]]) -> list[str]:
     """The card text in the sheet and in C# must be the same sentence (numbers excepted)."""
     problems: list[str] = []
@@ -1152,6 +1170,7 @@ def main(argv: list[str]) -> int:
     problems += check_keywords(items, scan_code_keywords(src_dir))
     problems += check_text_matches(items, scan_code_descriptions(src_dir))
     problems += check_var_names(src_dir)
+    problems += check_energy_icons(src_dir)
     problems += check_sentence_end(items)
     problems += check_units(items)
 
