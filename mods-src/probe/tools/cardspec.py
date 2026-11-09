@@ -955,6 +955,43 @@ def scan_code_descriptions(src_dir: Path) -> dict[tuple[str, str], tuple[str, st
     }
 
 
+VAR_NAME_ALIAS = {"DamageVar": "Damage", "BlockVar": "Block", "CardsVar": "Cards",
+                  "EnergyVar": "Energy", "RepeatVar": "Repeat", "HpLossVar": "HpLoss"}
+VAR_BUILTIN = {"Amount", "energyPrefix", "singleStarIcon", "IfUpgraded", "Name", "ApplierName"}
+
+
+def check_var_names(src_dir: Path) -> list[str]:
+    """描述里出现的 {Var} 必须是同一个类里声明过的 DynamicVar（否则会原样显示成 {Var}）。"""
+    problems: list[str] = []
+    for path in sorted(src_dir.rglob("*.cs")):
+        text = path.read_text(encoding="utf-8-sig")
+        starts = [m.start() for m in CLASS_START_RE.finditer(text)]
+        for idx, start in enumerate(starts):
+            end = starts[idx + 1] if idx + 1 < len(starts) else len(text)
+            chunk = text[start:end]
+            title_m = re.search(r'\("title",\s*"([^"]+)"\)', chunk)
+            if not title_m:
+                continue
+            title = title_m.group(1)
+
+            declared: set[str] = set()
+            for hit in re.finditer(r"new\s+PowerVar<(\w+)>", chunk):
+                declared.add(hit.group(1))
+            for hit in re.finditer(r'new\s+(\w+Var)\(\s*"(\w+)"', chunk):
+                declared.add(VAR_NAME_ALIAS.get(hit.group(1), hit.group(2)))
+            for hit in re.finditer(r"new\s+(DamageVar|BlockVar|CardsVar|EnergyVar|RepeatVar|HpLossVar)\(", chunk):
+                declared.add(VAR_NAME_ALIAS[hit.group(1)])
+
+            for desc_m in re.finditer(r'\("(?:description|smartDescription)",\s*"((?:[^"\\]|\\.)*)"\)', chunk):
+                body = desc_m.group(1)
+                for ph in re.finditer(r"\{([A-Za-z_]\w*)", body):
+                    name = ph.group(1)
+                    if name in VAR_BUILTIN or name in declared:
+                        continue
+                    problems.append(f"  {path.name} [{title}] 描述里的 {{{name}}} 不是本类声明过的变量")
+    return problems
+
+
 def check_text_matches(items: list[tuple[str, dict]], code_desc: dict[tuple[str, str], tuple[str, str]]) -> list[str]:
     """The card text in the sheet and in C# must be the same sentence (numbers excepted)."""
     problems: list[str] = []
@@ -1114,6 +1151,7 @@ def main(argv: list[str]) -> int:
     problems += check_stray_tokens(src_dir)
     problems += check_keywords(items, scan_code_keywords(src_dir))
     problems += check_text_matches(items, scan_code_descriptions(src_dir))
+    problems += check_var_names(src_dir)
     problems += check_sentence_end(items)
     problems += check_units(items)
 

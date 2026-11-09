@@ -253,7 +253,7 @@ public sealed class ProbeNerveJamming : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "神经干扰"),
-        ("description", "若拥有大于等于4层[gold]钙铠[/gold]，则失去4层[gold]钙铠[/gold]，并对所有敌人给予{Weak:diff()}层[gold]虚弱[/gold]3次。"),
+        ("description", "若拥有大于等于4层[gold]钙铠[/gold]，则失去4层[gold]钙铠[/gold]，并对所有敌人给予{WeakPower:diff()}层[gold]虚弱[/gold]3次。"),
     };
 }
 /// <summary>煅烧 — power: damage each turn at the cost of armour.</summary>
