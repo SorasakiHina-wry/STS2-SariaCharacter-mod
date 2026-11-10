@@ -36,7 +36,7 @@ public static class ProbeSpineVisuals
             spine.Name = "Visuals";
             spine.Scale = new Vector2(SpriteScale, SpriteScale);
             // Bounds 的矩形以 (0,0) 为左上角，血条按它的中心对齐；把角色右移半个宽度，让身体落在血条正上方
-            spine.Position = new Vector2(BoundsSize.X * 0.5f + 20f, 0f);
+            spine.Position = new Vector2(BoundsSize.X * 0.5f, 0f);
             root.AddChild(spine);
             spine.Owner = root;
             spine.UniqueNameInOwner = true;
