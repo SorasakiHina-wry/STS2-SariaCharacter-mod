@@ -4,7 +4,7 @@
 spine-godot 对数据版本做硬校验，版本不符会报
 `Skeleton version %s does not match runtime version %s` 并加载失败。
 
-素材：`resources/spine/build_char_202_demkni.{skel,atlas,png}` —— Spine **3.8.99**，
+素材（战斗版）：`resources/spine/fight/char_202_demkni.{skel,atlas,png}` —— Spine **3.8.99**，84 骨骼 / 50 槽位，
 80 骨骼 / 51 槽位 / 1 皮肤 / 52 个贴图区域（含 mesh 附件），
 动画：`Default, Interact, Move, Relax, Sit, Sleep`，事件：`OnAttack, OnStart`。
 
@@ -139,3 +139,33 @@ NCreatureVisuals (root)
 - 战斗内角色正常显示（SpineSprite 渲染、血条、意图位置都对）
 - 打出打击：伤害正常结算、攻击 VFX 正常
 - 日志无 spine 报错
+
+## 战斗版骨架（resources/spine/fight）
+
+原动画（9 个）：
+
+| 动画 | 时长 | 映射到引擎名 |
+|---|---|---|
+| `Idle` | 2.00s | **idle_loop** |
+| `Attack` | 1.17s | **attack** |
+| `Skill_Begin` | 0.70s | **cast** |
+| `Idle`（复用） | — | **hurt** |
+| `Die` | 1.00s | **die** |
+| `Attack_2` | 1.00s | （未用，可作 attack 的第二套） |
+| `Skill_Loop` | 0.40s | （未用，技能循环段） |
+| `Skill_End` | 0.50s | （未用，技能收招） |
+| `Start` | 0.83s | （未用，入场） |
+| `Default` | 0.00s | 空动画 |
+
+当前映射（`fight_42_alias.json` 里生成别名）：
+
+```
+idle_loop = Idle
+attack    = Attack
+cast      = Skill_Begin
+hurt      = Idle      ← 暂无受击动画，先用 Idle
+die       = Die
+```
+
+转换后骨架共 14 个动画（9 个原始 + 5 个别名），版本 4.2.43。
+图集 512×512、51 个区域，用 `tools/spine_atlas_upgrade.py` 升到 4.x 写法。

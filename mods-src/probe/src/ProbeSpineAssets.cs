@@ -26,8 +26,8 @@ public static class ProbeSpineAssets
         try
         {
             string dir = SpineDir;
-            string skelPath = dir.PathJoin("build_char_202_demkni.skel");
-            string atlasPath = dir.PathJoin("build_char_202_demkni.atlas");
+            string skelPath = dir.PathJoin("char_202_demkni.skel");
+            string atlasPath = dir.PathJoin("char_202_demkni.atlas");
 
             var atlas = ClassDB.Instantiate("SpineAtlasResource").AsGodotObject();
             var skelFile = ClassDB.Instantiate("SpineSkeletonFileResource").AsGodotObject();

@@ -61,8 +61,8 @@ public sealed class Probe : PlaceholderCharacterModel
     /// </summary>
     public override List<(string, string)>? Localization => new()
     {
-        ("title", "Saria"),
-        ("titleObject", "Saria"),
+        ("title", "塞雷娅"),
+        ("titleObject", "塞雷娅"),
         ("pronounSubject", "it"),
         ("pronounObject", "it"),
         ("possessiveAdjective", "its"),
