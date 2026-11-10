@@ -61,15 +61,15 @@ public sealed class Probe : PlaceholderCharacterModel
     /// </summary>
     public override List<(string, string)>? Localization => new()
     {
-        ("title", "The Probe"),
-        ("titleObject", "the Probe"),
+        ("title", "Saria"),
+        ("titleObject", "Saria"),
         ("pronounSubject", "it"),
         ("pronounObject", "it"),
         ("possessiveAdjective", "its"),
         ("pronounPossessive", "its"),
-        ("description", "A fragment of something that was never meant to wake.\nCopies the shapes of violence and hands them back."),
-        ("bestiaryQuote", "This thing has not been measured yet."),
-        ("eventDeathPrevention", "I have not finished observing."),
+        ("description", "A quiet traveller whose bones remember every blow they have taken.\nShe lends that memory to others as armour."),
+        ("bestiaryQuote", "She has been measured. She simply refuses the number."),
+        ("eventDeathPrevention", "Not yet. I still owe someone a debt."),
         ("cardsModifierTitle", "Probe Cards"),
         ("cardsModifierDescription", "Probe cards will now appear in rewards and shops."),
     };

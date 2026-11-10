@@ -96,3 +96,46 @@ data.Call("get_animations");                     // 6 个
 
 `build_pck` 会把 `.skel` / `.atlas` 原样打包；PNG 同时产出 `.ctex` + 原始 PNG + `.import`，
 spine 按图集里写的文件名找图，不会被打断。
+
+
+## 角色接线（2026-11-10，方案 A 已完成）
+
+角色名 **Saria**（内部 id 仍是 `PROBE-PROBE`，卡牌 id 不受影响）。
+
+### 动画别名（关键技巧）
+
+原骨骼只有 `Default/Interact/Move/Relax/Sit/Sleep`，缺战斗动画。做法是**在 JSON 里复制动画并改名**，
+再转回 4.2.43 —— 引擎侧完全不用改：
+
+| 引擎要求 | 借用的动画 |
+|---|---|
+| `idle_loop` | Default |
+| `attack` | Move |
+| `cast` | Interact |
+| `hurt` | Default |
+| `die` | Sleep |
+
+结果：`animations(11): Default, Interact, Move, Relax, Sit, Sleep, idle_loop, attack, cast, hurt, die`
+
+### 视觉节点怎么来
+
+`CharacterModel.CreateVisuals()` 不返回场景，而是直接 instantiate `res://scenes/creature_visuals/<id>.tscn`。
+我们用 Harmony **prefix 掉它**，程序化返回一个 `NCreatureVisuals`：
+
+```
+NCreatureVisuals (root)
+├─ Visuals   (SpineSprite, unique_name_in_owner)   ← set_skeleton_data_res + 播 idle_loop
+├─ Bounds    (Control)
+├─ IntentPos (Marker2D)
+└─ CenterPos (Marker2D)
+```
+
+`_Ready()` 会读 `%Visuals`（类名是 SpineSprite 时包成 MegaSprite）、`%Bounds`、`%IntentPos`、`%CenterPos`。
+
+注意：**`CharacterModel.Id.Entry` 是 `PROBE-PROBE`**（不是 `PROBE`），前缀判断要用 `StartsWith("PROBE")`。
+
+### 实测
+
+- 战斗内角色正常显示（SpineSprite 渲染、血条、意图位置都对）
+- 打出打击：伤害正常结算、攻击 VFX 正常
+- 日志无 spine 报错

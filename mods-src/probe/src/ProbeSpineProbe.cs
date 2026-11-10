@@ -18,6 +18,9 @@ public static class ProbeSpineProbe
             string skelPath = dir.PathJoin("build_char_202_demkni.skel");
             string atlasPath = dir.PathJoin("build_char_202_demkni.atlas");
 
+            var shared = ProbeSpineAssets.SkeletonData();
+            Log.Info($"[probe][spine] shared data = {(shared != null)}");
+
             var atlas = ClassDB.Instantiate("SpineAtlasResource").AsGodotObject();
             var skelFile = ClassDB.Instantiate("SpineSkeletonFileResource").AsGodotObject();
             var data = ClassDB.Instantiate("SpineSkeletonDataResource").AsGodotObject();
