@@ -237,6 +237,7 @@ cards.md
 & $exe D:\STS2\mods-src\probe\tools\prune.py --retag
 & $exe D:\STS2\mods-src\probe\tools\prune.py --clean-notes    # 去掉「已实装（…）」里的残留说明
 & $exe D:\STS2\mods-src\probe\tools\sort_powers.py           # 按 cards.md 里的顺序重排 powers.md（钙铠恒在首位）
+& $exe D:\STS2\mods-src\probe\tools\card_ids.py             # 生成 design/card-ids.md（中文名,英文代号）
 & $exe D:\STS2\mods-src\probe\tools\fill_templates.py       # 按计划数量补齐 cards.md 里的空样板（备注：空样板）
 ```
 
