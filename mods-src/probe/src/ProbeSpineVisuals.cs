@@ -13,8 +13,8 @@ namespace Probe;
 /// </summary>
 public static class ProbeSpineVisuals
 {
-    private const float SpriteScale = 0.75f;
-    private static readonly Vector2 BoundsSize = new(220f, 300f);
+    private const float SpriteScale = 0.5625f;   // 原 0.75 的 0.75 倍
+    private static readonly Vector2 BoundsSize = new(165f, 225f);   // 随缩放同比缩小
 
     public static NCreatureVisuals? Create()
     {
