@@ -32,7 +32,6 @@ public sealed class ProbeSoften : CustomCardModel
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
 
-        await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
         ArgumentNullException.ThrowIfNull(play.Target, "cardPlay.Target");
 
         var armour = Owner.Creature.GetPower<CalciumArmorPower>();
@@ -112,7 +111,6 @@ public sealed class ProbeCoverGen : CustomCardModel
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
 
-        await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
         await PowerCmd.Apply<CalciumArmorPower>(ctx, Owner.Creature, DynamicVars["CalciumArmorPower"].BaseValue, Owner.Creature, this);
         await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, play);
         await PowerCmd.Apply<BlurPower>(ctx, Owner.Creature, 1m, Owner.Creature, this);
@@ -155,7 +153,6 @@ public sealed class ProbeCondense : CustomCardModel
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
 
-        await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
         var armour = Owner.Creature.GetPower<CalciumArmorPower>();
         if (armour != null && armour.Amount > 0)
             await PowerCmd.ModifyAmount(ctx, armour, -armour.Amount, Owner.Creature, this);
@@ -195,7 +192,6 @@ public sealed class ProbeThermalRecovery : CustomCardModel
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
 
-        await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
         var hand = PileType.Hand.GetPile(Owner).Cards.ToList();
         foreach (var card in hand)
         {
@@ -238,7 +234,6 @@ public sealed class ProbeNerveJamming : CustomCardModel
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
 
-        await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
         var armour = Owner.Creature.GetPower<CalciumArmorPower>();
         if (armour == null || armour.Amount < ARMOR_COST)
             return; // 钙铠不足：可以打出，但没有效果

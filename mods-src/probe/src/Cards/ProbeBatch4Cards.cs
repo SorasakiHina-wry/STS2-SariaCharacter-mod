@@ -66,7 +66,6 @@ public sealed class ProbeArm : CustomCardModel
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
 
-        await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
         var armour = Owner.Creature.GetPower<CalciumArmorPower>();
         if (armour != null && armour.Amount > 0)
             await PowerCmd.Decrement(armour);
@@ -154,7 +153,6 @@ public sealed class ProbeLegArmor : CustomCardModel
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
 
-        await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
         await PowerCmd.Apply<CalciumArmorPower>(ctx, Owner.Creature, DynamicVars["CalciumArmorPower"].BaseValue, Owner.Creature, this);
         await PowerCmd.Apply<ProbeLegArmorPower>(ctx, Owner.Creature, DynamicVars["ProbeLegArmorPower"].BaseValue, Owner.Creature, this);
         await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, play);
@@ -228,7 +226,6 @@ public sealed class ProbeTechniqueOverload : CustomCardModel
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
 
-        await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
         var hand = PileType.Hand.GetPile(Owner);
         int missing = Math.Max(0, CardPile.MaxCardsInHand - hand.Cards.Count);
         if (missing > 0)
