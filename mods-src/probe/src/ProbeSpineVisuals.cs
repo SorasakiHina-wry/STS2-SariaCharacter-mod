@@ -53,17 +53,26 @@ public static class ProbeSpineVisuals
             root.AddChild(formVfx);
             formVfx.Owner = root;
             formVfx.UniqueNameInOwner = true;
-            var bounds = new Control { Name = "Bounds", Size = BoundsSize, Position = new Vector2(-BoundsSize.X * 0.5f, 0f) };
+            // 原版约定（见 ironclad.tscn）：Bounds 的左上角在角色头顶，向右下覆盖整个身体，
+// 即 Position = (-W/2, -H)、Size = (W, H)。引擎用它的「左上角 + 尺寸」生成鼠标判定框，
+// 若从 (0,0) 开始就会变成判定框落在脚下。
+            var bounds = new Control
+            {
+                Name = "Bounds",
+                Size = BoundsSize,
+                Position = new Vector2(-BoundsSize.X * 0.5f, -BoundsSize.Y),
+                MouseFilter = Control.MouseFilterEnum.Ignore,
+            };
             root.AddChild(bounds);
             bounds.Owner = root;
             bounds.UniqueNameInOwner = true;
 
-            var intent = new Marker2D { Name = "IntentPos", Position = new Vector2(0f, -BoundsSize.Y * 0.6f) };
+            var intent = new Marker2D { Name = "IntentPos", Position = new Vector2(0f, -BoundsSize.Y * 1.1f) };
             root.AddChild(intent);
             intent.Owner = root;
             intent.UniqueNameInOwner = true;
 
-            var center = new Marker2D { Name = "CenterPos", Position = new Vector2(0f, -BoundsSize.Y * 0.45f) };
+            var center = new Marker2D { Name = "CenterPos", Position = new Vector2(0f, -BoundsSize.Y * 0.6f) };
             root.AddChild(center);
             center.Owner = root;
             center.UniqueNameInOwner = true;

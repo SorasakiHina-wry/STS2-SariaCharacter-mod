@@ -76,7 +76,8 @@ def parse_talk_blocks(text: str) -> tuple[dict[str, str], list[str]]:
 
         who = "firstVisitEver" if set_raw.lower().startswith("firstvisit") else CHAR_ID
         set_index = "0" if who == "firstVisitEver" else set_raw.strip()
-        set_key = set_index + ("r" if repeat and who != "firstVisitEver" else "")
+        # 注意：可重复标记 "r" 挂在「行号」后面，形如 1-0r / 1-1r（不是 1r-0）
+        repeat_suffix = "r" if (repeat and who != "firstVisitEver") else ""
 
         for line_no, (speaker, body) in enumerate(lines):
             body = body.strip("\n")
@@ -85,7 +86,7 @@ def parse_talk_blocks(text: str) -> tuple[dict[str, str], list[str]]:
             kind = {"古": "ancient", "她": "char", "钮": "next"}[speaker]
             if kind == "next" and body.strip() == DEFAULT_NEXT:
                 continue
-            key = f"{ancient}.talk.{who}.{set_key}-{line_no}.{kind}"
+            key = f"{ancient}.talk.{who}.{set_index}-{line_no}{repeat_suffix}.{kind}"
             if key in entries:
                 warnings.append(f"重复的键：{key}")
             entries[key] = body
@@ -109,11 +110,11 @@ def main(argv: list[str]) -> int:
 
     grouped: dict[tuple[str, str], list[str]] = {}
     for key in entries:
-        m = re.match(r"^([A-Z_]+)\.talk\.([A-Za-z_]+)\.(\d+)r?-(\d+)\.", key)
+        m = re.match(r"^([A-Z_]+)\.talk\.([A-Za-z_]+)\.(\d+)-(\d+)r?\.", key)
         if m:
             grouped.setdefault((m.group(1), m.group(2)), []).append(key)
     for (ancient, who), keys in sorted(grouped.items()):
-        sets = sorted({re.match(r"^[A-Z_]+\.talk\.[A-Za-z_]+\.(\d+)r?-\d+\.", k).group(1) for k in keys})
+        sets = sorted({re.match(r"^[A-Z_]+\.talk\.[A-Za-z_]+\.(\d+)-\d+r?\.", k).group(1) for k in keys})
         print(f"  {ancient:<14} {who:<16} 套号 {','.join(sets)}  共 {len(keys)} 行")
 
     for w in warnings:
@@ -130,7 +131,7 @@ def main(argv: list[str]) -> int:
     # 生成 C# 数据表：先古 → [(对话序号, 行数)]
     by_ancient: dict[str, dict[int, int]] = {}
     for key in entries:
-        m = re.match(r"^([A-Z_]+)\.talk\.[A-Za-z_-]+\.(\d+)r?-(\d+)\.", key)
+        m = re.match(r"^([A-Z_]+)\.talk\.[A-Za-z_-]+\.(\d+)-(\d+)r?\.", key)
         if not m:
             continue
         ancient, set_index, line_no = m.group(1), int(m.group(2)), int(m.group(3))
