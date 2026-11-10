@@ -77,9 +77,9 @@ public sealed class Saria : PlaceholderCharacterModel
         ("pronounObject", "她"),
         ("possessiveAdjective", "她的"),
         ("pronounPossessive", "她的"),
-        ("description", "骨里记着每一道挨过的伤。\n她把那份记忆借给别人当护甲。"),
+        ("description", "前莱茵生命防卫科主任塞雷娅。\n通过源石技艺操作钙元素，武装，然后保卫。"),
         ("bestiaryQuote", "她被丈量过。她只是不承认那个数字。"),
-        ("eventDeathPrevention", "还不是时候。我还欠着一个人。"),
+        ("eventDeathPrevention", "举起盾牌的塞雷娅绝不会倒下。"),
         ("cardsModifierTitle", "塞雷娅卡牌"),
         ("cardsModifierDescription", "塞雷娅的卡牌现在会出现在奖励和商店中。"),
     };
