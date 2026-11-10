@@ -19,7 +19,7 @@ ROOT = Path(__file__).resolve().parent.parent
 DOC = ROOT / "design" / "character-writing.md"
 OUT = ROOT / "assets" / "localization" / "zhs" / "ancients.json"
 
-CHAR_ID = "SARIA"
+CHAR_ID = "PROBE-SARIA"
 DEFAULT_NEXT = "继续"
 
 TALK_RE = re.compile(r"```talk\r?\n(.*?)```", re.S)
@@ -126,6 +126,42 @@ def main(argv: list[str]) -> int:
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(entries, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"\n已写入 {OUT.relative_to(ROOT)}")
+
+    # 生成 C# 数据表：先古 → [(对话序号, 行数)]
+    by_ancient: dict[str, dict[int, int]] = {}
+    for key in entries:
+        m = re.match(r"^([A-Z_]+)\.talk\.[A-Za-z_-]+\.(\d+)r?-(\d+)\.", key)
+        if not m:
+            continue
+        ancient, set_index, line_no = m.group(1), int(m.group(2)), int(m.group(3))
+        by_ancient.setdefault(ancient, {})[set_index] = max(
+            by_ancient.get(ancient, {}).get(set_index, 0), line_no + 1
+        )
+
+    rows = []
+    for ancient in sorted(by_ancient):
+        sets = ", ".join(f"({idx}, {cnt})" for idx, cnt in sorted(by_ancient[ancient].items()))
+        rows.append(f'        ["{ancient}"] = new[] {{ {sets} }},')
+
+    cs = (
+        "using System.Collections.Generic;\n"
+        "\n"
+        "namespace Probe;\n"
+        "\n"
+        "/// <summary>由 tools/import_writing.py 生成，不要手改。</summary>\n"
+        "internal static class ProbeAncientDialogueData\n"
+        "{\n"
+        "    /// <summary>先古 ID → (对话序号, 行数)。对话序号就是 loc 键里的 X。</summary>\n"
+        "    public static readonly Dictionary<string, (int Index, int Lines)[]> Sets = new()\n"
+        "    {\n" + "\n".join(rows) + "\n"
+        "    };\n"
+        "\n"
+        "    public const string CharacterEntry = \"PROBE-SARIA\";\n"
+        "}\n"
+    )
+    cs_path = ROOT / "src" / "ProbeAncientDialogueData.cs"
+    cs_path.write_text(cs, encoding="utf-8")
+    print(f"已写入 {cs_path.relative_to(ROOT)}：{len(by_ancient)} 位先古")
     return 0
 
 
