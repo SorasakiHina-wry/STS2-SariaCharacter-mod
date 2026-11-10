@@ -46,6 +46,12 @@ public static class ProbeSpineVisuals
             var state = spine.Call("get_animation_state").AsGodotObject();
             state?.Call("set_animation", "idle_loop", true);
 
+            // 原版视觉场景里有一个 %FormVfx 容器；缺了它，死亡时 RemoveFormVfx 会抛异常，
+            // 导致死亡动画中断、后续事件不触发。
+            var formVfx = new Control { Name = "FormVfx", Size = BoundsSize, MouseFilter = Control.MouseFilterEnum.Ignore };
+            root.AddChild(formVfx);
+            formVfx.Owner = root;
+            formVfx.UniqueNameInOwner = true;
             var bounds = new Control { Name = "Bounds", Size = BoundsSize };
             root.AddChild(bounds);
             bounds.Owner = root;
