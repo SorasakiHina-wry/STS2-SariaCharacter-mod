@@ -35,8 +35,9 @@ public static class ProbeSpineVisuals
 
             spine.Name = "Visuals";
             spine.Scale = new Vector2(SpriteScale, SpriteScale);
-            // Bounds 的矩形以 (0,0) 为左上角，血条按它的中心对齐；把角色右移半个宽度，让身体落在血条正上方
-            spine.Position = new Vector2(BoundsSize.X * 0.5f, 0f);
+            // 角色保持原点；把 Bounds 矩形居中到原点，这样血条/状态栏/VFX 都以角色中心为准。
+            // （VFX 用 %CenterPos，血条用 %Bounds，两者不一致时就会出现"特效在左边、角色在右边"）
+            spine.Position = Vector2.Zero;
             root.AddChild(spine);
             spine.Owner = root;
             spine.UniqueNameInOwner = true;
@@ -52,7 +53,7 @@ public static class ProbeSpineVisuals
             root.AddChild(formVfx);
             formVfx.Owner = root;
             formVfx.UniqueNameInOwner = true;
-            var bounds = new Control { Name = "Bounds", Size = BoundsSize };
+            var bounds = new Control { Name = "Bounds", Size = BoundsSize, Position = new Vector2(-BoundsSize.X * 0.5f, 0f) };
             root.AddChild(bounds);
             bounds.Owner = root;
             bounds.UniqueNameInOwner = true;
