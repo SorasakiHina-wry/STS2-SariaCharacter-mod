@@ -30,6 +30,8 @@ public sealed class ProbeHardening : CustomCardModel
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
+
+        await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
         await PowerCmd.Apply<CalciumArmorPower>(
             choiceContext,
             Owner.Creature,
@@ -73,6 +75,8 @@ public sealed class ProbeIgnite : CustomCardModel
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
+
+        await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
         var armor = Owner.Creature.GetPower<CalciumArmorPower>();
         if (armor == null || armor.Amount < 1)
             return; // 条件不满足：整张牌不产生效果

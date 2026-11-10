@@ -31,6 +31,8 @@ public sealed class ProbeSteady : CustomCardModel
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
+
+        await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
         // block first: armour gained afterwards is not eaten by its own decay
         await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, play);
         await PowerCmd.Apply<CalciumArmorPower>(ctx, Owner.Creature, DynamicVars["CalciumArmorPower"].BaseValue, Owner.Creature, this);
@@ -69,6 +71,7 @@ public sealed class ProbeDetonate : CustomCardModel
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
+
         int armour = Owner.Creature.GetPowerAmount<CalciumArmorPower>();
         var power = Owner.Creature.GetPower<CalciumArmorPower>();
         if (armour <= 0 || power == null)
@@ -113,6 +116,7 @@ public sealed class ProbeFullSalvo : CustomCardModel
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
+
         int x = ResolveEnergyXValue();
         if (IsUpgraded)
             x += 1;
@@ -157,6 +161,8 @@ public sealed class ProbeChargeUp : CustomCardModel
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
+
+        await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
         await PowerCmd.Apply<CalciumArmorPower>(ctx, Owner.Creature, DynamicVars["CalciumArmorPower"].BaseValue, Owner.Creature, this);
         await PowerCmd.Apply<VigorPower>(ctx, Owner.Creature, DynamicVars["VigorPower"].BaseValue, Owner.Creature, this);
     }
@@ -195,6 +201,8 @@ public sealed class ProbeDistract : CustomCardModel
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
+
+        await CreatureCmd.TriggerAnim(Owner.Creature, "PowerUp", Owner.Character.PowerUpAnimDelay);
         var power = await PowerCmd.Apply<ProbeDistractPower>(
             ctx, Owner.Creature, DynamicVars["ProbeDistractPower"].BaseValue, Owner.Creature, this);
         power?.IncrementArmorGain();   // 每打出一次 +1 层钙铠（内部计数器，不显示在图标上）
@@ -230,6 +238,8 @@ public sealed class ProbeFocusMind : CustomCardModel
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
+
+        await CreatureCmd.TriggerAnim(Owner.Creature, "PowerUp", Owner.Character.PowerUpAnimDelay);
         var power = await PowerCmd.Apply<ProbeFocusMindPower>(
             ctx, Owner.Creature, DynamicVars["ProbeFocusMindPower"].BaseValue, Owner.Creature, this);
         power?.IncrementArmorLose();   // 每打出一次 → 回合开始时多失去 1 层钙铠（内部计数器）

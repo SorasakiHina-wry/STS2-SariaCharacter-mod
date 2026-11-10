@@ -32,6 +32,7 @@ public sealed class ProbeAmmoDose : CustomCardModel
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
+
         await ProbeCardKit.Hit(ctx, play, this, "vfx/vfx_attack_slash");
         await PowerCmd.Apply<CalciumArmorPower>(ctx, Owner.Creature, DynamicVars["CalciumArmorPower"].BaseValue, Owner.Creature, this);
     }
@@ -69,6 +70,8 @@ public sealed class ProbeDeploy : CustomCardModel
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
+
+        await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
         await PowerCmd.Apply<CalciumArmorPower>(ctx, Owner.Creature, DynamicVars["CalciumArmorPower"].BaseValue, Owner.Creature, this);
         await CardPileCmd.Draw(ctx, DynamicVars.Cards.BaseValue, Owner);
     }
@@ -101,6 +104,8 @@ public sealed class ProbePowderize : CustomCardModel
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
+
+        await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
         int armour = Owner.Creature.GetPowerAmount<CalciumArmorPower>();
         var power = Owner.Creature.GetPower<CalciumArmorPower>();
         if (armour > 0 && power != null)
@@ -147,6 +152,7 @@ public sealed class ProbePunch : CustomCardModel
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
+
         ArgumentNullException.ThrowIfNull(play.Target, "cardPlay.Target");
         await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
             .FromCard(this, play)
@@ -179,6 +185,7 @@ public sealed class ProbeShieldBash : CustomCardModel
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
+
         await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
             .FromCard(this, play)
             .TargetingAllOpponents(CombatState)
@@ -215,6 +222,8 @@ public sealed class ProbeInject : CustomCardModel
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
+
+        await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
         await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, play);
         await PowerCmd.Apply<CalciumArmorPower>(ctx, Owner.Creature, DynamicVars["CalciumArmorPower"].BaseValue, Owner.Creature, this);
     }
@@ -254,6 +263,8 @@ public sealed class ProbeTightGuard : CustomCardModel
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
+
+        await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
         await PowerCmd.Apply<ProbeTightGuardPower>(ctx, Owner.Creature, 1m, Owner.Creature, this);
         await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, play);
     }

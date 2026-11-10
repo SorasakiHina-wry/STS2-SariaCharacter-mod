@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using BaseLib.Abstracts;
 using Godot;
+using MegaCrit.Sts2.Core.Animation;
 using MegaCrit.Sts2.Core.Entities.Characters;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Relics;
@@ -21,6 +22,15 @@ public sealed class Probe : PlaceholderCharacterModel
 {
     /// <summary>Which vanilla character to borrow placeholder visuals from.</summary>
     public override string PlaceholderID => "ironclad";
+
+    /// <summary>能力牌动作改用骨架里的 powerup（由 Attack_2 复制并提速），其余沿用默认。</summary>
+    protected override List<(AnimState, string)> AnimationStates => new()
+    {
+        (new AnimState("cast"), "Cast"),
+        (new AnimState("attack"), "Attack"),
+        (new AnimState("hurt"), "Hit"),
+        (new AnimState("powerup"), "PowerUp"),
+    };
 
     public override Color NameColor => new("7FD4FF");
 

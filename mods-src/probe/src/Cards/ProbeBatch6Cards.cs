@@ -41,6 +41,8 @@ public sealed class ProbeTactics : CustomCardModel
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
+
+        await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
         await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, play);
         await PowerCmd.Apply<ProbeNextTurnArmorPower>(
             ctx, Owner.Creature, DynamicVars["ProbeNextTurnArmorPower"].BaseValue, Owner.Creature, this);
@@ -84,6 +86,8 @@ public sealed class ProbeForcedWake : CustomCardModel
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
+
+        await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
         await PowerCmd.Apply<CalciumArmorPower>(
             ctx, Owner.Creature, DynamicVars["CalciumArmorPower"].BaseValue, Owner.Creature, this);
         await PowerCmd.Apply<ProbeNextTurnArmorPower>(
@@ -124,6 +128,8 @@ public sealed class ProbeImprint : CustomCardModel
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
+
+        await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
         await PowerCmd.Apply<CalciumArmorPower>(
             ctx, Owner.Creature, DynamicVars["CalciumArmorPower"].BaseValue, Owner.Creature, this);
         await PowerCmd.Apply<ProbeImprintPower>(
@@ -162,6 +168,8 @@ public sealed class ProbeDisorder : CustomCardModel
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
+
+        await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
         ArgumentNullException.ThrowIfNull(play.Target, "cardPlay.Target");
 
         await ProbeCardKit.Hit(ctx, play, this, "vfx/vfx_attack_slash");
@@ -199,6 +207,7 @@ public sealed class ProbePrecision : CustomCardModel
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
+
         ArgumentNullException.ThrowIfNull(play.Target, "cardPlay.Target");
 
         await ProbeCardKit.Hit(ctx, play, this, "vfx/vfx_attack_blunt");
@@ -230,6 +239,7 @@ public sealed class ProbeRushPunch : CustomCardModel
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
+
         ArgumentNullException.ThrowIfNull(play.Target, "cardPlay.Target");
         await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
             .FromCard(this, play)
@@ -265,6 +275,8 @@ public sealed class ProbeHemostasis : CustomCardModel
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
+
+        await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
         var armour = Owner.Creature.GetPower<CalciumArmorPower>();
         if (armour != null && armour.Amount > 0)
         {
@@ -303,6 +315,8 @@ public sealed class ProbeFounder : CustomCardModel
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
+
+        await CreatureCmd.TriggerAnim(Owner.Creature, "PowerUp", Owner.Character.PowerUpAnimDelay);
         await PowerCmd.Apply<ProbeFounderPower>(
             ctx, Owner.Creature, DynamicVars["ProbeFounderPower"].BaseValue, Owner.Creature, this);
     }

@@ -32,6 +32,7 @@ public sealed class ProbeBrawl : CustomCardModel
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
+
         ArgumentNullException.ThrowIfNull(play.Target, "cardPlay.Target");
         await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
             .FromCard(this, play)
@@ -64,6 +65,8 @@ public sealed class ProbeArm : CustomCardModel
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
+
+        await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
         var armour = Owner.Creature.GetPower<CalciumArmorPower>();
         if (armour != null && armour.Amount > 0)
             await PowerCmd.Decrement(armour);
@@ -106,6 +109,7 @@ public sealed class ProbeCautious : CustomCardModel
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
+
         await ProbeCardKit.Hit(ctx, play, this, "vfx/vfx_attack_slash");
         await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, play);
         await PowerCmd.Apply<CalciumArmorPower>(ctx, Owner.Creature, DynamicVars["CalciumArmorPower"].BaseValue, Owner.Creature, this);
@@ -149,6 +153,8 @@ public sealed class ProbeLegArmor : CustomCardModel
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
+
+        await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
         await PowerCmd.Apply<CalciumArmorPower>(ctx, Owner.Creature, DynamicVars["CalciumArmorPower"].BaseValue, Owner.Creature, this);
         await PowerCmd.Apply<ProbeLegArmorPower>(ctx, Owner.Creature, DynamicVars["ProbeLegArmorPower"].BaseValue, Owner.Creature, this);
         await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, play);
@@ -187,6 +193,8 @@ public sealed class ProbeBoneMineralize : CustomCardModel
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
+
+        await CreatureCmd.TriggerAnim(Owner.Creature, "PowerUp", Owner.Character.PowerUpAnimDelay);
         await PowerCmd.Apply<ProbeBoneMineralizePower>(
             ctx, Owner.Creature, DynamicVars["ProbeBoneMineralizePower"].BaseValue, Owner.Creature, this);
     }
@@ -219,6 +227,8 @@ public sealed class ProbeTechniqueOverload : CustomCardModel
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
+
+        await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
         var hand = PileType.Hand.GetPile(Owner);
         int missing = Math.Max(0, CardPile.MaxCardsInHand - hand.Cards.Count);
         if (missing > 0)
@@ -255,6 +265,8 @@ public sealed class ProbeSpiritRecovery : CustomCardModel
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
+
+        await CreatureCmd.TriggerAnim(Owner.Creature, "PowerUp", Owner.Character.PowerUpAnimDelay);
         await PowerCmd.Apply<ProbeSpiritRecoveryPower>(
             ctx, Owner.Creature, 1m, Owner.Creature, this);   // 1 层 = 每次触发 1 点能量
     }
@@ -287,6 +299,8 @@ public sealed class ProbeBoxingGloves : CustomCardModel
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
+
+        await CreatureCmd.TriggerAnim(Owner.Creature, "PowerUp", Owner.Character.PowerUpAnimDelay);
         await PowerCmd.Apply<DexterityPower>(ctx, Owner.Creature, -1m, Owner.Creature, this);
         await PowerCmd.Apply<StrengthPower>(ctx, Owner.Creature, DynamicVars["StrengthPower"].BaseValue, Owner.Creature, this);
     }
@@ -320,6 +334,8 @@ public sealed class ProbeTechNova : CustomCardModel
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
+
+        await CreatureCmd.TriggerAnim(Owner.Creature, "PowerUp", Owner.Character.PowerUpAnimDelay);
         await PowerCmd.Apply<ProbeTechNovaPower>(
             ctx, Owner.Creature, DynamicVars["ProbeTechNovaPower"].BaseValue, Owner.Creature, this);
     }

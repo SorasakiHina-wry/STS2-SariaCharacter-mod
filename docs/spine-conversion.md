@@ -169,3 +169,38 @@ die       = Die
 
 转换后骨架共 14 个动画（9 个原始 + 5 个别名），版本 4.2.43。
 图集 512×512、51 个区域，用 `tools/spine_atlas_upgrade.py` 升到 4.x 写法。
+
+## 最终动画表（2026-11-10）
+
+| 引擎动画 id | 来源 | 速度 |
+|---|---|---|
+| `idle_loop` | Idle | **2×** |
+| `low_health_loop` | Idle | **2×**（引擎强制要求，低血量时用） |
+| `attack` | Attack | **2×** |
+| `powerup` | Attack_2 | **2×**（能力牌动作；角色里覆写 `AnimationStates` 把 PowerUp 指到这里） |
+| `cast` | Skill_Begin | 原速 |
+| `hurt` | Idle | 原速 |
+| `die` | Die | 原速 |
+| `revive` / `relaxed_loop` / `stun` | Idle | 原速 |
+
+引擎的默认映射是 `AnimationStates` 里写死的：
+
+```csharp
+(new AnimState("cast"), "Cast"),
+(new AnimState("attack"), "Attack"),
+(new AnimState("hurt"), "Hit"),
+(new AnimState("cast"), "PowerUp")   // ← 默认 PowerUp 用 cast
+```
+
+我们在 `Probe.AnimationStates` 里覆写成 `(new AnimState("powerup"), "PowerUp")`。
+
+### 卡牌侧
+
+原版卡牌是**手动**触发动画的（引擎不会自动播 cast/powerup，只有攻击牌由 `AttackCommand` 自动播 Attack）：
+
+```csharp
+await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);      // 技能牌
+await CreatureCmd.TriggerAnim(Owner.Creature, "PowerUp", Owner.Character.PowerUpAnimDelay); // 能力牌
+```
+
+已给全部 Probe 卡牌按类型补上（技能=Cast，能力=PowerUp）。
