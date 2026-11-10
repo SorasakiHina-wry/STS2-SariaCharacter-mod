@@ -24,6 +24,32 @@ ATTACK_RE = re.compile(r"^(?P<anc>[A-Z_]+)\.talk\.(?P<who>[A-Za-z_]+)\.\d+-attac
 
 ORDER = ["NEOW", "DARV", "NONUPEIPE", "OROBAS", "PAEL", "TANX", "TEZCATARA", "VAKUU", "THE_ARCHITECT"]
 
+# 富文本标记 → 作用（颜色类来自游戏内 RichTextTags，其余是 Godot BBCode 或内置效果）
+TAG_HELP = [
+    ("gold", "金色高亮：关键词、名字、数值"),
+    ("blue", "蓝色高亮：次要关键词"),
+    ("red", "红色高亮：危险、敌意、负面"),
+    ("green", "绿色高亮：正面、恢复"),
+    ("orange", "橙色高亮"),
+    ("purple", "紫色高亮"),
+    ("pink", "粉色高亮"),
+    ("aqua", "青色高亮"),
+    ("b", "粗体"),
+    ("i", "斜体（常与 font_size 一起做旁白）"),
+    ("font_size=22", "字号，22 是原版旁白/拟声用的小字号"),
+    ("center", "整段居中"),
+    ("sine", "上下缓慢起伏的波浪（飘忽、幽灵感；幅度约 0.8 像素）"),
+    ("jitter", "快速随机抖动（颤抖、情绪激动；幅度约 3 像素）"),
+    ("thinky_dots", "逐字轻微上浮的波浪，用来表现「正在思考/正在说」"),
+    ("shake", "Godot 内置抖动效果"),
+    ("rainbow", "Godot 内置彩虹渐变"),
+    ("fade_in", "淡入出现（常用于旁白）"),
+    ("fly_in", "飞入出现"),
+    ("scramble", "乱码/解码效果（不可名状的低语）"),
+    ("lb", "左方括号：`[lb]文字` 显示成「文字"),
+    ("rb", "右方括号：`文字[rb]` 显示成文字」"),
+]
+
 
 def load(name: str) -> dict:
     p = LOC / name
@@ -63,6 +89,23 @@ def main(argv: list[str]) -> int:
     lines.append("> 格式说明见 [`character-writing.md`](character-writing.md)。")
     lines.append("> 方括号里是先古（`[古]`）或该角色；`[钮]` 是继续按钮上的字（与原版不同时才列出）。")
     lines.append("> 原文里的换行 `\\n` 在这里直接显示成下一行（该行没有前缀）。")
+    lines.append("")
+
+    # 统计本文档里实际出现的富文本标记
+    used: set[str] = set()
+    for _k, _v in anc.items():
+        if isinstance(_v, str):
+            for _m in re.finditer(r"\[([a-zA-Z_]+)", _v):
+                used.add(_m.group(1).lower())
+
+    lines.append("## 富文本标记说明")
+    lines.append("")
+    lines.append("| 标记 | 作用 | 本文档中出现 |")
+    lines.append("|---|---|---|")
+    for tag, desc in TAG_HELP:
+        lines.append(f"| `[{tag}]` | {desc} | {'✓' if tag.split('=')[0] in used else ''} |")
+    lines.append("")
+    lines.append("> 颜色类标记（gold/blue/red/…）只改颜色、不改语义，和卡牌描述里的高亮是同一套。")
     lines.append("")
 
     custom = [a for a in anc if a.endswith(".title") and a.split(".")[0] not in ORDER]
