@@ -42,6 +42,8 @@ public static class ProbeMain
             }
 
             Log.Info($"[probe] harmony patches: {applied} applied, {skipped} skipped");
+
+            ProbeSpineProbe.Run();
         }
         catch (Exception ex)
         {
