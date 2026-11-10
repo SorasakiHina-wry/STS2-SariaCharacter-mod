@@ -81,7 +81,7 @@ public static class ProbeVisualsPatch
     {
         Log.Info($"[probe][spine] CreateVisuals entry={__instance.Id.Entry}");
 
-        if (!__instance.Id.Entry.StartsWith("PROBE", StringComparison.Ordinal))
+        if (!__instance.Id.Entry.EndsWith("SARIA", StringComparison.Ordinal))
             return true;
 
         var visuals = ProbeSpineVisuals.Create();

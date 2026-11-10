@@ -18,7 +18,7 @@ namespace Probe.Characters;
 /// another character - Ironclad by default - so the whole character is playable before any art exists.
 /// Override one member at a time as real assets land.
 /// </summary>
-public sealed class Probe : PlaceholderCharacterModel
+public sealed class Saria : PlaceholderCharacterModel
 {
     /// <summary>Which vanilla character to borrow placeholder visuals from.</summary>
     public override string PlaceholderID => "ironclad";
@@ -67,20 +67,20 @@ public sealed class Probe : PlaceholderCharacterModel
 
     /// <summary>
     /// In-code localization. BaseLib writes these into the table that matches the model category
-    /// ("characters" here), keyed as "PROBE.title", "PROBE.description", ...
+    /// ("characters" here), keyed as "SARIA.title", "SARIA.description", ...
     /// </summary>
     public override List<(string, string)>? Localization => new()
     {
         ("title", "塞雷娅"),
         ("titleObject", "塞雷娅"),
-        ("pronounSubject", "it"),
-        ("pronounObject", "it"),
-        ("possessiveAdjective", "its"),
-        ("pronounPossessive", "its"),
-        ("description", "A quiet traveller whose bones remember every blow they have taken.\nShe lends that memory to others as armour."),
-        ("bestiaryQuote", "She has been measured. She simply refuses the number."),
-        ("eventDeathPrevention", "Not yet. I still owe someone a debt."),
-        ("cardsModifierTitle", "Probe Cards"),
-        ("cardsModifierDescription", "Probe cards will now appear in rewards and shops."),
+        ("pronounSubject", "她"),
+        ("pronounObject", "她"),
+        ("possessiveAdjective", "她的"),
+        ("pronounPossessive", "她的"),
+        ("description", "骨里记着每一道挨过的伤。\n她把那份记忆借给别人当护甲。"),
+        ("bestiaryQuote", "她被丈量过。她只是不承认那个数字。"),
+        ("eventDeathPrevention", "还不是时候。我还欠着一个人。"),
+        ("cardsModifierTitle", "塞雷娅卡牌"),
+        ("cardsModifierDescription", "塞雷娅的卡牌现在会出现在奖励和商店中。"),
     };
 }
