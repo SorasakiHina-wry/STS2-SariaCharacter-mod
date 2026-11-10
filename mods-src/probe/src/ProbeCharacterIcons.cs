@@ -127,3 +127,32 @@ public static class ProbeCharacterSelectButtonPatch
         Log.Info("[probe] character select portrait applied");
     }
 }
+
+/// <summary>顶部栏头像：NTopBarPortrait 会 AddChild(character.Icon)，这里直接给一个 TextureRect。</summary>
+[HarmonyPatch(typeof(CharacterModel), nameof(CharacterModel.Icon), MethodType.Getter)]
+public static class ProbeTopBarIconPatch
+{
+    [HarmonyPrefix]
+    private static bool Prefix(CharacterModel __instance, ref Control __result)
+    {
+        if (!ProbeCharacterIcons.IsSaria(__instance.Id))
+            return true;
+
+        var texture = ProbeCharacterIcons.Square;
+        if (texture == null)
+            return true;
+
+        var rect = new TextureRect
+        {
+            Name = "SariaTopBarIcon",
+            Texture = texture,
+            ExpandMode = TextureRect.ExpandModeEnum.IgnoreSize,
+            StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered,
+            MouseFilter = Control.MouseFilterEnum.Ignore,
+        };
+        rect.SetAnchorsPreset(Control.LayoutPreset.FullRect);
+
+        __result = rect;
+        return false;
+    }
+}
