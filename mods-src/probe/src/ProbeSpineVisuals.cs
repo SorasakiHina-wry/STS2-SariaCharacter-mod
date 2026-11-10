@@ -13,8 +13,8 @@ namespace Probe;
 /// </summary>
 public static class ProbeSpineVisuals
 {
-    private const float SpriteScale = 0.5625f;   // 原 0.75 的 0.75 倍
-    private static readonly Vector2 BoundsSize = new(165f, 225f);   // 随缩放同比缩小
+    private const float SpriteScale = 0.75f;
+    private static readonly Vector2 BoundsSize = new(220f, 300f);
 
     public static NCreatureVisuals? Create()
     {
@@ -35,6 +35,8 @@ public static class ProbeSpineVisuals
 
             spine.Name = "Visuals";
             spine.Scale = new Vector2(SpriteScale, SpriteScale);
+            // Bounds 的矩形以 (0,0) 为左上角，血条按它的中心对齐；把角色右移半个宽度，让身体落在血条正上方
+            spine.Position = new Vector2(BoundsSize.X * 0.5f + 20f, 0f);
             root.AddChild(spine);
             spine.Owner = root;
             spine.UniqueNameInOwner = true;
