@@ -25,6 +25,7 @@
 战术,ProbeTactics
 强制唤醒,ProbeForcedWake
 拓印,ProbeImprint
+封装,ProbeEncapsulate
 紧密防护,ProbeTightGuard
 爆裂,ProbeDetonate
 全弹发射,ProbeFullSalvo
@@ -47,6 +48,9 @@
 精密操作,ProbePrecision
 冲拳,ProbeRushPunch
 止血,ProbeHemostasis
+防卫经验,ProbeDefenseExperience
+共振,ProbeResonance
+膨化,ProbePuffUp
 急救,ProbeFirstAid
 钙质化,ProbeCalcify
 神经干扰,ProbeNerveJamming
@@ -56,5 +60,11 @@
 “科技新星”,ProbeTechNova
 洞察,ProbeInsight
 创始人,ProbeFounder
+围歼,ProbeEncircle
+战略终结,ProbeStrategicEnd
+缠斗,ProbeTangle
+臂甲,ProbeArmguard
 升温,ProbeWarmUp
 捕集,ProbeCapture
+渗透,ProbeOsmosis
+极限功率,ProbeOverclock

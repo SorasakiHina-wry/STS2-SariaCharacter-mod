@@ -108,9 +108,8 @@ public sealed class ProbePowderize : CustomCardModel
         var power = Owner.Creature.GetPower<CalciumArmorPower>();
         if (armour > 0 && power != null)
         {
-            // 把层数清零而不是移除能力：钙铠要常驻显示
-            await PowerCmd.ModifyAmount(ctx, power, -armour, Owner.Creature, this);
-            await CreatureCmd.GainBlock(Owner.Creature, armour, ValueProp.Unpowered, play);
+            // 只消耗 1 层，不换格挡
+            await PowerCmd.ModifyAmount(ctx, power, -1m, Owner.Creature, this);
         }
 
         foreach (var enemy in CombatState.HittableEnemies)
@@ -132,7 +131,7 @@ public sealed class ProbePowderize : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "粉末化"),
-        ("description", "失去所有[gold]钙铠[/gold]，获得相同数值的[gold]格挡[/gold]。\n对所有敌人给予{VulnerablePower:diff()}层[gold]易伤[/gold]。"),
+        ("description", "失去1层[gold]钙铠[/gold]。\n对所有敌人给予{VulnerablePower:diff()}层[gold]易伤[/gold]。"),
     };
 }
 

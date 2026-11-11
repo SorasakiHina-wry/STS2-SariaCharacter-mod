@@ -27,6 +27,7 @@ RARITY = {
     "普通": "Common", "common": "Common",
     "罕见": "Uncommon", "uncommon": "Uncommon",
     "稀有": "Rare", "rare": "Rare",
+    "先古": "Ancient", "ancient": "Ancient", "远古": "Ancient",
     "无色": "Token", "token": "Token", "特殊": "Token",
 }
 TARGET = {
@@ -42,6 +43,7 @@ RARITY_RELIC = {
     "普通": "Common", "common": "Common",
     "罕见": "Uncommon", "uncommon": "Uncommon",
     "稀有": "Rare", "rare": "Rare",
+    "先古": "Ancient", "ancient": "Ancient", "远古": "Ancient",
     "无色": "Token", "token": "Token", "特殊": "Token",
     "商店": "Shop", "shop": "Shop",
     "事件": "Event", "event": "Event",

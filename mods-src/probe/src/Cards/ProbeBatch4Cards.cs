@@ -145,7 +145,7 @@ public sealed class ProbeLegArmor : CustomCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new PowerVar<CalciumArmorPower>(10m),
+        new PowerVar<CalciumArmorPower>(8m),
         new PowerVar<ProbeLegArmorPower>(1m),
         new BlockVar(8m, ValueProp.Move),
     };
@@ -160,7 +160,6 @@ public sealed class ProbeLegArmor : CustomCardModel
 
     protected override void OnUpgrade()
     {
-        DynamicVars["CalciumArmorPower"].UpgradeValueBy(2m);
         DynamicVars["ProbeLegArmorPower"].UpgradeValueBy(1m);
     }
 

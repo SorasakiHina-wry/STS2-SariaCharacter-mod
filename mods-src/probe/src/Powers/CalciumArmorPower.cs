@@ -81,6 +81,49 @@ public sealed class CalciumArmorPower : CustomPowerModel
             await PowerCmd.Apply<CalciumArmorPower>(new ThrowingPlayerChoiceContext(), Owner, bone.Amount, Owner, cardSource);
     }
 
+    /// <summary>How many armour stacks have been gained in this combat (used by 战略终结).</summary>
+    public int TotalGainedThisCombat { get; private set; }
+
+    /// <summary>
+    /// Tracks armour gained/lost so other cards can react:
+    ///   共振  — every gained stack deals damage once
+    ///   防卫经验 — the first 8 lost stacks each turn draw cards
+    /// </summary>
+    public override async Task AfterPowerAmountChanged(
+        PlayerChoiceContext choiceContext,
+        PowerModel power,
+        decimal amount,
+        Creature? applier,
+        CardModel? cardSource)
+    {
+        if (power is not CalciumArmorPower armour || armour.Owner != Owner)
+            return;
+
+        if (amount > 0)
+        {
+            int gained = (int)amount;
+            TotalGainedThisCombat += gained;
+
+            var resonance = Owner.GetPower<ProbeResonancePower>();
+            if (resonance != null && resonance.Amount > 0 && resonance.Target != null && resonance.Target.IsAlive)
+            {
+                Flash();
+                int hits = gained * (int)resonance.Amount;
+                for (int i = 0; i < hits; i++)
+                {
+                    await CreatureCmd.Damage(choiceContext, resonance.Target, ProbeResonancePower.DamagePerStack,
+                        ValueProp.Unpowered, Owner, null, null);
+                }
+            }
+        }
+        else if (amount < 0)
+        {
+            var experience = Owner.GetPower<ProbeDefenseExperiencePower>();
+            if (experience != null)
+                await experience.OnArmourLost(choiceContext, (int)(-amount));
+        }
+    }
+
     public override List<(string, string)>? Localization => new()
     {
         ("title", "钙铠"),

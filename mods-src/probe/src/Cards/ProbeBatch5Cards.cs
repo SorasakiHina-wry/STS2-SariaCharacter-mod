@@ -164,17 +164,18 @@ public sealed class ProbeReshape : CustomCardModel
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
         new CardsVar(3),
+        new PowerVar<DexterityPower>(2m),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
 
         await CardPileCmd.Draw(ctx, DynamicVars.Cards.BaseValue, Owner);
-        await PowerCmd.Apply<DexterityPower>(ctx, Owner.Creature, -1m, Owner.Creature, this);
-        await PowerCmd.Apply<ProbeReshapePower>(ctx, Owner.Creature, 1m, Owner.Creature, this);
+        await PowerCmd.Apply<DexterityPower>(ctx, Owner.Creature, -DynamicVars["DexterityPower"].BaseValue, Owner.Creature, this);
+        await PowerCmd.Apply<ProbeReshapePower>(ctx, Owner.Creature, DynamicVars["DexterityPower"].BaseValue, Owner.Creature, this);
     }
 
-    protected override void OnUpgrade() => EnergyCost.UpgradeBy(-1);
+    protected override void OnUpgrade() => DynamicVars["DexterityPower"].UpgradeValueBy(-1m);
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
     {
@@ -185,7 +186,7 @@ public sealed class ProbeReshape : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "再塑型"),
-        ("description", "抽{Cards:diff()}张牌。\n在本回合失去1点[gold]敏捷[/gold]。"),
+        ("description", "抽{Cards:diff()}张牌。\n在本回合失去{DexterityPower:diff()}点[gold]敏捷[/gold]。"),
     };
 }
 

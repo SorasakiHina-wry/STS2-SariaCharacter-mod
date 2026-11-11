@@ -180,7 +180,7 @@ public sealed class ProbeCondense : CustomCardModel
 [Pool(typeof(ProbeCardPool))]
 public sealed class ProbeThermalRecovery : CustomCardModel
 {
-    public ProbeThermalRecovery() : base(1, CardType.Skill, CardRarity.Rare, TargetType.Self) { }
+    public ProbeThermalRecovery() : base(2, CardType.Skill, CardRarity.Rare, TargetType.Self) { }
 
     public override IEnumerable<CardKeyword> CanonicalKeywords => new[] { CardKeyword.Exhaust };
 
@@ -200,7 +200,7 @@ public sealed class ProbeThermalRecovery : CustomCardModel
         }
     }
 
-    protected override void OnUpgrade() => DynamicVars["CalciumArmorPower"].UpgradeValueBy(1m);
+    protected override void OnUpgrade() => EnergyCost.UpgradeBy(-1);
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
     {

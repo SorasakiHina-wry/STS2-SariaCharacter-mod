@@ -1,0 +1,168 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using BaseLib.Abstracts;
+using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Entities.Players;
+using MegaCrit.Sts2.Core.Entities.Powers;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.ValueProps;
+
+namespace Probe.Powers;
+
+/// <summary>封装 — start of next turn: fetch a random card from the discard pile into hand.</summary>
+public sealed class ProbeEncapsulatePower : CustomPowerModel
+{
+    public override PowerType Type => PowerType.Buff;
+
+    public override PowerStackType StackType => PowerStackType.Counter;
+
+    public override string? CustomPackedIconPath => "res://images/atlases/power_atlas.sprites/thorns_power.tres";
+    public override string? CustomBigIconPath => "res://images/powers/thorns_power.png";
+
+    public override async Task AfterPlayerTurnStart(PlayerChoiceContext choiceContext, Player player)
+    {
+        if (player != Owner.Player || Amount <= 0)
+            return;
+
+        Flash();
+        var discard = PileType.Discard.GetPile(player);
+        if (discard.Cards.Count > 0)
+        {
+            var card = player.RunState.Rng.CombatCardSelection.NextItem(discard.Cards);
+            await CardPileCmd.Add(card, PileType.Hand, CardPilePosition.Top);
+        }
+
+        await PowerCmd.Decrement(this);
+    }
+
+    public override List<(string, string)>? Localization => new()
+    {
+        ("title", "封装"),
+        ("description", "在你的回合开始时，将[gold]弃牌堆[/gold]中的一张牌加入你的[gold]手牌[/gold]。"),
+    };
+}
+
+/// <summary>极限功率 — turn start (late pass): block is converted into armour after the normal payout.</summary>
+public sealed class ProbeOverclockPower : CustomPowerModel
+{
+    public override PowerType Type => PowerType.Buff;
+
+    public override PowerStackType StackType => PowerStackType.Counter;
+
+    public override string? CustomPackedIconPath => "res://images/atlases/power_atlas.sprites/thorns_power.tres";
+    public override string? CustomBigIconPath => "res://images/powers/thorns_power.png";
+
+    /// <summary>
+    /// Late pass: 钙铠 has already paid out its block (Early pass), so the block we take here is the
+    /// full amount and the fresh armour will not be cashed in until next turn.
+    /// </summary>
+    public override async Task AfterPlayerTurnStartLate(PlayerChoiceContext choiceContext, Player player)
+    {
+        if (player != Owner.Player || Amount <= 0)
+            return;
+
+        decimal block = Owner.Block;
+        if (block <= 0)
+            return;
+
+        Flash();
+        await CreatureCmd.LoseBlock(choiceContext, Owner, block, null);
+        await PowerCmd.Apply<CalciumArmorPower>(choiceContext, Owner, block, Owner, null);
+    }
+
+    public override List<(string, string)>? Localization => new()
+    {
+        ("title", "极限功率"),
+        ("description", "在你的回合开始时，失去所有[gold]格挡[/gold]，并获得相同数值的[gold]钙铠[/gold]。"),
+    };
+}
+
+/// <summary>共振 — every armour stack gained this turn deals damage to the chosen target once.</summary>
+public sealed class ProbeResonancePower : CustomPowerModel
+{
+    public const decimal DamagePerStack = 4m;
+
+    /// <summary>The enemy the card was played on; armour gained during this turn keeps hitting it.</summary>
+    public Creature? Target { get; set; }
+
+    public override PowerType Type => PowerType.Buff;
+
+    public override PowerStackType StackType => PowerStackType.Counter;
+
+    public override string? CustomPackedIconPath => "res://images/atlases/power_atlas.sprites/thorns_power.tres";
+    public override string? CustomBigIconPath => "res://images/powers/thorns_power.png";
+
+    /// <summary>Only lasts for the current turn: removed at the start of your next turn.</summary>
+    public override async Task AfterPlayerTurnStartEarly(PlayerChoiceContext choiceContext, Player player)
+    {
+        if (player != Owner.Player)
+            return;
+
+        await PowerCmd.Remove(this);
+    }
+
+    public override List<(string, string)>? Localization => new()
+    {
+        ("title", "共振"),
+        ("description", "本回合你每获得1层[gold]钙铠[/gold]，就对目标造成4点伤害。"),
+        ("smartDescription", "本回合你每获得1层[gold]钙铠[/gold]，就对目标造成[blue]{Amount}[/blue]×4点伤害。"),
+    };
+}
+
+/// <summary>防卫经验 — tracks armour lost this turn; the first 8 stacks draw cards.</summary>
+public sealed class ProbeDefenseExperiencePower : CustomPowerModel
+{
+    public const int Threshold = 8;
+
+    /// <summary>Cards drawn per trigger (2 base, +2 per extra copy played).</summary>
+    public int ExtraCards = 2;
+
+    private bool _triggeredThisTurn;
+
+    public override PowerType Type => PowerType.Buff;
+
+    public override PowerStackType StackType => PowerStackType.Counter;
+
+    public override string? CustomPackedIconPath => "res://images/atlases/power_atlas.sprites/thorns_power.tres";
+    public override string? CustomBigIconPath => "res://images/powers/thorns_power.png";
+
+    public override async Task AfterPlayerTurnStart(PlayerChoiceContext choiceContext, Player player)
+    {
+        if (player != Owner.Player)
+            return;
+
+        _triggeredThisTurn = false;
+        if (Amount != Threshold)
+            await PowerCmd.ModifyAmount(choiceContext, this, Threshold - Amount, Owner, null);
+    }
+
+    /// <summary>Called by <see cref="CalciumArmorPower"/> whenever stacks are lost.</summary>
+    public async Task OnArmourLost(PlayerChoiceContext choiceContext, int lost)
+    {
+        if (_triggeredThisTurn || lost <= 0)
+            return;
+
+        if (Amount - lost > 0)
+        {
+            await PowerCmd.ModifyAmount(choiceContext, this, -lost, Owner, null);
+            return;
+        }
+
+        _triggeredThisTurn = true;
+        Flash();
+        await PowerCmd.ModifyAmount(choiceContext, this, -Amount, Owner, null);
+        if (ExtraCards > 0)
+            await CardPileCmd.Draw(choiceContext, ExtraCards, Owner.Player);
+    }
+
+    public override List<(string, string)>? Localization => new()
+    {
+        ("title", "防卫经验"),
+        ("description", "本回合再失去8层[gold]钙铠[/gold]后，抽2张牌。"),
+        ("smartDescription", "本回合再失去[blue]{Amount}[/blue]层[gold]钙铠[/gold]后，抽2张牌。"),
+    };
+}
