@@ -207,7 +207,7 @@ $tool = 'D:\STS2\mods-src\probe\tools\cardspec.py'
 | `normalize_text.py` | 去中文空格 + 补句号（表与 C# 同步） |
 | `prune.py` | `--retag` 比对实现与描述后翻标签、`--clean-notes` 清残留说明、默认删「待删除」 |
 | `tag_status.py` | 给代码里已有的条目补 `已实装` |
-| `tag_implemented.py` | 把 `待实装/待修改` → `已实装`（实现完批量收尾用） |
+| `tag_implemented.py` | 把 `待实装/待修改` → `已实装`，并清掉备注里的括号说明（`--clean` 连已实装的残留一起清） |
 | `sort_powers.py` | 按 cards.md 顺序重排 powers.md（钙铠恒在首位） |
 | `fill_templates.py` | 按计划数量补齐空样板 |
 | `card_ids.py` | 生成 `design/card-ids.md` |
