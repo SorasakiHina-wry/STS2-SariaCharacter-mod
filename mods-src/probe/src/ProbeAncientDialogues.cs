@@ -4,6 +4,7 @@ using System.Linq;
 using Godot;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Entities.Ancients;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
 
@@ -93,6 +94,20 @@ public static class ProbeAncientDialoguePatch
 
                 var dialogue = new AncientDialogue(sfx) { VisitIndex = index };
                 dialogue.PopulateLines(ancientEntry, ProbeAncientDialogueData.CharacterEntry, index);
+
+                // PopulateLines 只填台词，按钮文字（`.next`）是 AncientDialogueSet.PopulateLocKeys 里补的；
+                // 我们的对话是在那之后注入的，所以这里自己照同样的规则补一遍：
+                // 第 k 句的按钮键 = 该句本地化键去掉最后一段 + ".next"。
+                for (int k = 0; k < dialogue.Lines.Count - 1; k++)
+                {
+                    var line = dialogue.Lines[k];
+                    string? key = line.LineText?.LocEntryKey;
+                    if (string.IsNullOrEmpty(key))
+                        continue;
+                    string next = key.Substring(0, key.LastIndexOf('.')) + ".next";
+                    line.NextButtonText = new LocString("ancients", next);
+                }
+
                 list.Add(dialogue);
             }
             catch (Exception ex)

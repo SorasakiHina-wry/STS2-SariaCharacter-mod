@@ -71,7 +71,7 @@ def parse_talk_blocks(text: str) -> tuple[dict[str, str], list[str]]:
         repeat = header.get("可重复", "").strip() == "是"
         if not ancient or not set_raw:
             continue
-        if not any(body.strip() for _sp, body in lines):
+        if not any(body.strip() for sp, body in lines if sp != "钮"):
             continue  # 空模板，跳过
 
         who = "firstVisitEver" if set_raw.lower().startswith("firstvisit") else CHAR_ID
@@ -79,17 +79,32 @@ def parse_talk_blocks(text: str) -> tuple[dict[str, str], list[str]]:
         # 注意：可重复标记 "r" 挂在「行号」后面，形如 1-0r / 1-1r（不是 1r-0）
         repeat_suffix = "r" if (repeat and who != "firstVisitEver") else ""
 
-        for line_no, (speaker, body) in enumerate(lines):
+        # [钮] 不是一句台词，而是「上一句说完后按钮上的字」：
+        # 键是 {套号}-{上一句的行号}.next，行号只数 [古]/[她]。
+        line_no = 0
+        for speaker, body in lines:
             body = body.strip("\n")
             if not body.strip():
                 continue
-            kind = {"古": "ancient", "她": "char", "钮": "next"}[speaker]
-            if kind == "next" and body.strip() == DEFAULT_NEXT:
+
+            if speaker == "钮":
+                if line_no == 0:
+                    warnings.append(f"{ancient} 套号{set_index}：[钮] 前面没有台词，已忽略")
+                    continue
+                if body.strip() == DEFAULT_NEXT:
+                    continue
+                key = f"{ancient}.talk.{who}.{set_index}-{line_no - 1}{repeat_suffix}.next"
+                if key in entries:
+                    warnings.append(f"重复的键：{key}")
+                entries[key] = body
                 continue
+
+            kind = {"古": "ancient", "她": "char"}[speaker]
             key = f"{ancient}.talk.{who}.{set_index}-{line_no}{repeat_suffix}.{kind}"
             if key in entries:
                 warnings.append(f"重复的键：{key}")
             entries[key] = body
+            line_no += 1
 
     return entries, warnings
 
@@ -129,9 +144,10 @@ def main(argv: list[str]) -> int:
     print(f"\n已写入 {OUT.relative_to(ROOT)}")
 
     # 生成 C# 数据表：先古 → [(对话序号, 行数)]
+    # 行数只数 [古]/[她] 的台词；.next 只是按钮文字，不占行。
     by_ancient: dict[str, dict[int, int]] = {}
     for key in entries:
-        m = re.match(r"^([A-Z_]+)\.talk\.[A-Za-z_-]+\.(\d+)-(\d+)r?\.", key)
+        m = re.match(r"^([A-Z_]+)\.talk\.[A-Za-z_-]+\.(\d+)-(\d+)r?\.(ancient|char)$", key)
         if not m:
             continue
         ancient, set_index, line_no = m.group(1), int(m.group(2)), int(m.group(3))

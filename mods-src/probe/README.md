@@ -143,6 +143,8 @@ BaseLib 的 `CustomCharacterModel` 构造时调用 `CustomContentDictionary.AddC
 `src/ProbeAncientDialogues.cs` 的做法：patch `AncientDialogueSet.GetValidDialogues`，从已有对话的本地化键
 推断先古 ID（`NEOW.talk.IRONCLAD.0-0.ancient` → `NEOW`），命中就返回我们自己构造的对话列表。
 
+键格式注意：[钮] 不是一句台词，而是**上一句**的按钮文字，键是 {套号}-{上一句行号}.next（行号只数 [古]/[她]）；PopulateLines 只填台词，按钮文字要在注入后自己补 NextButtonText，否则按钮上不显示文字。 后缀挂在**行号**后面，形如 1-0r。
+-
 键格式注意：**可重复标记 `r` 挂在行号后面**，形如 `NEOW.talk.PROBE-SARIA.1-0r.ancient`
 （不是 `1r-0`）。全存档首次（`firstVisitEver`）是所有角色共用的，我们没写就沿用原版。
 
