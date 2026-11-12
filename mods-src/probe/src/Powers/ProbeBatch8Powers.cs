@@ -11,6 +11,7 @@ using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.Extensions;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
 
@@ -104,12 +105,18 @@ public sealed class ProbeSwiftPower : CustomPowerModel
         }
     }
 
+    /// <summary>显示用：随机张数 = 层数 × 3（SmartFormat 没有乘法，只能这样算好再显示）。</summary>
+    protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
+    {
+        new MultipliedAmountVar("ReadyCard", 3m),
+    };
+
     public override List<(string, string)>? Localization => new()
     {
         ("title", "迅捷"),
         ("selectionScreenPrompt", "从抽牌堆中选择一张牌加入你的手牌。"),
         ("description", "在你的回合开始时，失去1层[gold]钙铠[/gold]，从[gold]抽牌堆[/gold]的随机3张牌中选择1张加入你的[gold]手牌[/gold]。"),
-        ("smartDescription", "在你的回合开始时，失去[blue]{Amount}[/blue]层[gold]钙铠[/gold]，从[gold]抽牌堆[/gold]的随机[blue]{Amount}[/blue]×3张牌中选择[blue]{Amount}[/blue]张加入你的[gold]手牌[/gold]。"),
+        ("smartDescription", "在你的回合开始时，失去[blue]{Amount}[/blue]层[gold]钙铠[/gold]，从[gold]抽牌堆[/gold]的随机[blue]{ReadyCard}[/blue]张牌中选择[blue]{Amount}[/blue]张加入你的[gold]手牌[/gold]。"),
     };
 }
 
