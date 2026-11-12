@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BaseLib.Abstracts;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
@@ -30,10 +32,21 @@ public sealed class ProbeEncapsulatePower : CustomPowerModel
 
         Flash();
         var discard = PileType.Discard.GetPile(player);
-        if (discard.Cards.Count > 0)
+        int want = Math.Min((int)Amount, discard.Cards.Count);
+        if (want > 0)
         {
-            var card = player.RunState.Rng.CombatCardSelection.NextItem(discard.Cards);
-            await CardPileCmd.Add(card, PileType.Hand, CardPilePosition.Top);
+            // 自选（不是随机）：照原版「全息影像」的写法弹选牌界面
+            var selected = await CardSelectCmd.FromCombatPile(
+                prefs: new CardSelectorPrefs(SelectionScreenPrompt, want),
+                context: choiceContext,
+                pile: discard,
+                player: player);
+
+            foreach (var card in selected)
+            {
+                if (card != null)
+                    await CardPileCmd.Add(card, PileType.Hand);
+            }
         }
 
         await PowerCmd.Decrement(this);
@@ -42,7 +55,8 @@ public sealed class ProbeEncapsulatePower : CustomPowerModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "封装"),
-        ("description", "在你的回合开始时，将[gold]弃牌堆[/gold]中的一张牌加入你的[gold]手牌[/gold]。"),
+        ("description", "下回合，将你[gold]弃牌堆[/gold]中的一张牌放入你的[gold]手牌[/gold]。"),
+        ("smartDescription", "下回合，将你[gold]弃牌堆[/gold]中的[blue]{Amount}[/blue]张牌放入你的[gold]手牌[/gold]。"),
     };
 }
 

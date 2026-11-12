@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Runs;
@@ -294,7 +295,7 @@ public sealed class ProbeHemostasisPower : CustomPowerModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "止血"),
-        ("description", "在你的下几个回合开始前，至多受到2次伤害，之后阻止所有伤害。"),
-        ("smartDescription", "在你的下[blue]{Amount}[/blue]个回合开始前，至多受到2次伤害，之后阻止所有伤害。"),
+        ("description", "在你的下几个回合开始前，至多受到2次伤害。"),
+        ("smartDescription", "在你的下[blue]{Amount}[/blue]个回合开始前，至多受到2次伤害。"),
     };
 }

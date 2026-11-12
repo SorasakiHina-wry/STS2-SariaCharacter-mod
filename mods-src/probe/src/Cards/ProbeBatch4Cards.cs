@@ -321,7 +321,7 @@ public sealed class ProbeBoxingGloves : CustomCardModel
 [Pool(typeof(ProbeCardPool))]
 public sealed class ProbeTechNova : CustomCardModel
 {
-    public ProbeTechNova() : base(2, CardType.Power, CardRarity.Rare, TargetType.Self) { }
+    public ProbeTechNova() : base(1, CardType.Power, CardRarity.Rare, TargetType.Self) { }
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {

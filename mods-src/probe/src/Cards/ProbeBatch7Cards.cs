@@ -169,26 +169,27 @@ public sealed class ProbeEncircle : CustomCardModel
 [Pool(typeof(ProbeCardPool))]
 public sealed class ProbeStrategicEnd : CustomCardModel
 {
-    public ProbeStrategicEnd() : base(1, CardType.Attack, CardRarity.Rare, TargetType.AllEnemies) { }
+    public ProbeStrategicEnd() : base(1, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy) { }
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
         new CalculationBaseVar(8m),
-        new ExtraDamageVar(2m),
+        new ExtraDamageVar(1m),
         new CalculatedDamageVar(ValueProp.Move).WithMultiplier(
             (card, _) => card.Owner.Creature.GetPower<CalciumArmorPower>()?.TotalGainedThisCombat ?? 0),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
+        ArgumentNullException.ThrowIfNull(play.Target, "cardPlay.Target");
         await DamageCmd.Attack(DynamicVars.CalculatedDamage)
             .FromCard(this, play)
-            .TargetingAllOpponents(CombatState)
+            .Targeting(play.Target)
             .WithHitFx("vfx/vfx_attack_blunt")
             .Execute(ctx);
     }
 
-    protected override void OnUpgrade() => DynamicVars.ExtraDamage.UpgradeValueBy(2m);
+    protected override void OnUpgrade() => DynamicVars.ExtraDamage.UpgradeValueBy(1m);
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
     {
@@ -254,7 +255,7 @@ public sealed class ProbeTangle : CustomCardModel
 [Pool(typeof(ProbeCardPool))]
 public sealed class ProbeArmguard : CustomCardModel
 {
-    public ProbeArmguard() : base(0, CardType.Skill, CardRarity.Rare, TargetType.Self) { }
+    public ProbeArmguard() : base(1, CardType.Skill, CardRarity.Rare, TargetType.Self) { }
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
@@ -269,7 +270,7 @@ public sealed class ProbeArmguard : CustomCardModel
         CardCmd.PreviewCardPileAdd(await CardPileCmd.AddGeneratedCardToCombat(copy, PileType.Discard, Owner), 2.2f);
     }
 
-    protected override void OnUpgrade() => DynamicVars["StrengthPower"].UpgradeValueBy(1m);
+    protected override void OnUpgrade() => EnergyCost.UpgradeBy(-1);
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
     {
@@ -292,7 +293,7 @@ public sealed class ProbeOsmosis : CustomCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new PowerVar<VulnerablePower>(2m),
+        new PowerVar<VulnerablePower>(1m),
         new PowerVar<WeakPower>(1m),
         new RepeatVar(2),
     };
