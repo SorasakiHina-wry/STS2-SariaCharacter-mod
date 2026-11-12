@@ -61,7 +61,7 @@ public sealed class ProbeCycle : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "循环"),
-        ("description", "造成{Damage:diff()}点伤害。\n将一张[gold][gold]{IfUpgraded:show:升温+|升温}[/gold][/gold]放到你的[gold]抽牌堆[/gold]的顶部。"),
+        ("description", "造成{Damage:diff()}点伤害。\n将一张[gold]{IfUpgraded:show:升温+|升温}[/gold]放到你的[gold]抽牌堆[/gold]的顶部。"),
     };
 }
 
@@ -334,7 +334,7 @@ public sealed class ProbeWarmUp : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "升温"),
-        ("description", "获得{Block:diff()}点[gold]格挡[/gold]。\n将一张[gold][gold]{IfUpgraded:show:捕集+|捕集}[/gold][/gold]放到你的[gold]抽牌堆[/gold]的顶部。"),
+        ("description", "获得{Block:diff()}点[gold]格挡[/gold]。\n将一张[gold]{IfUpgraded:show:捕集+|捕集}[/gold]放到你的[gold]抽牌堆[/gold]的顶部。"),
     };
 }
 
@@ -375,6 +375,6 @@ public sealed class ProbeCapture : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "捕集"),
-        ("description", "获得{CalciumArmorPower:diff()}层[gold]钙铠[/gold]。\n将一张[gold][gold]{IfUpgraded:show:升温+|升温}[/gold][/gold]放到你的[gold]抽牌堆[/gold]的顶部。"),
+        ("description", "获得{CalciumArmorPower:diff()}层[gold]钙铠[/gold]。\n将一张[gold]{IfUpgraded:show:升温+|升温}[/gold]放到你的[gold]抽牌堆[/gold]的顶部。"),
     };
 }

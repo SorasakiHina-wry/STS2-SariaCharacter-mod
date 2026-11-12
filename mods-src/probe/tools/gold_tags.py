@@ -39,22 +39,44 @@ IFUP_RE = re.compile(r"\{IfUpgraded:show:([^{}]*)\|([^{}]*)\}")
 
 
 def highlight(text: str) -> str:
-    """Wrap keywords outside existing [gold] spans."""
+    """Wrap keywords outside existing [gold] spans (idempotent: nested duplicates are collapsed first)."""
+    text = collapse_dup_gold(text)
+
+    pieces: list[str] = []
+    cursor = 0
+    for m in TAG_RE.finditer(text):
+        pieces.append(_wrap_segment(text[cursor:m.start()]))
+        pieces.append(m.group(0))
+        cursor = m.end()
+    pieces.append(_wrap_segment(text[cursor:]))
+    return "".join(pieces)
+
+
+def collapse_dup_gold(text: str) -> str:
+    """`[gold][gold]x[/gold][/gold]` → `[gold]x[/gold]`（相邻的重复开/闭标签合并）。"""
+    while "[gold][gold]" in text or "[/gold][/gold]" in text:
+        text = text.replace("[gold][gold]", "[gold]").replace("[/gold][/gold]", "[/gold]")
+    return text
+
+
+def _wrap_segment(segment: str) -> str:
+    """A stretch of text with no [gold] span in it yet."""
     # 原版写法：IfUpgraded 里是指向另一张牌的名字时，整段包 [gold]
     def _wrap_ifup(m: re.Match) -> str:
         if any(kw in m.group(1) or kw in m.group(2) for kw in KEYWORDS):
             return f"[gold]{m.group(0)}[/gold]"
         return m.group(0)
 
-    text = IFUP_RE.sub(_wrap_ifup, text)
+    segment = IFUP_RE.sub(_wrap_ifup, segment)
 
+    # 新加的 [gold] 里已经包住的词不要再上色，所以按标签再切一次
     pieces: list[str] = []
     cursor = 0
-    for m in TAG_RE.finditer(text):
-        pieces.append(_wrap_keywords(text[cursor:m.start()]))
+    for m in TAG_RE.finditer(segment):
+        pieces.append(_wrap_keywords(segment[cursor:m.start()]))
         pieces.append(m.group(0))
         cursor = m.end()
-    pieces.append(_wrap_keywords(text[cursor:]))
+    pieces.append(_wrap_keywords(segment[cursor:]))
     return "".join(pieces)
 
 

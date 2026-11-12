@@ -874,8 +874,16 @@ def _head_text(path: Path) -> str | None:
         return None
 
 
-def print_changed(design_dir: Path) -> None:
-    """Entries added or edited since the last commit - catches untagged edits too."""
+def print_changed(design_dir: Path, items: list[tuple[str, dict]] | None = None) -> None:
+    """Entries added or edited since the last commit - catches untagged edits too.
+
+    With `items` supplied each added/modified entry also prints its full spec line, so a round can be
+    handled without opening the design sheets at all.
+    """
+    spec = {}
+    if items:
+        spec = {(KIND_SINGULAR.get(kind, kind), item["name"]): (kind, item) for kind, item in items}
+
     total = 0
     for name, kind in (("cards.md", "card"), ("powers.md", "power"),
                        ("mechanics.md", "mechanic"), ("relics.md", "relic")):
@@ -898,6 +906,15 @@ def print_changed(design_dir: Path) -> None:
             for label, rows in (("新增", added), ("修改", modified), ("删除", removed)):
                 if rows:
                     print(f"  {label}（{len(rows)}）: " + "、".join(rows))
+            if spec:
+                singular = KIND_SINGULAR.get(kind, kind)
+                for label, rows in (("新增", added), ("修改", modified)):
+                    for entry in rows:
+                        hit = spec.get((singular, entry))
+                        if hit:
+                            print(f"    {label} {entry}: {_spec_line(hit[0], hit[1])}")
+                        else:
+                            print(f"    {label} {entry}: （表里已找不到这一条，可能是改名前后的残留）")
     if total == 0:
         print("设计表自上次提交以来没有变化")
 
@@ -1122,7 +1139,7 @@ def main(argv: list[str]) -> int:
         print_pending(items_for_modes, scan_code_index(design_dir.parent / "src"))
         return 0
     if "--changed" in argv:
-        print_changed(design_dir)
+        print_changed(design_dir, items_for_modes)
         return 0
 
     print(f"卡牌表: {cards_path}")
