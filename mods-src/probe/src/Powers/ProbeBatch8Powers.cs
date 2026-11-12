@@ -114,7 +114,7 @@ public sealed class ProbeSwiftPower : CustomPowerModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "迅捷"),
-        ("selectionScreenPrompt", "从抽牌堆中选择{Amount}张牌加入你的手牌。"),
+        ("selectionScreenPrompt", "选择{Amount}张牌放入你的手牌。"),
         ("description", "在你的回合开始时，失去1层[gold]钙铠[/gold]，从[gold]抽牌堆[/gold]的随机3张牌中选择1张加入你的[gold]手牌[/gold]。"),
         ("smartDescription", "在你的回合开始时，失去[blue]{Amount}[/blue]层[gold]钙铠[/gold]，从[gold]抽牌堆[/gold]的随机[blue]{ReadyCard}[/blue]张牌中选择[blue]{Amount}[/blue]张加入你的[gold]手牌[/gold]。"),
     };
