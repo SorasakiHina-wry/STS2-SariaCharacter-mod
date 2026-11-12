@@ -78,13 +78,13 @@ public static class ProbeAncientDialoguePatch
         return null;
     }
 
-    private static List<AncientDialogue> Build(string ancientEntry, (int Index, int Lines)[] sets)
+    private static List<AncientDialogue> Build(string ancientEntry, (int Index, int Lines, bool LastHasNext)[] sets)
     {
         if (Cache.TryGetValue(ancientEntry, out var cached))
             return cached;
 
         var list = new List<AncientDialogue>();
-        foreach (var (index, lineCount) in sets)
+        foreach (var (index, lineCount, lastHasNext) in sets)
         {
             try
             {
@@ -98,7 +98,8 @@ public static class ProbeAncientDialoguePatch
                 // PopulateLines 只填台词，按钮文字（`.next`）是 AncientDialogueSet.PopulateLocKeys 里补的；
                 // 我们的对话是在那之后注入的，所以这里自己照同样的规则补一遍：
                 // 第 k 句的按钮键 = 该句本地化键去掉最后一段 + ".next"。
-                for (int k = 0; k < dialogue.Lines.Count - 1; k++)
+                int textLines = lastHasNext ? dialogue.Lines.Count : dialogue.Lines.Count - 1;
+                for (int k = 0; k < textLines; k++)
                 {
                     var line = dialogue.Lines[k];
                     string? key = line.LineText?.LocEntryKey;

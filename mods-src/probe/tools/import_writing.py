@@ -106,6 +106,12 @@ def parse_talk_blocks(text: str) -> tuple[dict[str, str], list[str]]:
             entries[key] = body
             line_no += 1
 
+        # 原版 165 套对话里，**每一句非最后台词都带 .next**（没写就是「继续」），
+        # 缺了引擎会把原始 key 直接显示在按钮上（比如 ancients.NEOW.talk...）。
+        for k in range(line_no - 1):
+            key = f"{ancient}.talk.{who}.{set_index}-{k}{repeat_suffix}.next"
+            entries.setdefault(key, DEFAULT_NEXT)
+
     return entries, warnings
 
 
@@ -143,9 +149,10 @@ def main(argv: list[str]) -> int:
     OUT.write_text(json.dumps(entries, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"\n已写入 {OUT.relative_to(ROOT)}")
 
-    # 生成 C# 数据表：先古 → [(对话序号, 行数)]
+    # 生成 C# 数据表：先古 → [(对话序号, 行数, 最后一句是否自带按钮文字)]
     # 行数只数 [古]/[她] 的台词；.next 只是按钮文字，不占行。
     by_ancient: dict[str, dict[int, int]] = {}
+    last_next: set[tuple[str, int]] = set()
     for key in entries:
         m = re.match(r"^([A-Z_]+)\.talk\.[A-Za-z_-]+\.(\d+)-(\d+)r?\.(ancient|char)$", key)
         if not m:
@@ -154,10 +161,20 @@ def main(argv: list[str]) -> int:
         by_ancient.setdefault(ancient, {})[set_index] = max(
             by_ancient.get(ancient, {}).get(set_index, 0), line_no + 1
         )
+    for key in entries:
+        m = re.match(r"^([A-Z_]+)\.talk\.[A-Za-z_-]+\.(\d+)-(\d+)r?\.next$", key)
+        if not m:
+            continue
+        ancient, set_index, line_no = m.group(1), int(m.group(2)), int(m.group(3))
+        if by_ancient.get(ancient, {}).get(set_index, 0) == line_no + 1:
+            last_next.add((ancient, set_index))
 
     rows = []
     for ancient in sorted(by_ancient):
-        sets = ", ".join(f"({idx}, {cnt})" for idx, cnt in sorted(by_ancient[ancient].items()))
+        sets = ", ".join(
+            f"({idx}, {cnt}, {str((ancient, idx) in last_next).lower()})"
+            for idx, cnt in sorted(by_ancient[ancient].items())
+        )
         rows.append(f'        ["{ancient}"] = new[] {{ {sets} }},')
 
     cs = (
@@ -168,8 +185,8 @@ def main(argv: list[str]) -> int:
         "/// <summary>由 tools/import_writing.py 生成，不要手改。</summary>\n"
         "internal static class ProbeAncientDialogueData\n"
         "{\n"
-        "    /// <summary>先古 ID → (对话序号, 行数)。对话序号就是 loc 键里的 X。</summary>\n"
-        "    public static readonly Dictionary<string, (int Index, int Lines)[]> Sets = new()\n"
+        "    /// <summary>先古 ID → (对话序号, 行数, 最后一句是否自带按钮文字)。</summary>\n"
+        "    public static readonly Dictionary<string, (int Index, int Lines, bool LastHasNext)[]> Sets = new()\n"
         "    {\n" + "\n".join(rows) + "\n"
         "    };\n"
         "\n"
