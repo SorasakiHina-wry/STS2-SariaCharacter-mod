@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""把已经实装的条目从 待实装 / 待修改 改成 已实装。
+"""把已经实装的条目从 待实装 / 待修改 改成 已实装，并清掉备注里的括号说明。
 
 判定：条目的 名称 在本体代码里出现过 ("title", "名称")。
 备注后面的补充说明会保留；「修改了牌效/数值」这类临时说明会被丢掉。
@@ -23,6 +23,7 @@ NAME_RE = re.compile(r"^名称[:：][ \t]*(.+?)[ \t]*$", re.M)
 NOTE_RE = re.compile(r"^备注[:：][ \t]*(.*)$", re.M)
 
 STALE = {"（修改了牌效）", "（修改了数值）", "（修改了牌效/数值）"}
+CLEAN_RE = re.compile(r"(已实装)[ \t]*[（(][^）)\n]*[）)]")
 
 
 def main(argv: list[str]) -> int:
@@ -33,6 +34,8 @@ def main(argv: list[str]) -> int:
         titles.update(TITLE_RE.findall(path.read_text(encoding="utf-8")))
 
     changed: list[tuple[str, str, str]] = []
+    cleaned: list[tuple[str, str]] = []
+    clean = "--clean" in argv
     for doc in sorted(DESIGN.glob("*.md")):
         text = doc.read_text(encoding="utf-8")
         pieces: list[str] = []
@@ -44,13 +47,20 @@ def main(argv: list[str]) -> int:
             note = NOTE_RE.search(body)
             if name and note and name.group(1) in titles:
                 old = note.group(1)
+                new = old
                 if old.startswith(("待实装", "待修改")):
                     rest = old[3:]
                     if rest.strip() in STALE:
                         rest = ""
                     new = "已实装" + rest
-                    block = block.replace(body, body[:note.start(1)] + new + body[note.end(1):])
                     changed.append((doc.name, name.group(1), old))
+                # 括号里的说明是给智能体看的，进 已实装 之后就没有意义了
+                if new.startswith("已实装"):
+                    new = CLEAN_RE.sub(r"\1", new)
+                    if new != old and not old.startswith(("待实装", "待修改")):
+                        cleaned.append((doc.name, name.group(1)))
+                if new != old:
+                    block = block.replace(body, body[:note.start(1)] + new + body[note.end(1):])
             pieces.append(block)
             pos = m.end()
         pieces.append(text[pos:])
@@ -58,9 +68,14 @@ def main(argv: list[str]) -> int:
         if new_text != text and not dry_run:
             doc.write_text(new_text, encoding="utf-8")
 
-    print(f"{'将标记' if dry_run else '已标记'} {len(changed)} 项")
+    verb = "将标记" if dry_run else "已标记"
+    print(f"{verb} {len(changed)} 项")
     for doc, name, old in changed:
         print(f"  {doc}: {name}  （{old[:24]}…）")
+    if cleaned:
+        print(f"{'将清理' if dry_run else '已清理'} {len(cleaned)} 条已实装备注说明")
+        for doc, name in cleaned:
+            print(f"  {doc}: {name}")
     return 0
 
 
