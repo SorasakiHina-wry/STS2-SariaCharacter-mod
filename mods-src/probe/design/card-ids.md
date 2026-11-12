@@ -26,6 +26,8 @@
 强制唤醒,ProbeForcedWake
 拓印,ProbeImprint
 封装,ProbeEncapsulate
+弱化,ProbeWeaken
+限位,ProbeLimit
 紧密防护,ProbeTightGuard
 爆裂,ProbeDetonate
 全弹发射,ProbeFullSalvo
@@ -64,6 +66,10 @@
 战略终结,ProbeStrategicEnd
 缠斗,ProbeTangle
 臂甲,ProbeArmguard
+策略归纳,ProbeStrategySummary
+便携刻印,ProbePortableSeal
+迅捷,ProbeSwift
+覆还,ProbeReturn
 升温,ProbeWarmUp
 捕集,ProbeCapture
 渗透,ProbeOsmosis

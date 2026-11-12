@@ -164,7 +164,7 @@ public sealed class ProbeReshape : CustomCardModel
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
         new CardsVar(3),
-        new PowerVar<DexterityPower>(2m),
+        new PowerVar<DexterityPower>(1m),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -175,7 +175,7 @@ public sealed class ProbeReshape : CustomCardModel
         await PowerCmd.Apply<ProbeReshapePower>(ctx, Owner.Creature, DynamicVars["DexterityPower"].BaseValue, Owner.Creature, this);
     }
 
-    protected override void OnUpgrade() => DynamicVars["DexterityPower"].UpgradeValueBy(-1m);
+    protected override void OnUpgrade() => DynamicVars.Cards.UpgradeValueBy(1m);
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
     {

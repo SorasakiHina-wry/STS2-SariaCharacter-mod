@@ -55,6 +55,7 @@ public sealed class ProbeEncapsulatePower : CustomPowerModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "封装"),
+        ("selectionScreenPrompt", "从弃牌堆中选择一张牌加入你的手牌。"),
         ("description", "下回合，将你[gold]弃牌堆[/gold]中的一张牌放入你的[gold]手牌[/gold]。"),
         ("smartDescription", "下回合，将你[gold]弃牌堆[/gold]中的[blue]{Amount}[/blue]张牌放入你的[gold]手牌[/gold]。"),
     };

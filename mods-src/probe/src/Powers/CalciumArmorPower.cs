@@ -121,6 +121,14 @@ public sealed class CalciumArmorPower : CustomPowerModel
             var experience = Owner.GetPower<ProbeDefenseExperiencePower>();
             if (experience != null)
                 await experience.OnArmourLost(choiceContext, (int)(-amount));
+
+            // 覆还：本回合每失去 1 层，就把等量钙铠记到下回合
+            var giveBack = Owner.GetPower<ProbeReturnPower>();
+            if (giveBack != null && giveBack.Amount > 0)
+            {
+                decimal carry = (int)(-amount) * giveBack.Amount;
+                await PowerCmd.Apply<ProbeNextTurnArmorPower>(choiceContext, Owner, carry, Owner, null);
+            }
         }
     }
 

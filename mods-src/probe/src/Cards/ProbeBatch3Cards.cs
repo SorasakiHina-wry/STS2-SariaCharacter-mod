@@ -398,7 +398,7 @@ public sealed class ProbeTraction : CustomCardModel
 [Pool(typeof(ProbeCardPool))]
 public sealed class ProbeChargeSuit : CustomCardModel
 {
-    public ProbeChargeSuit() : base(3, CardType.Power, CardRarity.Rare, TargetType.Self) { }
+    public ProbeChargeSuit() : base(2, CardType.Power, CardRarity.Rare, TargetType.Self) { }
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
@@ -413,7 +413,7 @@ public sealed class ProbeChargeSuit : CustomCardModel
             ctx, Owner.Creature, DynamicVars["ProbeChargeSuitPower"].BaseValue, Owner.Creature, this);
     }
 
-    protected override void OnUpgrade() => EnergyCost.UpgradeBy(-1);
+    protected override void OnUpgrade() => AddKeyword(CardKeyword.Innate);
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
     {

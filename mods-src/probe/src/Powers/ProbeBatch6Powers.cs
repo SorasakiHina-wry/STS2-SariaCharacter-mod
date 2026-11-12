@@ -301,7 +301,7 @@ public sealed class ProbeHemostasisPower : CustomPowerModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "止血"),
-        ("description", "在你的下几个回合开始前，至多受到2次伤害。"),
-        ("smartDescription", "在你的下[blue]{Amount}[/blue]个回合开始前，至多受到2次伤害。"),
+        ("description", "在你的下几个回合开始前，每回合至多受到2次伤害。"),
+        ("smartDescription", "在你的下[blue]{Amount}[/blue]个回合开始前，每回合至多受到2次伤害。"),
     };
 }
