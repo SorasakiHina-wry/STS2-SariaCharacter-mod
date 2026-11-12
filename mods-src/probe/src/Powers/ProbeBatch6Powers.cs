@@ -231,7 +231,14 @@ public sealed class ProbeFounderPower : CustomPowerModel
     };
 }
 
-/// <summary>止血 — Amount = 剩余回合；每回合前 2 次受伤照常，之后完全阻止。</summary>
+/// <summary>
+/// 止血 — Amount = 剩余回合；每回合前 2 次「受到伤害」照常结算，之后完全阻止。
+///
+/// 计数口径（用户确认）：**任何伤害都算一次，哪怕被格挡完全挡住**；只排除无法被格挡的伤害
+/// （ValueProp.Unblockable，例如中毒那种「失去生命」）。
+/// 计数 = ProbeHemostasisTickPatch（Hook.BeforeDamageReceived，每段真实伤害一次，早于格挡）；
+/// 阻止 = ModifyDamageCap 返回 0。
+/// </summary>
 public sealed class ProbeHemostasisPower : CustomPowerModel
 {
     private const int ALLOWED_HITS = 2;
@@ -240,9 +247,6 @@ public sealed class ProbeHemostasisPower : CustomPowerModel
     {
         public int remaining = ALLOWED_HITS;
     }
-
-    /// <summary>本次伤害修正里我是否真的接管了（Owner 是目标）。</summary>
-    private bool _touchedThisPass;
 
     public override PowerType Type => PowerType.Buff;
 
@@ -253,27 +257,29 @@ public sealed class ProbeHemostasisPower : CustomPowerModel
 
     protected override object? InitInternalData() => new Data();
 
-    public override decimal ModifyHpLostAfterOstyLate(
-        Creature target, decimal amount, ValueProp props, Creature? dealer, CardModel? cardSource)
+    /// <summary>
+    /// 额度用尽后把整段伤害压成 0（连格挡都不用消耗）。只在真正的伤害结算阶段读这个值，
+    /// 所以不会影响预览。
+    /// </summary>
+    public override decimal ModifyDamageCap(
+        Creature? target, ValueProp props, Creature? dealer, CardModel? cardSource, CardPlay? cardPlay)
     {
         if (target != Owner)
-            return amount;
-
-        _touchedThisPass = true;
-        return GetInternalData<Data>().remaining > 0 ? amount : 0m;   // 用尽后阻止
+            return decimal.MaxValue;
+        return GetInternalData<Data>().remaining <= 0 ? 0m : decimal.MaxValue;
     }
 
-    public override Task AfterModifyingHpLostAfterOsty()
+    /// <summary>每次受到伤害消耗一次额度（不论是否被格挡）。由 <c>ProbeHemostasisTickPatch</c> 调用。</summary>
+    public bool ConsumeHit()
     {
-        if (!_touchedThisPass)
-            return Task.CompletedTask;
-        _touchedThisPass = false;
-
         var data = GetInternalData<Data>();
         if (data.remaining > 0)
+        {
             data.remaining--;
-
-        return Task.CompletedTask;
+            Flash();
+            return true;
+        }
+        return false;
     }
 
     public override async Task AfterPlayerTurnStart(PlayerChoiceContext choiceContext, Player player)
