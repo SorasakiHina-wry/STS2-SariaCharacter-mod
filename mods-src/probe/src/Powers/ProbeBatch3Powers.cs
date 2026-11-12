@@ -107,7 +107,7 @@ public sealed class ProbeFirstAidPower : CustomPowerModel
     };
 }
 
-/// <summary>钙质化 — Amount = 每层易伤带来的额外伤害。伤害结算由 <see cref="Probe.Patches.BrittleCraftDamagePatch"/> 加上。</summary>
+/// <summary>钙质化 — Amount = 每层易伤带来的额外伤害。伤害结算由 <see cref="Probe.Patches.CalcifyDamagePatch"/> 加上。</summary>
 public sealed class ProbeVulnerableBonusPower : CustomPowerModel
 {
     public override PowerType Type => PowerType.Buff;

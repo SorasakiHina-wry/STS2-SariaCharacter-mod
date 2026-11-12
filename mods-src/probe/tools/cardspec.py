@@ -1000,6 +1000,13 @@ def check_var_names(src_dir: Path) -> list[str]:
                 declared.add(VAR_NAME_ALIAS.get(hit.group(1), hit.group(2)))
             for hit in re.finditer(r"new\s+(DamageVar|BlockVar|CardsVar|EnergyVar|RepeatVar|HpLossVar)\(", chunk):
                 declared.add(VAR_NAME_ALIAS[hit.group(1)])
+            # 计算型伤害三件套：声明 Base/Extra 后，CalculatedDamage 与 ExtraDamage 都是隐式可用的
+            if "CalculationBaseVar(" in chunk:
+                declared.add("CalculatedDamage")
+            if "ExtraDamageVar(" in chunk:
+                declared.add("ExtraDamage")
+            if "CalculationBaseVar(" in chunk:
+                declared.add("CalculationBase")
 
             for desc_m in re.finditer(r'\("(?:description|smartDescription)",\s*"((?:[^"\\]|\\.)*)"\)', chunk):
                 body = desc_m.group(1)

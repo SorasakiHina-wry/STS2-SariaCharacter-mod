@@ -173,23 +173,22 @@ public sealed class ProbeStrategicEnd : CustomCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new DamageVar(8m, ValueProp.Move),
-        new DynamicVar("PerArmor", 2m),
+        new CalculationBaseVar(8m),
+        new ExtraDamageVar(2m),
+        new CalculatedDamageVar(ValueProp.Move).WithMultiplier(
+            (card, _) => card.Owner.Creature.GetPower<CalciumArmorPower>()?.TotalGainedThisCombat ?? 0),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
-        int total = Owner.Creature.GetPower<CalciumArmorPower>()?.TotalGainedThisCombat ?? 0;
-        decimal damage = DynamicVars.Damage.BaseValue + DynamicVars["PerArmor"].BaseValue * total;
-
-        await DamageCmd.Attack(damage)
+        await DamageCmd.Attack(DynamicVars.CalculatedDamage)
             .FromCard(this, play)
             .TargetingAllOpponents(CombatState)
             .WithHitFx("vfx/vfx_attack_blunt")
             .Execute(ctx);
     }
 
-    protected override void OnUpgrade() => DynamicVars["PerArmor"].UpgradeValueBy(2m);
+    protected override void OnUpgrade() => DynamicVars.ExtraDamage.UpgradeValueBy(2m);
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
     {
@@ -200,7 +199,7 @@ public sealed class ProbeStrategicEnd : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "战略终结"),
-        ("description", "造成{Damage:diff()}点伤害。\n在本场战斗中，你每获得过1层[gold]钙铠[/gold]，伤害增加{PerArmor:diff()}。"),
+        ("description", "造成{CalculatedDamage:diff()}点伤害。\n在本场战斗中，你每获得过1层[gold]钙铠[/gold]，伤害增加{ExtraDamage:diff()}。"),
     };
 }
 
@@ -267,7 +266,7 @@ public sealed class ProbeArmguard : CustomCardModel
         await PowerCmd.Apply<StrengthPower>(ctx, Owner.Creature, DynamicVars["StrengthPower"].BaseValue, Owner.Creature, this);
 
         var copy = CreateClone();
-        await CardPileCmd.AddGeneratedCardToCombat(copy, PileType.Discard, Owner);
+        CardCmd.PreviewCardPileAdd(await CardPileCmd.AddGeneratedCardToCombat(copy, PileType.Discard, Owner), 2.2f);
     }
 
     protected override void OnUpgrade() => DynamicVars["StrengthPower"].UpgradeValueBy(1m);

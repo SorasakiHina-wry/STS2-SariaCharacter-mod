@@ -15,7 +15,7 @@ using Probe.Relics;
 namespace Probe.Patches;
 
 /// <summary>
-/// Post-multiplier damage bonuses for the Probe character:
+/// Post-multiplier damage bonus for 钙质化 (ProbeVulnerableBonusPower):
 ///
 ///   * 脆化技艺 (starter relic): +2 flat when the target has any Vulnerable
 ///   * 钙质化  (power):        +Amount damage per Vulnerable stack
@@ -33,11 +33,8 @@ namespace Probe.Patches;
 /// so it cannot recurse.
 /// </summary>
 [HarmonyPatch(typeof(Hook), "ModifyDamage")]
-public static class BrittleCraftDamagePatch
+public static class CalcifyDamagePatch
 {
-    /// <summary>Flat bonus applied when the target has any Vulnerable (see design/relics.md).</summary>
-    private const int BonusDamage = 2;
-
     [HarmonyPostfix]
     private static void Postfix(
         IRunState runState,
@@ -70,14 +67,11 @@ public static class BrittleCraftDamagePatch
         if (stacks <= 0)
             return;
 
-        decimal bonus = 0m;
-        if (OwnsRelic(player))
-            bonus += BonusDamage;
-
         var calcify = dealer.GetPower<ProbeVulnerableBonusPower>();
-        if (calcify != null && calcify.Amount > 0)
-            bonus += calcify.Amount * stacks;
+        if (calcify == null || calcify.Amount <= 0)
+            return;
 
+        decimal bonus = calcify.Amount * stacks;
         if (bonus <= 0)
             return;
 
@@ -85,16 +79,5 @@ public static class BrittleCraftDamagePatch
         __result = Hook.ModifyDamage(
             runState, combatState, target, dealer, __result + bonus, props, cardSource, cardPlay,
             ModifyDamageHookType.Cap, previewMode, out _);
-    }
-
-    private static bool OwnsRelic(Player player)
-    {
-        IReadOnlyList<RelicModel> relics = player.Relics;
-        for (int i = 0; i < relics.Count; i++)
-        {
-            if (relics[i] is BrittleCraft)
-                return true;
-        }
-        return false;
     }
 }

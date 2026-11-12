@@ -62,7 +62,7 @@ public sealed class Saria : PlaceholderCharacterModel
 
     public override IReadOnlyList<RelicModel> StartingRelics => new RelicModel[]
     {
-        ModelDb.Relic<BrittleCraft>(),
+        ModelDb.Relic<CalciumOperation>(),
     };
 
     /// <summary>
