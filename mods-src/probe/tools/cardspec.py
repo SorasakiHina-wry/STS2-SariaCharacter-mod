@@ -50,8 +50,8 @@ RARITY_RELIC = {
     "远古": "Ancient", "ancient": "Ancient",
 }
 # statuses the game already ships - no power definition needed
-VANILLA_STATUS = {"易伤", "虚弱", "脆弱", "中毒", "荆棘", "力量", "敏捷"}
-VANILLA_EN = {"vulnerable", "weak", "frail", "poison", "thorns", "strength", "dexterity"}
+VANILLA_STATUS = {"易伤", "虚弱", "脆弱", "中毒", "荆棘", "力量", "敏捷", "缓冲", "人工制品", "活力", "能量"}
+VANILLA_EN = {"vulnerable", "weak", "frail", "poison", "thorns", "strength", "dexterity", "buffer", "artifact", "vigor", "energy"}
 
 # CardKeyword enum values, and the sheet spellings that map onto them.
 CARD_KEYWORDS = {

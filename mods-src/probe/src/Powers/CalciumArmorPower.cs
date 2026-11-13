@@ -104,6 +104,10 @@ public sealed class CalciumArmorPower : CustomPowerModel
             int gained = (int)amount;
             TotalGainedThisCombat += gained;
 
+            var practice = Owner.GetPower<ProbePracticePower>();
+            if (practice != null)
+                await practice.OnArmourGained(choiceContext, gained);
+
             var resonance = Owner.GetPower<ProbeResonancePower>();
             if (resonance != null && resonance.Amount > 0 && resonance.Target != null && resonance.Target.IsAlive)
             {

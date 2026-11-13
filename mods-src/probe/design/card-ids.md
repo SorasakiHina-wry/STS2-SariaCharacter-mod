@@ -53,6 +53,7 @@
 防卫经验,ProbeDefenseExperience
 共振,ProbeResonance
 膨化,ProbePuffUp
+蒸氨回收,ProbeAmmoniaRecovery
 急救,ProbeFirstAid
 钙质化,ProbeCalcify
 神经干扰,ProbeNerveJamming
@@ -70,7 +71,13 @@
 便携刻印,ProbePortableSeal
 迅捷,ProbeSwift
 覆还,ProbeReturn
+熟能生巧,ProbePractice
+澄清,ProbeClarify
+抗酸化,ProbeAcidResist
+全身武装,ProbeFullArmament
+紧急指令,ProbeEmergencyOrder
 升温,ProbeWarmUp
 捕集,ProbeCapture
+破阵,ProbeBreach
 渗透,ProbeOsmosis
 极限功率,ProbeOverclock
