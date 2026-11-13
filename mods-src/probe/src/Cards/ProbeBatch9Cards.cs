@@ -11,6 +11,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using Probe.Pools;
@@ -219,8 +220,8 @@ public sealed class ProbeEmergencyOrder : CustomCardModel
     };
 }
 
-/// <summary>破阵 — 全身武装塞进手里的 Token 攻击牌。</summary>
-[Pool(typeof(ProbeCardPool))]
+/// <summary>破阵 — 全身武装塞进手里的无色 Token 攻击牌（和 升温/捕集 一样进 Token 池，不会出现在百科）。</summary>
+[Pool(typeof(TokenCardPool))]
 public sealed class ProbeBreach : CustomCardModel
 {
     public ProbeBreach() : base(0, CardType.Attack, CardRarity.Token, TargetType.AnyEnemy) { }
