@@ -362,3 +362,15 @@
 图标：
 备注：已实装
 ```
+
+```power
+名称：熟能生巧
+类型：buff
+叠层：计数
+衰减：无
+触发：{ArmorNeed}小于等于0时
+效果：抽{Amount}张牌。
+描述：你再获得{ArmorNeed}层钙铠，就抽{Amount}张牌。
+图标：
+备注：待实装（打出"熟能生巧""熟能生巧+"时，Amount+1；首次获得该power时，ArmorNeed初始为7且不会大于7；每次获得钙铠时，ArmorNeed减去相同数值，当ArmorNeed小于等于0时，重复"ArmorNeed+7，抽{Amount}张牌"的效果直到ArmorNeed大于0）
+```

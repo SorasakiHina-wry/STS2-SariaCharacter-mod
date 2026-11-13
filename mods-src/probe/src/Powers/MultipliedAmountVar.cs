@@ -7,10 +7,9 @@ namespace Probe.Powers;
 /// <summary>
 /// A display-only DynamicVar that equals "power stacks × factor".
 ///
-/// The game's power text only understands {Amount} (the stack count); SmartFormat has no math
-/// extension, so {3*Amount} cannot be written directly. This var computes the multiple at render
-/// time, which lets a description say "lose {BlockCost} block" and show the real number for the
-/// current stack count.
+/// 游戏 2026-11 更新后，SmartFormat 取的是 DynamicVar.ShownValue（= (int)PreviewValue），
+/// 原来那层 `GetBaseValueForIConvertible()` 钩子没了，所以只能在层数变化时把 PreviewValue 算好写进去
+/// （见 <c>ProbeSwiftPower.RefreshVars</c>）。这个类本身只负责“按倍率刷新”。
 /// </summary>
 public sealed class MultipliedAmountVar : DynamicVar
 {
@@ -21,11 +20,13 @@ public sealed class MultipliedAmountVar : DynamicVar
         _factor = factor;
     }
 
-    private decimal Computed =>
-        _owner is PowerModel power ? power.Amount * _factor : BaseValue;
+    /// <summary>按当前层数刷新显示值（BaseValue / PreviewValue 都要写，后者才是显示用的）。</summary>
+    public void Refresh(int powerAmount)
+    {
+        decimal value = powerAmount * _factor;
+        BaseValue = value;
+        PreviewValue = value;
+    }
 
-    // SmartFormat formats a plain object through ToString(), so this is what the player sees.
-    public override string ToString() => ((int)Computed).ToString(CultureInfo.InvariantCulture);
-
-    protected override decimal GetBaseValueForIConvertible() => Computed;
+    public override string ToString() => ((int)PreviewValue).ToString(CultureInfo.InvariantCulture);
 }

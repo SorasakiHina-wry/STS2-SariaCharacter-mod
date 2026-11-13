@@ -125,7 +125,8 @@ public sealed class ProbeDisorderPower : CustomPowerModel
     }
 
     public override async Task AfterDeath(
-        PlayerChoiceContext choiceContext, Creature creature, bool wasRemovalPrevented, float deathAnimLength)
+        PlayerChoiceContext choiceContext, Creature creature, CardModel? source, bool wasRemovalPrevented,
+        float deathAnimLength)
     {
         if (creature != Owner)
             return;

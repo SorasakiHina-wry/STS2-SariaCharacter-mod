@@ -62,11 +62,30 @@ public sealed class ProbeSwiftPower : CustomPowerModel
     public override string? CustomPackedIconPath => "res://images/atlases/power_atlas.sprites/thorns_power.tres";
     public override string? CustomBigIconPath => "res://images/powers/thorns_power.png";
 
+    /// <summary>描述里的「随机{ReadyCard}张」= 层数 × 3；层数一变就刷新显示值。</summary>
+    private void RefreshVars()
+    {
+        if (DynamicVars == null)
+            return;
+
+        var ready = DynamicVars["ReadyCard"] as MultipliedAmountVar;
+        ready?.Refresh(Amount);
+    }
+
+    public override Task AfterPowerAmountChanged(
+        PlayerChoiceContext choiceContext, PowerModel power, decimal amount, Creature? applier, CardModel? cardSource)
+    {
+        if (power == this)
+            RefreshVars();
+        return Task.CompletedTask;
+    }
+
     public override async Task AfterPlayerTurnStart(PlayerChoiceContext choiceContext, Player player)
     {
         if (player != Owner.Player || Amount <= 0)
             return;
 
+        RefreshVars();
         Flash();
 
         int take = (int)Amount;

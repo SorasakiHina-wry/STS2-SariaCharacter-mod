@@ -252,3 +252,25 @@ $tool = 'D:\STS2\mods-src\probe\tools\cardspec.py'
    不会自动包含「渗透」「极限功率」，需要额外补丁或改由其它途径获得。
 3. **遗物表扩充**：目前 4 张（1 初始 + 2 罕见 + 1 稀有），奖励档位偏薄。
 4. **卡池微调**：稀有 13 张偏多、普通 18 张偏少，按 `cardspec.py` 的配比提示调整。
+
+## 游戏更新后的适配（v0.113.0 / 2026-11-12）
+
+游戏加了新角色，同时改了几处 API，mod 里对应改过：
+
+| 变化 | 旧写法 | 新写法 |
+|---|---|---|
+| `NCharacterSelectScreen.SelectCharacter` | `(NCharacterSelectButton, CharacterModel)` | `(NCharacterSelectButton)`，角色从按钮上取 `button.Character` |
+| `Hook.AfterDeath` | `(ctx, creature, bool wasRemovalPrevented, float deathAnimLength)` | 多了 `CardModel? source` 参数（在第 3 位） |
+| `DynamicVar` 显示路径 | 有 `protected virtual GetBaseValueForIConvertible()` 可覆盖 | 改成读 `ShownValue = (int)PreviewValue`，只能自己把 `PreviewValue` 算好写进去 |
+
+对应处理：
+
+- `ProbeCharacterBg.cs`：补丁签名跟着改，判定从 `characterModel.Id.Entry` 改为 `button.Character?.Id.Entry`，
+  并保留按钮节点名（`PROBE-SARIA_button`）作为兜底；
+- `ProbeDisorderPower`：`AfterDeath` 补 `CardModel? source` 参数；
+- `MultipliedAmountVar`：改为「按倍率刷新」的 `Refresh(powerAmount)`（同时写 `BaseValue` 与 `PreviewValue`），
+  `ProbeSwiftPower` 在层数变化（`AfterPowerAmountChanged`）与回合开始时调用它。
+
+> 游戏源码索引（`vendor/sts2-modding-mcp/decompiled`）是 v0.111.0 的旧版；新版用
+> `D:\STS2\.tools\ilspycmd\ilspycmd.exe -p -o <dir> <game>\data_sts2_windows_x86_64\sts2.dll`
+> 自己反编译，当前版本在 `.cache/decompiled_2026-11-13/`。

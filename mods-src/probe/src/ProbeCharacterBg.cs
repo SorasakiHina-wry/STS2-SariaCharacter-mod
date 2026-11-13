@@ -10,6 +10,10 @@ namespace Probe;
 /// <summary>
 /// 角色选择界面的背景替换。
 ///
+/// 游戏 2026-11 更新后，`SelectCharacter` 的签名从
+/// `(NCharacterSelectButton, CharacterModel)` 变成了 `(NCharacterSelectButton)`，
+/// 角色改为从按钮上取，所以这里跟着改；同时保留按钮节点名作为兜底判定。
+///
 /// 原版是 `PreloadManager.Cache.GetScene(CharacterSelectBg)` 实例化一个场景；而 mod 的 PCK 里放不了
 /// 可直接加载的 .tscn（需要 .godot/exported 的 .scn + .tscn.remap）。所以这里不去改路径，
 /// 而是在 SelectCharacter 之后把背景容器（AnimatedBg）里的内容换成运行时用 PNG 建出来的 TextureRect。
@@ -24,9 +28,9 @@ public static class ProbeCharacterSelectBgPatch
     private static Texture2D? _cached;
 
     [HarmonyPostfix]
-    private static void Postfix(NCharacterSelectScreen __instance, CharacterModel characterModel)
+    private static void Postfix(NCharacterSelectScreen __instance, NCharacterSelectButton charSelectButton)
     {
-        if (!characterModel.Id.Entry.EndsWith("SARIA", StringComparison.Ordinal))
+        if (!IsSaria(charSelectButton))
             return;
 
         var container = __instance.GetNodeOrNull<Control>("AnimatedBg");
@@ -57,6 +61,20 @@ public static class ProbeCharacterSelectBgPatch
         rect.SetAnchorsPreset(Control.LayoutPreset.FullRect);
         container.AddChild(rect);
         Log.Info("[probe] character select background replaced");
+    }
+
+    /// <summary>新版游戏把角色挂在按钮上；老版没有这个属性时退回到节点名（`PROBE-SARIA_button`）。</summary>
+    private static bool IsSaria(NCharacterSelectButton? button)
+    {
+        if (button == null)
+            return false;
+
+        string? entry = button.Character?.Id.Entry;
+        if (!string.IsNullOrEmpty(entry))
+            return entry.EndsWith("SARIA", StringComparison.Ordinal);
+
+        string nodeName = button.Name?.ToString() ?? string.Empty;
+        return nodeName.Contains("SARIA", StringComparison.Ordinal);
     }
 
     private static Texture2D? LoadTexture()
