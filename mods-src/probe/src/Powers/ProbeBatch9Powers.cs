@@ -119,3 +119,33 @@ public sealed class ProbeFullArmamentPower : CustomPowerModel
         ("smartDescription", "在你的回合开始时，在你的[gold]手牌[/gold]中加入[blue]{Amount}[/blue]张[gold]破阵[/gold]。"),
     };
 }
+
+/// <summary>
+/// 飞龙形态 — 回合开始时获得 Amount 层钙铠。
+/// 走「正常」回合开始阶段，所以晚于钙铠自己的格挡结算：当回合只涨层数，格挡从下回合开始。
+/// </summary>
+public sealed class ProbeDragonFormPower : CustomPowerModel
+{
+    public override PowerType Type => PowerType.Buff;
+
+    public override PowerStackType StackType => PowerStackType.Counter;
+
+    public override string? CustomPackedIconPath => "res://images/atlases/power_atlas.sprites/thorns_power.tres";
+    public override string? CustomBigIconPath => "res://images/powers/thorns_power.png";
+
+    public override async Task AfterPlayerTurnStart(PlayerChoiceContext choiceContext, Player player)
+    {
+        if (player != Owner.Player || Amount <= 0)
+            return;
+
+        Flash();
+        await PowerCmd.Apply<CalciumArmorPower>(choiceContext, Owner, Amount, Owner, null);
+    }
+
+    public override List<(string, string)>? Localization => new()
+    {
+        ("title", "飞龙形态"),
+        ("description", "在你的回合开始时，获得[gold]钙铠[/gold]。"),
+        ("smartDescription", "在你的回合开始时，获得[blue]{Amount}[/blue]层[gold]钙铠[/gold]。"),
+    };
+}

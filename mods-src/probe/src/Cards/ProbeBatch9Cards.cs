@@ -151,7 +151,7 @@ public sealed class ProbeAcidResist : CustomCardModel
 [Pool(typeof(ProbeCardPool))]
 public sealed class ProbeFullArmament : CustomCardModel
 {
-    public ProbeFullArmament() : base(1, CardType.Power, CardRarity.Rare, TargetType.Self) { }
+    public ProbeFullArmament() : base(1, CardType.Power, CardRarity.Uncommon, TargetType.Self) { }
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
@@ -231,7 +231,7 @@ public sealed class ProbeBreach : CustomCardModel
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
         new DamageVar(2m, ValueProp.Move),
-        new RepeatVar(3),
+        new RepeatVar(2),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -284,5 +284,37 @@ public sealed class ProbePractice : CustomCardModel
     {
         ("title", "熟能生巧"),
         ("description", "你每获得7层[gold]钙铠[/gold]，就抽1张牌。"),
+    };
+}
+
+/// <summary>飞龙形态 — 常驻：每回合开始获得钙铠（在钙铠结算格挡之后加，当回合只涨层数）。</summary>
+[Pool(typeof(ProbeCardPool))]
+public sealed class ProbeDragonForm : CustomCardModel
+{
+    public ProbeDragonForm() : base(3, CardType.Power, CardRarity.Rare, TargetType.Self) { }
+
+    protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
+    {
+        new PowerVar<ProbeDragonFormPower>(4m),
+    };
+
+    protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
+    {
+        await CreatureCmd.TriggerAnim(Owner.Creature, "PowerUp", Owner.Character.PowerUpAnimDelay);
+        await PowerCmd.Apply<ProbeDragonFormPower>(ctx, Owner.Creature, DynamicVars["ProbeDragonFormPower"].BaseValue, Owner.Creature, this);
+    }
+
+    protected override void OnUpgrade() => DynamicVars["ProbeDragonFormPower"].UpgradeValueBy(1m);
+
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
+    {
+        HoverTipFactory.FromPower<CalciumArmorPower>(),
+    };
+
+    public override string? CustomPortraitPath => ProbeCardKit.InflamePortrait;
+    public override List<(string, string)>? Localization => new()
+    {
+        ("title", "飞龙形态"),
+        ("description", "在你的回合开始时，获得{ProbeDragonFormPower:diff()}层[gold]钙铠[/gold]。"),
     };
 }

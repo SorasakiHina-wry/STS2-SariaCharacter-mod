@@ -54,6 +54,7 @@
 共振,ProbeResonance
 膨化,ProbePuffUp
 蒸氨回收,ProbeAmmoniaRecovery
+全身武装,ProbeFullArmament
 急救,ProbeFirstAid
 钙质化,ProbeCalcify
 神经干扰,ProbeNerveJamming
@@ -74,8 +75,8 @@
 熟能生巧,ProbePractice
 澄清,ProbeClarify
 抗酸化,ProbeAcidResist
-全身武装,ProbeFullArmament
 紧急指令,ProbeEmergencyOrder
+飞龙形态,ProbeDragonForm
 升温,ProbeWarmUp
 捕集,ProbeCapture
 破阵,ProbeBreach
