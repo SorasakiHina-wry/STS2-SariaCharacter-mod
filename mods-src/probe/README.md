@@ -1,6 +1,6 @@
 # Probe / 塞雷娅 — 自定义角色 Mod
 
-在《杀戮尖塔2》v0.111.0 上新增一个**可玩的原创角色「塞雷娅」**与**一整套原创卡牌**（钙铠机制）。
+在《杀戮尖塔2》v0.113.0 上新增一个**可玩的原创角色「塞雷娅」**与**一整套原创卡牌**（钙铠机制）。
 美术部分自绘资源逐步替换中，未画的部位暂借原版。
 
 ## 当前状态（实测通过）
@@ -9,10 +9,10 @@
 |---|---|
 | Mod 加载 | `Found mod manifest ... mods\probe\mod_manifest.json` → `[probe] harmony patches: N applied` |
 | 角色 | 内部 ID `SARIA`（完整 `PROBE-SARIA`），显示名 **塞雷娅**，HP 70、金币 99 |
-| 起手遗物 | **脆化技艺**（攻击带易伤的目标 +2 伤害） |
+| 起手遗物 | **钙质操作**（每场战斗开始获得 5 层钙铠） |
 | 起手牌组 | 打击×4、防御×4、硬化×1、激发×1 |
-| 卡池 | **64 张**（含 2 张先古、2 张无色），配比表见 `design/cards.md` 顶部（自动生成） |
-| 自定义状态 | **27 个 power**，核心机制 **钙铠** |
+| 卡池 | **78 张**（含 2 张先古、4 张无色 token），配比表见 `design/cards.md` 顶部（自动生成） |
+| 自定义状态 | **31 个 power**，核心机制 **钙铠** |
 | 先古对话 | 9 位先古共 **54 行**，通过 `design/character-writing.md` → `assets/localization/zhs/ancients.json` 注入 |
 | 战斗立绘 | Spine 骨骼动画（自制），死亡/受击/攻击/能力动画已接 |
 | 选人界面 | 背景大图 + 底部头像 + 顶栏头像均已换成自定义资源 |
@@ -61,16 +61,16 @@ probe/
     card-ids.md               （生成物）中文名 ↔ 英文代号
     ancient-dialogue-vanilla.md（生成物）原版角色×先古对话参考
   docs/ → 见仓库根目录 docs/
-  tools/                    14 个维护脚本，见下
+  tools/                    15 个维护脚本，见下
   assets/                   PCK 源（只放 spine 与本地化 JSON，不放图片）
   src/
     ProbeMain.cs             入口 + 逐类应用 Harmony 补丁
     Characters/Saria.cs      角色模型
     Pools/ProbePools.cs      卡池 / 遗物池 / 药水池
-    Cards/*.cs               64 张卡
-    Powers/*.cs              27 个状态
+    Cards/*.cs               78 张卡
+    Powers/*.cs              31 个状态
     Relics/*.cs              4 张遗物
-    Patches/*.cs             钙铠常驻、建筑师胜利、脆化技艺加伤
+    Patches/*.cs             钙铠常驻、建筑师胜利、钙质化加伤、止血计数
     ProbeSpineAssets.cs      加载自制 Spine 资源
     ProbeSpineVisuals.cs     运行时构建 NCreatureVisuals + 命中框
     ProbeCharacterBg.cs      选人界面背景替换
@@ -198,6 +198,20 @@ $tool = 'D:\STS2\mods-src\probe\tools\cardspec.py'
 & $exe $tool --changed    # 自上次提交以来你改了哪些条目（没打标签也能抓到）
 & $exe $tool --pending    # 未实装条目的完整规格，一行一条
 ```
+
+### 一批内容做完了的收尾顺序
+
+```powershell
+$env:PYTHONUTF8='1'; $exe = 'D:\STS2\.python312\python.exe'; $t = 'D:\STS2\mods-src\probe\tools'
+& $exe "$t\normalize_text.py"            # 去中文空格、补句号（表与 C#）
+& $exe "$t\tag_implemented.py" --clean   # 待实装/待修改 → 已实装，清掉括号说明
+& $exe "$t\sort_cards.py"                # 各稀有度小节内：攻击 → 技能 → 能力
+& $exe "$t\card_ids.py"                  # 刷新 design/card-ids.md
+& $exe "$t\card_stats.py"                # 刷新 cards.md 顶部配比表
+& $exe "$t\cardspec.py"                  # 全量校验，必须「校验通过 ✅」
+```
+
+再编译 → 部署 → 提交 git（用户没要求就不启动游戏）。
 
 `--json --pending` 可机器读取。默认全量校验会报结构/配比/文案一致性问题。
 
