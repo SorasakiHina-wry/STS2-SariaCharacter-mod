@@ -211,6 +211,7 @@ $tool = 'D:\STS2\mods-src\probe\tools\cardspec.py'
 | `tag_status.py` | 给代码里已有的条目补 `已实装` |
 | `tag_implemented.py` | 把 `待实装/待修改` → `已实装`，并清掉备注里的括号说明（`--clean` 连已实装的残留一起清） |
 | `sort_powers.py` | 按 cards.md 顺序重排 powers.md（钙铠恒在首位） |
+| `sort_cards.py` | 在 普通/罕见/稀有 各小节内按「攻击 → 技能 → 能力」重排卡牌（`--dry-run` / `--check`；空样板自动沉到小节末尾） |
 | `fill_templates.py` | 按计划数量补齐空样板 |
 | `card_ids.py` | 生成 `design/card-ids.md` |
 | `card_stats.py` | 更新 cards.md 的「当前配比」表 |
