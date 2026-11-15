@@ -258,6 +258,12 @@ $env:PYTHONUTF8='1'; $exe = 'D:\STS2\.python312\python.exe'; $t = 'D:\STS2\mods-
 8. **AutoSlay 默认随机选角色**，`bridge_autoslay_start(character=...)` 靠 MCPTest 的补丁才生效；
    `AutoSlayConfig` 里是 `readonly` 静态字段，`max_floor` / `run_timeout` 改不动。
 9. **游戏结束界面的「继续」**在结算动画跑完前是 disabled 的（约十几秒），别误判卡死。
+10. **`CalculatedVar` 必须配 `CalculationBaseVar` + `CalculationExtraVar`**（`CalculatedDamageVar` 配 `CalculationBaseVar` + `ExtraDamageVar`）。
+    少了这对变量，`Calculate()` 里 `GetBaseVar()/GetExtraVar()` 按 key 取 DynamicVar 会抛 `KeyNotFoundException`，
+    而 `UpdateCardPreview()` 每次刷新卡面都会调它 —— 表现是**卡面数字变 0**、牌库滚动到该卡附近时
+    卡牌节点初始化到一半中断、出现**重复行/闪烁**（网格虚拟化复用了半初始化的 holder）。
+    案例：「策略归纳」曾用 `CalculatedVar("Hits")` 只声明自己一个变量，牌库底部闪成一片；改成
+    `RepeatVar` + setter 同步（照原版「巨镰」）后恢复正常。
 
 ## 下一步
 
