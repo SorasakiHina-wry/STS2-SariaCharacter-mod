@@ -117,18 +117,17 @@ public sealed class ProbeFullSalvo : CustomCardModel
     {
 
         int x = ResolveEnergyXValue();
-        if (IsUpgraded)
-            x += 1;
         if (x <= 0)
             return;
 
         ArgumentNullException.ThrowIfNull(play.Target, "cardPlay.Target");
 
-        await PowerCmd.Apply<VulnerablePower>(ctx, play.Target, 1m, Owner.Creature, this);
+        // 易伤层数 = X；命中次数 = X（升级 +1）
+        await PowerCmd.Apply<VulnerablePower>(ctx, play.Target, x, Owner.Creature, this);
         await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
             .FromCard(this, play)
             .Targeting(play.Target)
-            .WithHitCount(x)
+            .WithHitCount(IsUpgraded ? x + 1 : x)
             .WithHitFx("vfx/vfx_attack_slash")
             .Execute(ctx);
     }

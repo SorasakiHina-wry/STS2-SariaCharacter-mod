@@ -113,6 +113,19 @@ public sealed class ProbeDisorderPower : CustomPowerModel
 
     protected override object? InitInternalData() => new Data();
 
+    /// <summary>被挂上时就先检测一次：若目标此刻已在 30% 以下，立即触发。</summary>
+    public override async Task AfterPowerAmountChanged(
+        PlayerChoiceContext choiceContext, PowerModel power, decimal amount, Creature? applier, CardModel? cardSource)
+    {
+        if (power != this || amount <= 0)
+            return;
+
+        if (Owner.CurrentHp > Owner.MaxHp * 0.3m)
+            return;
+
+        await Trigger();
+    }
+
     public override async Task AfterCurrentHpChanged(Creature creature, decimal delta)
     {
         if (creature != Owner || delta >= 0)
