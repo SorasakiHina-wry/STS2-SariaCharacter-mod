@@ -197,7 +197,7 @@ public sealed class ProbeRehearsal : CustomCardModel
         PlayerCmd.EndTurn(Owner, canBackOut: false);
     }
 
-    protected override void OnUpgrade() { }
+    protected override void OnUpgrade() => EnergyCost.UpgradeBy(-1);
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
     {

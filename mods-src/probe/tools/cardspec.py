@@ -585,8 +585,7 @@ def validate_cards(cards: list[dict]) -> tuple[list[str], list[str]]:
         if seen[c["name"]] > 1:
             problems.append(f"{where}: 卡名重复")
         if c["base_raw"] and c["base_raw"] == c["upgrade_raw"]:
-            # 有些牌设计上就是「升级不变」（例如预演），只提示不报错
-            infos.append(f"{where}: 升级前后完全一样")
+            problems.append(f"{where}: 升级前后完全一样（是不是忘了写升级效果？）")
 
     counts: dict[str, int] = {}
     types: dict[str, int] = {}
