@@ -114,6 +114,14 @@ public sealed class ProbeStrategySummary : CustomCardModel
         {
             AssertMutable();
             _extraHits = value;
+
+            // 卡面「造成N点伤害X次」要跟着变；照原版「巨镰」的做法直接同步 DynamicVar，
+            // 不要用 CalculatedVar —— 它在牌库预览里没有目标，会显示成 0。
+            if (DynamicVars != null && DynamicVars.ContainsKey("Repeat"))
+            {
+                DynamicVars.Repeat.BaseValue = 1 + value;
+                DynamicVars.Repeat.PreviewValue = 1 + value;
+            }
         }
     }
 
@@ -124,7 +132,7 @@ public sealed class ProbeStrategySummary : CustomCardModel
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
         new DamageVar(8m, ValueProp.Move),
-        new CalculatedVar("Hits").WithMultiplier((card, _) => 1 + ((ProbeStrategySummary)card).ExtraHits),
+        new RepeatVar(1),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -133,7 +141,7 @@ public sealed class ProbeStrategySummary : CustomCardModel
 
         // 斩杀判定照原版「狂宴」：目标没有禁止 fatal 的 power，且这一击把它打死
         bool shouldTriggerFatal = play.Target.Powers.All(p => p.ShouldOwnerDeathTriggerFatal());
-        int hits = (int)((CalculatedVar)DynamicVars["Hits"]).Calculate(play.Target);
+        int hits = Math.Max(1, (int)DynamicVars.Repeat.BaseValue);
 
         var attack = await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
             .FromCard(this, play)
@@ -157,7 +165,7 @@ public sealed class ProbeStrategySummary : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "策略归纳"),
-        ("description", "造成{Damage:diff()}点伤害{Hits:diff()}次。\n斩杀时，这张牌在本局游戏中永久性额外造成一次伤害。"),
+        ("description", "造成{Damage:diff()}点伤害{Repeat:diff()}次。\n斩杀时，这张牌在本局游戏中永久性额外造成一次伤害。"),
     };
 }
 
