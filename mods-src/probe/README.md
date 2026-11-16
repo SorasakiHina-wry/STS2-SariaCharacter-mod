@@ -171,6 +171,12 @@ Start-Process 'steam://rungameid/2868840'
 验证走 MCP bridge：`bridge_focus_game` → `bridge_start_run(character="Saria")` →
 `bridge_get_full_state` / `bridge_play_card` / `bridge_capture_screenshot`（截图前必须 focus）。
 
+## 数值定价：`docs/how-to-adjust.md`
+
+调卡时先算「牌效值」= 总 VP ÷ (6 × 费用)，再对照稀有度区间（1 费普通中位约 2.0）。
+钙铠要分四种计价：产甲 +1.6/层、条件型「若≥N」1.2/层（另扣哑火 0.5）、
+至多型 1.5/层、清空型「失去所有」0.8/层（另扣清空风险 2）。
+完整单价表、稀有度区间与八张样例分析见 [docs/how-to-adjust.md](D:\STS2\docs\how-to-adjust.md)。
 ## 工作流（你 ↔ 我）
 
 > **协作节奏**：只有你说「检查文档更新 / 更新新内容」这类指令时，我才批量实现攒着的待办；
