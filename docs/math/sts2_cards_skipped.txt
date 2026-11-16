@@ -1,0 +1,225 @@
+﻿卡牌类名	原因
+Abundance	四项数值全为 0，不计
+Acrobatics	四项数值全为 0，不计
+Adrenaline	四项数值全为 0，不计
+Afterlife	四项数值全为 0，不计
+Alchemize	四项数值全为 0，不计
+Alignment	四项数值全为 0，不计
+Anointed	四项数值全为 0，不计
+Anticipate	四项数值全为 0，不计
+Apotheosis	四项数值全为 0，不计
+Apparition	四项数值全为 0，不计
+BattleTrance	四项数值全为 0，不计
+Begone	四项数值全为 0，不计
+BelieveInYou	四项数值全为 0，不计
+BigBang	四项数值全为 0，不计
+BladeDance	四项数值全为 0，不计
+BladeOfInk	四项数值全为 0，不计
+BladeSymphony	四项数值全为 0，不计
+Blaze	四项数值全为 0，不计
+Bloodletting	四项数值全为 0，不计
+Bodyguard	四项数值全为 0，不计
+BorrowedTime	四项数值全为 0，不计
+Brand	四项数值全为 0，不计
+BrightestFlame	四项数值全为 0，不计
+BubbleBubble	四项数值全为 0，不计
+BulletTime	四项数值全为 0，不计
+BundleOfJoy	四项数值全为 0，不计
+BurningPact	四项数值全为 0，不计
+Burst	四项数值全为 0，不计
+CalculatedGamble	四项数值全为 0，不计
+Catastrophe	四项数值全为 0，不计
+Chaos	四项数值全为 0，不计
+Charge	四项数值全为 0，不计
+Chill	四项数值全为 0，不计
+Cleanse	四项数值全为 0，不计
+Concoct	四项数值全为 0，不计
+Conqueror	四项数值全为 0，不计
+Convergence	四项数值全为 0，不计
+Coolheaded	四项数值全为 0，不计
+Coordinate	四项数值全为 0，不计
+CorrosiveWave	四项数值全为 0，不计
+DarkShackles	四项数值全为 0，不计
+Darkness	四项数值全为 0，不计
+DeadlyPoison	四项数值全为 0，不计
+DecisionsDecisions	四项数值全为 0，不计
+Discovery	四项数值全为 0，不计
+Distraction	四项数值全为 0，不计
+DoubleEnergy	四项数值全为 0，不计
+Dredge	四项数值全为 0，不计
+DrumOfBattle	四项数值全为 0，不计
+DualWield	四项数值全为 0，不计
+Dualcast	四项数值全为 0，不计
+Eidolon	四项数值全为 0，不计
+EndOfDays	四项数值全为 0，不计
+EnergySurge	四项数值全为 0，不计
+EnfeeblingTouch	四项数值全为 0，不计
+Enlightenment	四项数值全为 0，不计
+Expertise	四项数值全为 0，不计
+Fade	四项数值全为 0，不计
+FeedingFrenzy	四项数值全为 0，不计
+Flanking	四项数值全为 0，不计
+ForegoneConclusion	四项数值全为 0，不计
+ForgottenRitual	四项数值全为 0，不计
+Fusion	四项数值全为 0，不计
+Glimmer	四项数值全为 0，不计
+GlimpseBeyond	四项数值全为 0，不计
+Glow	四项数值全为 0，不计
+Guards	四项数值全为 0，不计
+Havoc	四项数值全为 0，不计
+Hibernate	四项数值全为 0，不计
+HiddenCache	四项数值全为 0，不计
+HiddenDaggers	四项数值全为 0，不计
+HiddenGem	四项数值全为 0，不计
+Hotfix	四项数值全为 0，不计
+HuddleUp	四项数值全为 0，不计
+Ignition	四项数值全为 0，不计
+ImitationLearning	四项数值全为 0，不计
+Impatience	四项数值全为 0，不计
+InfernalBlade	四项数值全为 0，不计
+Invoke	四项数值全为 0，不计
+JackOfAllTrades	四项数值全为 0，不计
+KnifeTrap	四项数值全为 0，不计
+Largesse	四项数值全为 0，不计
+LegionOfBone	四项数值全为 0，不计
+MasterOfStrategy	四项数值全为 0，不计
+Metamorphosis	四项数值全为 0，不计
+Modded	四项数值全为 0，不计
+Monologue	四项数值全为 0，不计
+Nightmare	四项数值全为 0，不计
+NoEscape	四项数值全为 0，不计
+NotYet	四项数值全为 0，不计
+Oblivion	四项数值全为 0，不计
+Offering	四项数值全为 0，不计
+OneTwoPunch	四项数值全为 0，不计
+Outbreak	四项数值全为 0，不计
+Outmaneuver	四项数值全为 0，不计
+Overclock	四项数值全为 0，不计
+Parse	四项数值全为 0，不计
+PiercingWail	四项数值全为 0，不计
+Plot	四项数值全为 0，不计
+Prepared	四项数值全为 0，不计
+PrimalForce	四项数值全为 0，不计
+Production	四项数值全为 0，不计
+Prolong	四项数值全为 0，不计
+Prophesize	四项数值全为 0，不计
+Purity	四项数值全为 0，不计
+Quadcast	四项数值全为 0，不计
+Quasar	四项数值全为 0，不计
+Rage	四项数值全为 0，不计
+Rainbow	四项数值全为 0，不计
+Reanimate	四项数值全为 0，不计
+Reboot	四项数值全为 0，不计
+RefineBlade	四项数值全为 0，不计
+Reflex	四项数值全为 0，不计
+Resonance	四项数值全为 0，不计
+Restlessness	四项数值全为 0，不计
+RoyalGamble	四项数值全为 0，不计
+Scavenge	四项数值全为 0，不计
+Scourge	四项数值全为 0，不计
+Scrawl	四项数值全为 0，不计
+Seance	四项数值全为 0，不计
+SecretTechnique	四项数值全为 0，不计
+SecretWeapon	四项数值全为 0，不计
+ShadowStep	四项数值全为 0，不计
+Shadowmeld	四项数值全为 0，不计
+SharedFate	四项数值全为 0，不计
+Sidestep	四项数值全为 0，不计
+SignalBoost	四项数值全为 0，不计
+Skim	四项数值全为 0，不计
+Snakebite	四项数值全为 0，不计
+Splash	四项数值全为 0，不计
+SpoilsOfBattle	四项数值全为 0，不计
+Spur	四项数值全为 0，不计
+Stoke	四项数值全为 0，不计
+StormOfSteel	四项数值全为 0，不计
+SummonForth	四项数值全为 0，不计
+Supercritical	四项数值全为 0，不计
+Synchronize	四项数值全为 0，不计
+Tactician	四项数值全为 0，不计
+Terraforming	四项数值全为 0，不计
+TheBomb	四项数值全为 0，不计
+TheSmith	四项数值全为 0，不计
+ThinkingAhead	四项数值全为 0，不计
+Transfigure	四项数值全为 0，不计
+Turbo	四项数值全为 0，不计
+Tutor	四项数值全为 0，不计
+Underworld	四项数值全为 0，不计
+UpMySleeve	四项数值全为 0，不计
+Venerate	四项数值全为 0，不计
+Voltaic	四项数值全为 0，不计
+WhiteNoise	四项数值全为 0，不计
+Wish	四项数值全为 0，不计
+Wisp	四项数值全为 0，不计
+Zap	四项数值全为 0，不计
+AshenStrike	伤害为动态计算
+Barrage	攻击段数动态
+BeatDown	随机目标
+BodySlam	伤害为动态计算
+BouncingFlask	随机目标
+Bully	伤害为动态计算
+Cascade	X 费牌
+CrescentSpear	伤害为动态计算
+DeathMarch	伤害为动态计算
+DemonicShield	格挡为动态计算
+Dirge	X 费牌
+Dismantle	攻击段数动态
+Entrench	格挡为动态计算
+Eradicate	X 费牌
+ExpectAFight	格挡为动态计算
+FiendFire	攻击段数动态
+Finisher	攻击段数动态
+Fisticuffs	格挡为动态计算
+FlakCannon	随机目标
+Flechettes	攻击段数动态
+Fuel	衍生/Token/状态/诅咒牌
+GangUp	伤害为动态计算
+GeneticAlgorithm	格挡为动态计算
+GiantRock	衍生/Token/状态/诅咒牌
+GoldAxe	伤害为动态计算
+HeavenlyDrill	X 费牌
+HelixDrill	攻击段数动态
+Luminesce	衍生/Token/状态/诅咒牌
+LunarBlast	攻击段数动态
+MadScience	不在卡牌图鉴中
+Malaise	X 费牌
+MementoMori	伤害为动态计算
+Mimic	格挡为动态计算
+MindBlast	伤害为动态计算
+MinionDiveBomb	衍生/Token/状态/诅咒牌
+MinionSacrifice	衍生/Token/状态/诅咒牌
+MinionStrike	衍生/Token/状态/诅咒牌
+Mirage	格挡为动态计算
+MockCardModel	测试占位牌
+MoltenFist	易伤/虚弱层数动态
+MultiCast	X 费牌
+Murder	伤害为动态计算
+PerfectedStrike	伤害为动态计算
+PreciseCut	伤害为动态计算
+Protector	伤害为动态计算
+PullFromBelow	攻击段数动态
+Radiate	攻击段数动态
+Rattle	攻击段数动态
+Rend	伤害为动态计算
+Ricochet	随机目标
+RipAndTear	随机目标
+Sacrifice	格挡为动态计算
+Shiv	衍生/Token/状态/诅咒牌
+Skewer	X 费牌
+Soul	衍生/Token/状态/诅咒牌
+SoulStorm	伤害为动态计算
+SovereignBlade	衍生/Token/状态/诅咒牌
+Spite	攻击段数动态
+Squeeze	伤害为动态计算
+Stack	格挡为动态计算
+Stardust	X 费牌
+Supermassive	伤害为动态计算
+SweepingGaze	衍生/Token/状态/诅咒牌
+SwordBoomerang	随机目标
+TearAsunder	攻击段数动态
+Tempest	X 费牌
+TheScythe	有伤害指令但取不到固定伤害
+TimesUp	伤害为动态计算
+Unleash	伤害为动态计算
+Volley	X 费牌
+Whirlwind	X 费牌
