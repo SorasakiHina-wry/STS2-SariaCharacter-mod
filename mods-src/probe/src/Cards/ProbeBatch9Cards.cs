@@ -226,7 +226,7 @@ public sealed class ProbeBreach : CustomCardModel
 {
     public ProbeBreach() : base(0, CardType.Attack, CardRarity.Token, TargetType.AnyEnemy) { }
 
-    public override IEnumerable<CardKeyword> CanonicalKeywords => new[] { CardKeyword.Retain };
+    public override IEnumerable<CardKeyword> CanonicalKeywords => new[] { CardKeyword.Retain, CardKeyword.Exhaust };
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
