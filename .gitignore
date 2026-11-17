@@ -15,8 +15,6 @@ GDRE_tools-v2.7.4-windows/
 **/obj/
 **/out/
 mods-src/probe/lib/
-
-# build output
 dist/
 
 # noise
