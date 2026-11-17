@@ -15,7 +15,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.ValueProps;
 
-namespace Probe.Powers;
+namespace Saria.Powers;
 
 // 2026-11-09 batch.
 

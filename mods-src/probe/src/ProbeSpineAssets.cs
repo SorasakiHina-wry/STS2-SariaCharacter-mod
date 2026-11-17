@@ -2,10 +2,10 @@ using System;
 using Godot;
 using MegaCrit.Sts2.Core.Logging;
 
-namespace Probe;
+namespace Saria;
 
 /// <summary>
-/// 在运行时加载 mods/probe/spine 下的 Spine 资源（spine-godot 4.2.43）。
+/// 在运行时加载 mods/saria/spine 下的 Spine 资源（spine-godot 4.2.43）。
 ///
 /// 注意：不能用 ResourceLoader.Load(".skel")——.skel/.atlas 的导入器只在 Godot 编辑器里存在，
 /// 运行时必须走 SpineAtlasResource / SpineSkeletonFileResource / SpineSkeletonDataResource 这套 API。
@@ -15,7 +15,7 @@ public static class ProbeSpineAssets
     private static GodotObject? _skeletonData;
 
     public static string SpineDir =>
-        OS.GetExecutablePath().GetBaseDir().PathJoin("mods").PathJoin("probe").PathJoin("spine");
+        OS.GetExecutablePath().GetBaseDir().PathJoin("mods").PathJoin("saria").PathJoin("spine");
 
     /// <summary>加载（并缓存）SpineSkeletonDataResource；失败返回 null。</summary>
     public static GodotObject? SkeletonData()
@@ -34,7 +34,7 @@ public static class ProbeSpineAssets
             var data = ClassDB.Instantiate("SpineSkeletonDataResource").AsGodotObject();
             if (atlas == null || skelFile == null || data == null)
             {
-                Log.Error("[probe][spine] instantiate failed");
+                Log.Error("[saria][spine] instantiate failed");
                 return null;
             }
 
@@ -47,17 +47,17 @@ public static class ProbeSpineAssets
 
             if (!data.Call("is_skeleton_data_loaded").AsBool())
             {
-                Log.Error("[probe][spine] skeleton data did not load");
+                Log.Error("[saria][spine] skeleton data did not load");
                 return null;
             }
 
-            Log.Info($"[probe][spine] skeleton ready version={data.Call("get_version").AsString()}");
+            Log.Info($"[saria][spine] skeleton ready version={data.Call("get_version").AsString()}");
             _skeletonData = data;
             return data;
         }
         catch (Exception ex)
         {
-            Log.Error($"[probe][spine] load threw: {ex}");
+            Log.Error($"[saria][spine] load threw: {ex}");
             return null;
         }
     }

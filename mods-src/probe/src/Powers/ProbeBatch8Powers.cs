@@ -15,7 +15,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
 
-namespace Probe.Powers;
+namespace Saria.Powers;
 
 /// <summary>限位 — 下一次获得格挡时整段变 0，然后层数 -1。</summary>
 public sealed class ProbeLimitPower : CustomPowerModel

@@ -13,7 +13,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 
-namespace Probe.Powers;
+namespace Saria.Powers;
 
 // 2026-11-08 batch. All follow the vanilla pattern: one power per mechanic, Amount on the icon,
 // extra numbers in named DynamicVars (docs 9.3 / 9.4).

@@ -12,7 +12,7 @@
 
 | 内容 | 数量 / 说明 |
 |---|---|
-| 角色 | 塞雷娅（内部 ID `SARIA`），HP 70，起手遗物「钙质技艺」 |
+| 角色 | 塞雷娅（Mod ID `saria`，角色 ID `SARIA-SARIA`），HP 70，起手遗物「钙质技艺」 |
 | 卡牌 | **89 张**（含基础牌、普通/罕见/稀有、先古牌、无色 token） |
 | 遗物 | **8 件**：初始 1、普通 1、罕见 2、稀有 2、商店 1、先古 1 |
 | 状态（power） | **31 个**，核心机制 **钙铠**：回合开始转化格挡、可被卡牌消耗以换取效果 |
@@ -23,6 +23,10 @@
 仍为占位的部分：能量球、地图标记、休息处/商店动画、卡框与卡图（当前借原版资源）。
 
 ---
+
+## 许可证
+
+代码以 [MIT](LICENSE) 许可发布。仓库**不包含**美术与 Spine 源文件（见下方版权声明）。
 
 ## 目录结构
 
@@ -56,14 +60,14 @@ dotnet build -c Release
 # 部署到本机游戏（会先关掉游戏进程）
 powershell -ExecutionPolicy Bypass -File tools\apply.ps1
 
-# 打包给测试者：产出 dist\probe\ 与 dist\probe-<version>.zip
+# 打包给测试者：产出 dist\saria\ 与 dist\saria-<version>.zip
 powershell -ExecutionPolicy Bypass -File tools\package.ps1
 ```
 
-**测试者安装**：解压 zip，把其中的 `probe` 文件夹整体放进 `<游戏目录>\mods\`，
+**测试者安装**：解压 zip，把其中的 `saria` 文件夹整体放进 `<游戏目录>\mods\`，
 确认已订阅 BaseLib，启动游戏后在角色选择界面选「塞雷娅」。
 
-> 注意：`probe.pck` 只装 Spine 与本地化 JSON；图片走散文件（`images/`），
+> 注意：`saria.pck` 只装 Spine 与本地化 JSON；图片走散文件（`images/`），
 > 详见 `mods-src/probe/README.md` 的「已知的坑」。
 
 ---
@@ -86,7 +90,7 @@ powershell -ExecutionPolicy Bypass -File tools\package.ps1
 
 ## 版权与分发声明
 
-- 本仓库**不是**游戏资源分发渠道：`resources/` 与 `mods-src/probe/assets/` 中的美术/骨骼
+- 本仓库**不是**游戏资源分发渠道：`resources/`（已被 gitignore）与 `mods-src/probe/assets/` 中的美术/骨骼
   部分取自游戏或为同人创作，**仅供本地构建使用，请勿二次分发**。
-- 若要公开托管，建议使用**私有仓库**；如需开源，请先将上表涉及第三方素材的目录排除。
+- 因此仓库只保留代码与设计表；本地若要打出带立绘的 zip，需要自备 `resources/` 目录。
 - 代码部分可自由参考，但不附带任何担保。

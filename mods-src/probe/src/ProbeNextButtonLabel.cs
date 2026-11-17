@@ -7,7 +7,7 @@ using MegaCrit.Sts2.Core.Nodes.Events;
 using MegaCrit.Sts2.addons.mega_text;
 using MegaCrit.Sts2.Core.Nodes.Events;
 
-namespace Probe;
+namespace Saria;
 
 /// <summary>
 /// 先古对话右下角按钮上的字。
@@ -49,7 +49,7 @@ public static class ProbeNextButtonLabelPatch
         MegaLabel label = LabelRef(__instance);
         if (label == null)
         {
-            Log.Warn("[probe] next button label not found");
+            Log.Warn("[saria] next button label not found");
             return;
         }
 

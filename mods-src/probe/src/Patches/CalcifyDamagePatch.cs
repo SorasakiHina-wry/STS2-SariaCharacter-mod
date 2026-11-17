@@ -9,10 +9,10 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.ValueProps;
-using Probe.Powers;
-using Probe.Relics;
+using Saria.Powers;
+using Saria.Relics;
 
-namespace Probe.Patches;
+namespace Saria.Patches;
 
 /// <summary>
 /// Post-multiplier damage bonus for 钙质化 (ProbeVulnerableBonusPower):

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Probe;
+namespace Saria;
 
 /// <summary>由 tools/import_writing.py 生成，不要手改。</summary>
 internal static class ProbeAncientDialogueData
@@ -19,5 +19,5 @@ internal static class ProbeAncientDialogueData
         ["VAKUU"] = new[] { (0, 3, false), (1, 1, false) },
     };
 
-    public const string CharacterEntry = "PROBE-SARIA";
+    public const string CharacterEntry = "SARIA-SARIA";
 }

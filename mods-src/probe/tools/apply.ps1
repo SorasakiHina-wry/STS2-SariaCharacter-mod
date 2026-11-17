@@ -12,7 +12,7 @@
   powershell -ExecutionPolicy Bypass -File mods-src\probe\tools\apply.ps1 -NoKill
 
 说明：
-* 游戏运行时会锁住 probe.dll，所以默认会自动关掉游戏再覆盖；-Launch 再拉起来。
+* 游戏运行时会锁住 saria.dll，所以默认会自动关掉游戏再覆盖；-Launch 再拉起来。
 * 只改数值时不需要重启游戏之外的任何工具。
 #>
 param(
@@ -23,7 +23,7 @@ param(
 $ErrorActionPreference = 'Stop'
 $ProjectDir = Split-Path -Parent $PSScriptRoot
 $GameDir = if ($env:STS2_GAME_DIR) { $env:STS2_GAME_DIR } else { 'D:\SteamLibrary\steamapps\common\Slay the Spire 2' }
-$Dll = Join-Path $GameDir 'mods\probe\probe.dll'
+$Dll = Join-Path $GameDir 'mods\saria\saria.dll'
 
 Write-Host '==> 1/3 编译' -ForegroundColor Cyan
 & (Join-Path $PSScriptRoot 'build.ps1')
@@ -31,7 +31,7 @@ Write-Host '==> 1/3 编译' -ForegroundColor Cyan
 $running = Get-Process -Name SlayTheSpire2 -ErrorAction SilentlyContinue
 if ($running) {
     if ($NoKill) {
-        Write-Warning '游戏正在运行，probe.dll 被占用；部署会失败（-NoKill 生效）'
+        Write-Warning '游戏正在运行，saria.dll 被占用；部署会失败（-NoKill 生效）'
     }
     else {
         Write-Host '==> 2/3 关闭游戏（覆盖 DLL 需要）' -ForegroundColor Cyan

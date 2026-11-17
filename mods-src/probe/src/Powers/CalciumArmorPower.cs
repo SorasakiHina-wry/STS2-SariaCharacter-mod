@@ -11,7 +11,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
 
-namespace Probe.Powers;
+namespace Saria.Powers;
 
 /// <summary>
 /// 钙铠 — the character's signature defensive buff.

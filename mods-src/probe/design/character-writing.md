@@ -3,7 +3,7 @@
 这个文件是**给你写文字的**：角色选择界面描述、以及和各位先古之民的对话。
 写完告诉我，我负责转成游戏内的本地化条目并接进代码。
 
-- 角色内部 ID：`SARIA`（完整 ID 是 `PROBE-SARIA`，前缀是 mod id）
+- 角色内部 ID：`SARIA`（完整 ID 是 `SARIA-SARIA`，前缀是 mod id）
 - 显示名：**塞雷娅**
 - 两种写法都可以：中文原文、带换行（我按 `\n` 处理）
 
@@ -197,10 +197,10 @@
 | 故障机器人 | `DEFECT` | 齿轮玻璃 |
 | 亡灵契约师 | `NECROBINDER` | 巫妖玻璃 |
 | 贵族 | `REGENT` | 贵族玻璃 |
-| **塞雷娅** | **`PROBE-SARIA`** | **钠钙玻璃** |
+| **塞雷娅** | **`SARIA-SARIA`** | **钠钙玻璃** |
 
 所以塞雷娅这一支写在 `assets/localization/zhs/relics.json`：
-`"SEA_GLASS.PROBE-SARIA.title": "钠钙玻璃"`（打包进 PCK 后由 BaseLib 合并进 `relics` 表）。
+`"SEA_GLASS.SARIA-SARIA.title": "钠钙玻璃"`（打包进 PCK 后由 BaseLib 合并进 `relics` 表）。
 这是目前原版**唯一**一个按角色取名的遗物。
 
 ### 佩尔 PAEL（融化巨龙）

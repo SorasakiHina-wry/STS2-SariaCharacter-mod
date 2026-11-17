@@ -12,10 +12,10 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
-using Probe.Pools;
-using Probe.Powers;
+using Saria.Pools;
+using Saria.Powers;
 
-namespace Probe.Relics;
+namespace Saria.Relics;
 
 // 遗物图标暂时借原版图集（IconBaseName），等自制图到位再逐个替换。
 

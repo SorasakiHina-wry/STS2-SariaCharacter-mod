@@ -13,7 +13,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
 
-namespace Probe.Powers;
+namespace Saria.Powers;
 
 /// <summary>封装 — start of next turn: fetch a random card from the discard pile into hand.</summary>
 public sealed class ProbeEncapsulatePower : CustomPowerModel

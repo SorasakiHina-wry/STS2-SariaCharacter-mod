@@ -11,9 +11,9 @@ using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
-using Probe.Cards;
+using Saria.Cards;
 
-namespace Probe.Powers;
+namespace Saria.Powers;
 
 /// <summary>
 /// 熟能生巧 — 每累计获得 7 层钙铠抽 Amount 张牌。

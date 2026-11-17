@@ -6,9 +6,9 @@ using MegaCrit.Sts2.Core.Hooks;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.ValueProps;
-using Probe.Powers;
+using Saria.Powers;
 
-namespace Probe.Patches;
+namespace Saria.Patches;
 
 /// <summary>
 /// 止血的「受到伤害次数」计数。

@@ -12,7 +12,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 
-namespace Probe.Powers;
+namespace Saria.Powers;
 
 // 2026-11-08 batch 3.
 

@@ -3,7 +3,7 @@ using HarmonyLib;
 using MegaCrit.Sts2.Core.Entities.Ancients;
 using MegaCrit.Sts2.Core.Models.Events;
 
-namespace Probe.Patches;
+namespace Saria.Patches;
 
 /// <summary>
 /// A custom character can never win a run without this.
@@ -54,13 +54,13 @@ public static class ArchitectWinRunPatch
         var field = AccessTools.Field(typeof(TheArchitect), "_dialogue");
         if (field == null)
         {
-            MegaCrit.Sts2.Core.Logging.Log.Warn("[probe] TheArchitect._dialogue not found; victory fix inactive");
+            MegaCrit.Sts2.Core.Logging.Log.Warn("[saria] TheArchitect._dialogue not found; victory fix inactive");
             return true;
         }
 
         if (field.GetValue(__instance) == null)
         {
-            MegaCrit.Sts2.Core.Logging.Log.Info("[probe] installing placeholder architect dialogue for custom character");
+            MegaCrit.Sts2.Core.Logging.Log.Info("[saria] installing placeholder architect dialogue for custom character");
             field.SetValue(__instance, Placeholder());
         }
 

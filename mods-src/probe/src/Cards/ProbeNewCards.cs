@@ -10,10 +10,10 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
-using Probe.Pools;
-using Probe.Powers;
+using Saria.Pools;
+using Saria.Powers;
 
-namespace Probe.Cards;
+namespace Saria.Cards;
 
 // Cards added in the 2026-11-07 design pass. Descriptions are the sheet's 描述/效果 text verbatim,
 // with only the numbers replaced by dynamic vars so upgrades show the right values.

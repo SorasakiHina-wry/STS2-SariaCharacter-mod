@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
-    <AssemblyName>probe</AssemblyName>
-    <RootNamespace>Probe</RootNamespace>
+    <AssemblyName>saria</AssemblyName>
+    <RootNamespace>Saria</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>

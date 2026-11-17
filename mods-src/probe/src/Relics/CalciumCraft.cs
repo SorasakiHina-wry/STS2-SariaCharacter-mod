@@ -5,10 +5,10 @@ using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Relics;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using Probe.Pools;
-using Probe.Powers;
+using Saria.Pools;
+using Saria.Powers;
 
-namespace Probe.Relics;
+namespace Saria.Relics;
 
 /// <summary>
 /// 钙质技艺 — 初始遗物：每场战斗开始获得 5 层钙铠。

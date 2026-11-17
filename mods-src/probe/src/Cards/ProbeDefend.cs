@@ -8,9 +8,9 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
-using Probe.Pools;
+using Saria.Pools;
 
-namespace Probe.Cards;
+namespace Saria.Cards;
 
 /// <summary>Starter skill. Mirrors Defend for the first build.</summary>
 [Pool(typeof(ProbeCardPool))]

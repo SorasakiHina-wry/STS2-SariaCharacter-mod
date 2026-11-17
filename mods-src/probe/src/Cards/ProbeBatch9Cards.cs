@@ -14,10 +14,10 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
-using Probe.Pools;
-using Probe.Powers;
+using Saria.Pools;
+using Saria.Powers;
 
-namespace Probe.Cards;
+namespace Saria.Cards;
 
 /// <summary>蒸氨回收 — 花掉一大笔钙铠换一层缓冲。</summary>
 [Pool(typeof(ProbeCardPool))]

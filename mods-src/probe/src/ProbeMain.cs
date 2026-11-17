@@ -3,7 +3,7 @@ using HarmonyLib;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Modding;
 
-namespace Probe;
+namespace Saria;
 
 /// <summary>
 /// Entry point. BaseLib discovers the custom models by scanning this assembly, so nothing has to be
@@ -12,17 +12,17 @@ namespace Probe;
 [ModInitializer("Init")]
 public static class ProbeMain
 {
-    public const string ModId = "probe";
+    public const string ModId = "saria";
 
     private static Harmony? _harmony;
 
     public static void Init()
     {
-        Log.Info("[probe] initializing validation character mod");
+        Log.Info("[saria] initializing character mod");
 
         try
         {
-            _harmony = new Harmony("com.sts2modding.probe");
+            _harmony = new Harmony("com.sts2modding.saria");
             // Patch class-by-class so one stale target can't take down the rest.
             int applied = 0, skipped = 0;
             foreach (var type in typeof(ProbeMain).Assembly.GetTypes())
@@ -37,15 +37,15 @@ public static class ProbeMain
                 catch (Exception ex)
                 {
                     skipped++;
-                    Log.Warn($"[probe] patch {type.Name} skipped: {ex.GetBaseException().Message}");
+                    Log.Warn($"[saria] patch {type.Name} skipped: {ex.GetBaseException().Message}");
                 }
             }
 
-            Log.Info($"[probe] harmony patches: {applied} applied, {skipped} skipped");
+            Log.Info($"[saria] harmony patches: {applied} applied, {skipped} skipped");
         }
         catch (Exception ex)
         {
-            Log.Error($"[probe] patch setup failed: {ex}");
+            Log.Error($"[saria] patch setup failed: {ex}");
         }
     }
 }

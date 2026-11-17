@@ -1,7 +1,7 @@
 using BaseLib.Abstracts;
 using Godot;
 
-namespace Probe.Pools;
+namespace Saria.Pools;
 
 /// <summary>
 /// The character's own card pool. BaseLib needs one per custom character; cards declare membership
@@ -9,7 +9,7 @@ namespace Probe.Pools;
 /// </summary>
 public sealed class ProbeCardPool : CustomCardPoolModel
 {
-    public override string Title => "probe";
+    public override string Title => "saria";
 
     public override Color DeckEntryCardColor => new("7FD4FF");
 

@@ -10,12 +10,12 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
-using Probe.Pools;
+using Saria.Pools;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models.CardPools;
-using Probe.Powers;
+using Saria.Powers;
 
-namespace Probe.Cards;
+namespace Saria.Cards;
 
 // 2026-11-08 batch 3 (9 cards). Token cards (升温 / 捕集) use CardRarity.Token so they never
 // show up in rewards or shops, exactly like vanilla 仆从打击 (MinionStrike).

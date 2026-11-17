@@ -6,11 +6,11 @@ using MegaCrit.Sts2.Core.Animation;
 using MegaCrit.Sts2.Core.Entities.Characters;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Relics;
-using Probe.Cards;
-using Probe.Pools;
-using Probe.Relics;
+using Saria.Cards;
+using Saria.Pools;
+using Saria.Relics;
 
-namespace Probe.Characters;
+namespace Saria.Characters;
 
 /// <summary>
 /// Validation character. Inherits BaseLib's PlaceholderCharacterModel, which borrows every visual

@@ -3,7 +3,7 @@
 > 由 `tools/card_ids.py` 自动生成，**不要手改**。改设计表后重新跑一次即可。
 >
 > 三列：`中文名,英文代号,源文件`。
-> 英文代号就是类名（游戏内 ID = `PROBE-` + 大写下划线形式，如 `ProbeStrike` → `PROBE-PROBE_STRIKE`）；
+> 英文代号就是类名（游戏内 ID = `SARIA-` + 大写下划线形式，如 `ProbeStrike` → `SARIA-PROBE_STRIKE`）；
 > 按它给卡图命名即可（例如 `ProbeStrike.png`）。
 >
 > 「批次」就是源文件：`ProbeStrike.cs` 是首批，`ProbeBatch2Cards.cs` 是第二批，以此类推。

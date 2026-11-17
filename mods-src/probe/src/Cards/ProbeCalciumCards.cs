@@ -9,10 +9,10 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
-using Probe.Pools;
-using Probe.Powers;
+using Saria.Pools;
+using Saria.Powers;
 
-namespace Probe.Cards;
+namespace Saria.Cards;
 
 /// <summary>硬化 — basic skill: gain 钙铠 stacks.</summary>
 [Pool(typeof(ProbeCardPool))]

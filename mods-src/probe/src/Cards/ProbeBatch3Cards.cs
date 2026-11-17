@@ -11,10 +11,10 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
-using Probe.Pools;
-using Probe.Powers;
+using Saria.Pools;
+using Saria.Powers;
 
-namespace Probe.Cards;
+namespace Saria.Cards;
 
 // 2026-11-08 batch. Card text mirrors design/cards.md verbatim; only numbers become dynamic vars.
 

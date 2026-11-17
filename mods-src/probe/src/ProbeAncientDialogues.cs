@@ -8,7 +8,7 @@ using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
 
-namespace Probe;
+namespace Saria;
 
 /// <summary>
 /// 把塞雷娅的先古对话接进原版先古。
@@ -113,11 +113,11 @@ public static class ProbeAncientDialoguePatch
             }
             catch (Exception ex)
             {
-                Log.Error($"[probe] dialogue build failed {ancientEntry}#{index}: {ex.Message}");
+                Log.Error($"[saria] dialogue build failed {ancientEntry}#{index}: {ex.Message}");
             }
         }
 
-        Log.Info($"[probe] ancient dialogues ready: {ancientEntry} -> {list.Count} 组");
+        Log.Info($"[saria] ancient dialogues ready: {ancientEntry} -> {list.Count} 组");
         Cache[ancientEntry] = list;
         return list;
     }

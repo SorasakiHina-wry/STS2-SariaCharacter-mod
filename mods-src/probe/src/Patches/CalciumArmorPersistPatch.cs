@@ -1,8 +1,8 @@
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Models;
-using Probe.Powers;
+using Saria.Powers;
 
-namespace Probe.Patches;
+namespace Saria.Patches;
 
 /// <summary>
 /// 钙铠 is the character's signature mechanic and stays on screen for the whole combat:

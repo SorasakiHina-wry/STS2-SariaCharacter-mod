@@ -5,7 +5,7 @@ using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Screens.CharacterSelect;
 
-namespace Probe;
+namespace Saria;
 
 /// <summary>
 /// 角色选择界面的背景替换。
@@ -36,7 +36,7 @@ public static class ProbeCharacterSelectBgPatch
         var container = __instance.GetNodeOrNull<Control>("AnimatedBg");
         if (container == null)
         {
-            Log.Warn("[probe] AnimatedBg node not found");
+            Log.Warn("[saria] AnimatedBg node not found");
             return;
         }
 
@@ -60,7 +60,7 @@ public static class ProbeCharacterSelectBgPatch
         };
         rect.SetAnchorsPreset(Control.LayoutPreset.FullRect);
         container.AddChild(rect);
-        Log.Info("[probe] character select background replaced");
+        Log.Info("[saria] character select background replaced");
     }
 
     /// <summary>新版游戏把角色挂在按钮上；老版没有这个属性时退回到节点名（`PROBE-SARIA_button`）。</summary>
@@ -85,18 +85,18 @@ public static class ProbeCharacterSelectBgPatch
         try
         {
             string path = OS.GetExecutablePath().GetBaseDir()
-                .PathJoin("mods").PathJoin("probe").PathJoin("images").PathJoin(BgFileName);
+                .PathJoin("mods").PathJoin("saria").PathJoin("images").PathJoin(BgFileName);
 
             if (!System.IO.File.Exists(path))
             {
-                Log.Warn($"[probe] background image missing: {path}");
+                Log.Warn($"[saria] background image missing: {path}");
                 return null;
             }
 
             var image = new Image();
             if (image.LoadPngFromBuffer(System.IO.File.ReadAllBytes(path)) != Error.Ok)
             {
-                Log.Warn("[probe] background png decode failed");
+                Log.Warn("[saria] background png decode failed");
                 return null;
             }
 
@@ -105,7 +105,7 @@ public static class ProbeCharacterSelectBgPatch
         }
         catch (Exception ex)
         {
-            Log.Error($"[probe] background load threw: {ex.Message}");
+            Log.Error($"[saria] background load threw: {ex.Message}");
             return null;
         }
     }

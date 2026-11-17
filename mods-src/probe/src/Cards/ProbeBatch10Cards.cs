@@ -15,10 +15,10 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
-using Probe.Pools;
-using Probe.Powers;
+using Saria.Pools;
+using Saria.Powers;
 
-namespace Probe.Cards;
+namespace Saria.Cards;
 
 /// <summary>苛化 — 全体多段伤害，每一段未被格挡的伤害抽一张牌。</summary>
 [Pool(typeof(ProbeCardPool))]

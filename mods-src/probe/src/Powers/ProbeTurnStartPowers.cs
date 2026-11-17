@@ -12,7 +12,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 
-namespace Probe.Powers;
+namespace Saria.Powers;
 
 // Turn-start companions for 钙铠 cards. They run in AfterPlayerTurnStart, which fires after
 // AfterSideTurnStart - the hook 钙铠 pays its block out in - so "after the armour gives block"

@@ -8,9 +8,9 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
-using Probe.Pools;
+using Saria.Pools;
 
-namespace Probe.Cards;
+namespace Saria.Cards;
 
 /// <summary>
 /// Starter attack. Deliberately a near-copy of Strike so the first build only proves that

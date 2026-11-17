@@ -19,7 +19,7 @@ ROOT = Path(__file__).resolve().parent.parent
 DOC = ROOT / "design" / "character-writing.md"
 OUT = ROOT / "assets" / "localization" / "zhs" / "ancients.json"
 
-CHAR_ID = "PROBE-SARIA"
+CHAR_ID = "SARIA-SARIA"
 DEFAULT_NEXT = "继续"
 
 TALK_RE = re.compile(r"```talk\r?\n(.*?)```", re.S)
@@ -190,7 +190,7 @@ def main(argv: list[str]) -> int:
         "    {\n" + "\n".join(rows) + "\n"
         "    };\n"
         "\n"
-        "    public const string CharacterEntry = \"PROBE-SARIA\";\n"
+        "    public const string CharacterEntry = \"SARIA-SARIA\";\n"
         "}\n"
     )
     cs_path = ROOT / "src" / "ProbeAncientDialogueData.cs"

@@ -5,7 +5,7 @@ using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Combat;
 
-namespace Probe;
+namespace Saria;
 
 /// <summary>
 /// 用程序化方式搭一个 NCreatureVisuals：SpineSprite 作为 %Visuals，外加 %Bounds / %IntentPos / %CenterPos。
@@ -29,7 +29,7 @@ public static class ProbeSpineVisuals
             var spine = ClassDB.Instantiate("SpineSprite").AsGodotObject() as Node2D;
             if (spine == null)
             {
-                Log.Error("[probe][spine] SpineSprite instantiate failed");
+                Log.Error("[saria][spine] SpineSprite instantiate failed");
                 return null;
             }
 
@@ -77,12 +77,12 @@ public static class ProbeSpineVisuals
             center.Owner = root;
             center.UniqueNameInOwner = true;
 
-            Log.Info("[probe][spine] creature visuals built");
+            Log.Info("[saria][spine] creature visuals built");
             return root;
         }
         catch (Exception ex)
         {
-            Log.Error($"[probe][spine] visuals build threw: {ex}");
+            Log.Error($"[saria][spine] visuals build threw: {ex}");
             return null;
         }
     }
@@ -95,7 +95,7 @@ public static class ProbeVisualsPatch
     [HarmonyPrefix]
     private static bool Prefix(CharacterModel __instance, ref NCreatureVisuals __result)
     {
-        Log.Info($"[probe][spine] CreateVisuals entry={__instance.Id.Entry}");
+        Log.Info($"[saria][spine] CreateVisuals entry={__instance.Id.Entry}");
 
         if (!__instance.Id.Entry.EndsWith("SARIA", StringComparison.Ordinal))
             return true;

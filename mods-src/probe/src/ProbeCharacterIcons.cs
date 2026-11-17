@@ -5,7 +5,7 @@ using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Screens.CharacterSelect;
 
-namespace Probe;
+namespace Saria;
 
 /// <summary>
 /// 角色图标接线。
@@ -48,18 +48,18 @@ public static class ProbeCharacterIcons
         try
         {
             string path = OS.GetExecutablePath().GetBaseDir()
-                .PathJoin("mods").PathJoin("probe").PathJoin("images").PathJoin(fileName);
+                .PathJoin("mods").PathJoin("saria").PathJoin("images").PathJoin(fileName);
 
             if (!System.IO.File.Exists(path))
             {
-                Log.Warn($"[probe] icon file missing: {path}");
+                Log.Warn($"[saria] icon file missing: {path}");
                 return null;
             }
 
             var image = new Image();
             if (image.LoadPngFromBuffer(System.IO.File.ReadAllBytes(path)) != Error.Ok)
             {
-                Log.Warn($"[probe] icon decode failed: {fileName}");
+                Log.Warn($"[saria] icon decode failed: {fileName}");
                 return null;
             }
 
@@ -67,7 +67,7 @@ public static class ProbeCharacterIcons
         }
         catch (Exception ex)
         {
-            Log.Error($"[probe] icon load threw ({fileName}): {ex.Message}");
+            Log.Error($"[saria] icon load threw ({fileName}): {ex.Message}");
             return null;
         }
     }
@@ -119,12 +119,12 @@ public static class ProbeCharacterSelectButtonPatch
         var icon = __instance.GetNodeOrNull<TextureRect>("%Icon");
         if (icon == null)
         {
-            Log.Warn("[probe] character select button icon not found");
+            Log.Warn("[saria] character select button icon not found");
             return;
         }
 
         icon.Texture = texture;
-        Log.Info("[probe] character select portrait applied");
+        Log.Info("[saria] character select portrait applied");
     }
 }
 

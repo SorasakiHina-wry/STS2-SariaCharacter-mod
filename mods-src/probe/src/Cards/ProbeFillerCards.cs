@@ -10,9 +10,9 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
-using Probe.Pools;
+using Saria.Pools;
 
-namespace Probe.Cards;
+namespace Saria.Cards;
 
 // Small shared helpers. Values are literals inside each card class rather than constructor
 // parameters: CanonicalVars must never depend on subclass state that might not be assigned yet.

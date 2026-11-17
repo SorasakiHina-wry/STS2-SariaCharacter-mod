@@ -2,7 +2,7 @@ using System.Globalization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 
-namespace Probe.Powers;
+namespace Saria.Powers;
 
 /// <summary>
 /// A display-only DynamicVar that equals "power stacks × factor".

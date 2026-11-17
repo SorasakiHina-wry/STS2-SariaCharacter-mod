@@ -8,7 +8,7 @@
 | 项目 | 状态 |
 |---|---|
 | Mod 加载 | `Found mod manifest ... mods\probe\mod_manifest.json` → `[probe] harmony patches: N applied` |
-| 角色 | 内部 ID `SARIA`（完整 `PROBE-SARIA`），显示名 **塞雷娅**，HP 70、金币 99 |
+| 角色 | Mod ID `saria`，角色 entry `SARIA-SARIA`，显示名 **塞雷娅**，HP 70、金币 99 |
 | 起手遗物 | **钙质技艺**（每场战斗开始获得 5 层钙铠） |
 | 起手牌组 | 打击×4、防御×4、硬化×1、激发×1 |
 | 卡池 | **78 张**（含 2 张先古、4 张无色 token），配比表见 `design/cards.md` 顶部（自动生成） |
@@ -100,7 +100,7 @@ BaseLib 的 `CustomCharacterModel` 构造时调用 `CustomContentDictionary.AddC
 
 ### 3. ID / 本地化 key 都是大写
 `ModelId.Entry = StringHelper.Slugify(type.Name)`（内部 `ToUpperInvariant()`）。
-注意**自定义角色的完整 entry 是 `modId-Id`**，即 `class Saria` → `PROBE-SARIA`：
+注意**自定义角色的完整 entry 是 `modId-Id`**，即 `class Saria` → `SARIA-SARIA`：
 判定角色、拼本地化键、对话键都必须用这个完整形式（或用 `EndsWith`）。
 
 ### 4. 本地化
@@ -143,9 +143,10 @@ BaseLib 的 `CustomCharacterModel` 构造时调用 `CustomContentDictionary.AddC
 `src/ProbeAncientDialogues.cs` 的做法：patch `AncientDialogueSet.GetValidDialogues`，从已有对话的本地化键
 推断先古 ID（`NEOW.talk.IRONCLAD.0-0.ancient` → `NEOW`），命中就返回我们自己构造的对话列表。
 
-键格式注意：[钮] 不是一句台词，而是**上一句**的按钮文字，键是 {套号}-{上一句行号}.next（行号只数 [古]/[她]）；PopulateLines 只填台词，按钮文字要在注入后自己补 NextButtonText，否则按钮上不显示文字。 后缀挂在**行号**后面，形如 1-0r。
+键格式注意：[钮] 不是一句台词，而是**上一句**的按钮文字，键是 {套号}-{上一句行号}.next（行号只数 [古]/[她]）；PopulateLines 只填台词，按钮文字要在注入后自己补 NextButtonText，否则按钮上不显示文字。
+ 后缀挂在**行号**后面，形如 1-0r。
 -
-键格式注意：**可重复标记 `r` 挂在行号后面**，形如 `NEOW.talk.PROBE-SARIA.1-0r.ancient`
+键格式注意：**可重复标记 `r` 挂在行号后面**，形如 `NEOW.talk.SARIA-SARIA.1-0r.ancient`
 （不是 `1r-0`）。全存档首次（`firstVisitEver`）是所有角色共用的，我们没写就沿用原版。
 
 ## 编译 / 部署 / 验证
@@ -293,7 +294,7 @@ $env:PYTHONUTF8='1'; $exe = 'D:\STS2\.python312\python.exe'; $t = 'D:\STS2\mods-
 对应处理：
 
 - `ProbeCharacterBg.cs`：补丁签名跟着改，判定从 `characterModel.Id.Entry` 改为 `button.Character?.Id.Entry`，
-  并保留按钮节点名（`PROBE-SARIA_button`）作为兜底；
+  并保留按钮节点名（`SARIA-SARIA_button`）作为兜底；
 - `ProbeDisorderPower`：`AfterDeath` 补 `CardModel? source` 参数；
 - `MultipliedAmountVar`：改为「按倍率刷新」的 `Refresh(powerAmount)`（同时写 `BaseValue` 与 `PreviewValue`），
   `ProbeSwiftPower` 在层数变化（`AfterPowerAmountChanged`）与回合开始时调用它。
