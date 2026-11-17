@@ -265,6 +265,11 @@ $env:PYTHONUTF8='1'; $exe = 'D:\STS2\.python312\python.exe'; $t = 'D:\STS2\mods-
 8. **AutoSlay 默认随机选角色**，`bridge_autoslay_start(character=...)` 靠 MCPTest 的补丁才生效；
    `AutoSlayConfig` 里是 `readonly` 静态字段，`max_floor` / `run_timeout` 改不动。
 9. **游戏结束界面的「继续」**在结算动画跑完前是 disabled 的（约十几秒），别误判卡死。
+
+11. **模型 ID 前缀取自「根命名空间」，不是 manifest 的 id**（BaseLib `TypePrefix.GetPrefix()`）。
+    把 mod id 从 `probe` 改成 `saria` 时，只改 manifest 是不够的：代码里 id 仍是 `PROBE-*`；
+    必须把命名空间 `Probe` 一起改成 `Saria`，模型 ID 才会变成 `SARIA-*`（角色 entry `SARIA-SARIA`）。
+    改 ID 会连带影响：先古对话键名、海玻璃专属名键、旧存档兼容性。
 10. **`CalculatedVar` 必须配 `CalculationBaseVar` + `CalculationExtraVar`**（`CalculatedDamageVar` 配 `CalculationBaseVar` + `ExtraDamageVar`）。
     少了这对变量，`Calculate()` 里 `GetBaseVar()/GetExtraVar()` 按 key 取 DynamicVar 会抛 `KeyNotFoundException`，
     而 `UpdateCardPreview()` 每次刷新卡面都会调它 —— 表现是**卡面数字变 0**、牌库滚动到该卡附近时

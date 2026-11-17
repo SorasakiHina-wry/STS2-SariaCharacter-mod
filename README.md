@@ -68,6 +68,8 @@ powershell -ExecutionPolicy Bypass -File tools\package.ps1
 **测试者安装**：解压 zip，把其中的 `saria` 文件夹整体放进 `<游戏目录>\mods\`，
 确认已订阅 BaseLib，启动游戏后在角色选择界面选「塞雷娅」。
 
+> 发版（版本号、打包、推送、Release）见 [`docs/release.md`](docs/release.md)。
+>
 > 注意：`saria.pck` 只装 Spine 与本地化 JSON；图片走散文件（`images/`），
 > 详见 `mods-src/probe/README.md` 的「已知的坑」。
 
@@ -91,7 +93,9 @@ powershell -ExecutionPolicy Bypass -File tools\package.ps1
 
 ## 版权与分发声明
 
-- 本仓库**不是**游戏资源分发渠道：`resources/`（已被 gitignore）与 `mods-src/probe/assets/` 中的美术/骨骼
+- 本仓库**不托管**游戏/同人美术资源：`resources/` 已被 `.gitignore` 排除，仓库里只有代码与设计表；
+  `mods-src/probe/assets/` 仅含 Spine 骨骼与本地化 JSON（本地构建用）
   部分取自游戏或为同人创作，**仅供本地构建使用，请勿二次分发**。
-- 因此仓库只保留代码与设计表；本地若要打出带立绘的 zip，需要自备 `resources/` 目录。
+- 正式发行包（Release 附件 `saria-<version>.zip`）里含立绘与 Spine，属于同人再分发，请勿转售；
+  本地若要自己打完整包，需要自备 `resources/` 目录（见 [`docs/release.md`](docs/release.md)）。
 - 代码部分可自由参考，但不附带任何担保。
