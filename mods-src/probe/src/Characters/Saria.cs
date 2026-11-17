@@ -32,7 +32,7 @@ public sealed class Saria : PlaceholderCharacterModel
     protected override List<(AnimState, string)> AnimationStates => new()
     {
         (new AnimState("cast"), "Cast"),
-        (new AnimState("cast"), "PowerUp"),   // 引擎默认：能力牌 = cast
+        (new AnimState("powerup"), "PowerUp"),   // 能力牌用专属的 powerup 剪辑（骨架里由 Attack_2 复制）
         (new AnimState("attack"), "Attack"),
         (new AnimState("hurt"), "Hit"),
         (new AnimState("cast"), "Buff"),
