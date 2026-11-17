@@ -26,7 +26,7 @@ public sealed class ProbeSoften : CustomCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new PowerVar<WeakPower>(3m),
+        new PowerVar<WeakPower>(2m),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -39,7 +39,8 @@ public sealed class ProbeSoften : CustomCardModel
             return; // 条件不足：可以打出，但没有效果
 
         await PowerCmd.ModifyAmount(ctx, armour, -2m, Owner.Creature, this);
-        await PowerCmd.Apply<WeakPower>(ctx, play.Target, DynamicVars.Weak.BaseValue, Owner.Creature, this);
+        for (int i = 0; i < 2; i++)
+            await PowerCmd.Apply<WeakPower>(ctx, play.Target, DynamicVars.Weak.BaseValue, Owner.Creature, this);
     }
 
     protected override void OnUpgrade() => DynamicVars.Weak.UpgradeValueBy(1m);
@@ -54,7 +55,7 @@ public sealed class ProbeSoften : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "软化"),
-        ("description", "若拥有大于等于2层[gold]钙铠[/gold]，则失去2层[gold]钙铠[/gold]，并给予{WeakPower:diff()}层[gold]虚弱[/gold]。"),
+        ("description", "若拥有大于等于2层[gold]钙铠[/gold]，则失去2层[gold]钙铠[/gold]，并给予{WeakPower:diff()}层[gold]虚弱[/gold]2次。"),
     };
 }
 
@@ -68,7 +69,7 @@ public sealed class ProbeLiveAmmo : CustomCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new DamageVar(6m, ValueProp.Move),
+        new DamageVar(4m, ValueProp.Move),
         new RepeatVar(3),
     };
 
@@ -84,13 +85,13 @@ public sealed class ProbeLiveAmmo : CustomCardModel
             .Execute(ctx);
     }
 
-    protected override void OnUpgrade() => EnergyCost.UpgradeBy(-1);
+    protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(1m);
 
     public override string? CustomPortraitPath => ProbeCardKit.StrikePortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "杀伤弹药"),
-        ("description", "造成{Damage:diff()}点伤害{Repeat:diff()}次。"),
+        ("description", "对所有敌人造成{Damage:diff()}点伤害{Repeat:diff()}次。"),
     };
 }
 
@@ -105,7 +106,7 @@ public sealed class ProbeCoverGen : CustomCardModel
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
         new PowerVar<CalciumArmorPower>(3m),
-        new BlockVar(4m, ValueProp.Move),
+        new BlockVar(5m, ValueProp.Move),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -118,8 +119,8 @@ public sealed class ProbeCoverGen : CustomCardModel
 
     protected override void OnUpgrade()
     {
-        DynamicVars["CalciumArmorPower"].UpgradeValueBy(1m);
-        DynamicVars.Block.UpgradeValueBy(2m);
+        DynamicVars["CalciumArmorPower"].UpgradeValueBy(2m);
+        DynamicVars.Block.UpgradeValueBy(4m);
     }
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
@@ -180,13 +181,13 @@ public sealed class ProbeCondense : CustomCardModel
 [Pool(typeof(ProbeCardPool))]
 public sealed class ProbeThermalRecovery : CustomCardModel
 {
-    public ProbeThermalRecovery() : base(2, CardType.Skill, CardRarity.Rare, TargetType.Self) { }
+    public ProbeThermalRecovery() : base(1, CardType.Skill, CardRarity.Rare, TargetType.Self) { }
 
     public override IEnumerable<CardKeyword> CanonicalKeywords => new[] { CardKeyword.Exhaust };
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new PowerVar<CalciumArmorPower>(3m),
+        new PowerVar<CalciumArmorPower>(2m),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -200,7 +201,7 @@ public sealed class ProbeThermalRecovery : CustomCardModel
         }
     }
 
-    protected override void OnUpgrade() => EnergyCost.UpgradeBy(-1);
+    protected override void OnUpgrade() => DynamicVars["CalciumArmorPower"].UpgradeValueBy(1m);
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
     {
@@ -228,7 +229,7 @@ public sealed class ProbeNerveJamming : CustomCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new PowerVar<WeakPower>(1m),
+        new PowerVar<WeakPower>(2m),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -259,7 +260,7 @@ public sealed class ProbeNerveJamming : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "神经干扰"),
-        ("description", "若拥有大于等于4层[gold]钙铠[/gold]，则失去4层[gold]钙铠[/gold]，并对所有敌人给予{WeakPower:diff()}层[gold]虚弱[/gold]3次。"),
+        ("description", "若拥有大于等于4层[gold]钙铠[/gold]，则失去4层[gold]钙铠[/gold]，并给予所有敌人{WeakPower:diff()}层[gold]虚弱[/gold]3次。"),
     };
 }
 /// <summary>煅烧 — power: damage each turn at the cost of armour.</summary>
@@ -310,7 +311,7 @@ public sealed class ProbeFirstAid : CustomCardModel
         await PowerCmd.Apply<ProbeFirstAidPower>(ctx, Owner.Creature, 1m, Owner.Creature, this);
     }
 
-    protected override void OnUpgrade() => EnergyCost.UpgradeBy(-1);
+    protected override void OnUpgrade() => AddKeyword(CardKeyword.Retain);
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
     {
@@ -321,7 +322,7 @@ public sealed class ProbeFirstAid : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "急救"),
-        ("description", "回合开始时，若生命小于等于25，则仅一次失去至多15层[gold]钙铠[/gold]，并回复相同数值的生命。"),
+        ("description", "回合开始时，若生命小于等于25，则仅一次失去至多10层[gold]钙铠[/gold]，并回复等量于其数值两倍的生命。"),
     };
 }
 

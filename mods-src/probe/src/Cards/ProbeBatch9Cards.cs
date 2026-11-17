@@ -51,7 +51,7 @@ public sealed class ProbeAmmoniaRecovery : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "蒸氨回收"),
-        ("description", "若拥有大于等于{IfUpgraded:show:5|7}层[gold]钙铠[/gold]，则失去{IfUpgraded:show:5|7}层[gold]钙铠[/gold]，获得1层[gold]缓冲[/gold]。"),
+        ("description", "若拥有大于等于{IfUpgraded:show:5|7}层[gold]钙铠[/gold]，则失去{IfUpgraded:show:5|7}层[gold]钙铠[/gold]，阻止下1次你受到的生命值损伤。"),
     };
 }
 
@@ -189,7 +189,7 @@ public sealed class ProbeEmergencyOrder : CustomCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new PowerVar<CalciumArmorPower>(6m),
+        new PowerVar<CalciumArmorPower>(4m),
         new EnergyVar(1),
         new CardsVar(3),
     };
@@ -204,7 +204,6 @@ public sealed class ProbeEmergencyOrder : CustomCardModel
     protected override void OnUpgrade()
     {
         DynamicVars.Energy.UpgradeValueBy(1m);
-        DynamicVars.Cards.UpgradeValueBy(1m);
     }
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]

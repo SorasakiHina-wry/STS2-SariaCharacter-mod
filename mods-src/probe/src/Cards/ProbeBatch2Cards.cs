@@ -26,7 +26,7 @@ public sealed class ProbeSteady : CustomCardModel
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
         new BlockVar(8m, ValueProp.Move),
-        new PowerVar<CalciumArmorPower>(4m),
+        new PowerVar<CalciumArmorPower>(1m),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -65,7 +65,7 @@ public sealed class ProbeDetonate : CustomCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new DamageVar(4m, ValueProp.Move),
+        new DamageVar(2m, ValueProp.Move),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -193,7 +193,7 @@ public sealed class ProbeDistract : CustomCardModel
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
         // 施加的层数 = 回合开始时要失去的格挡量（分神 3，分神+ 2）
-        new PowerVar<ProbeDistractPower>(3m),
+        new PowerVar<ProbeDistractPower>(4m),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -217,7 +217,7 @@ public sealed class ProbeDistract : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "分神"),
-        ("description", "在你的回合开始时，失去{IfUpgraded:show:2|3}点[gold]格挡[/gold]并获得1层[gold]钙铠[/gold]。"),
+        ("description", "在你的回合开始时，失去{IfUpgraded:show:3|4}点[gold]格挡[/gold]并获得1层[gold]钙铠[/gold]。"),
     };
 }
 
@@ -230,7 +230,7 @@ public sealed class ProbeFocusMind : CustomCardModel
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
         // 施加的层数 = 每回合获得的活力（4 / 升级 6）
-        new PowerVar<ProbeFocusMindPower>(4m),
+        new PowerVar<ProbeFocusMindPower>(3m),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)

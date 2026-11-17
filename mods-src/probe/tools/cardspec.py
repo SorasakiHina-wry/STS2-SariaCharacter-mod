@@ -281,6 +281,12 @@ def check_keywords(items: list[tuple[str, dict]], code_keywords: dict[tuple[str,
         if not name or card.get("status") == "待删除":
             continue
         sheet = set(card.get("keywords") or [])
+        # 允许写在基础文案里的行内词条（例如「[消耗]造成…」），与 词条 字段等价
+        inline = {"消耗": "Exhaust", "保留": "Retain", "固有": "Innate",
+                  "虚无": "Ethereal", "永恒": "Eternal", "不可打出": "Unplayable"}
+        for marker, keyword in inline.items():
+            if "[" + marker + "]" in str(card.get("base_raw") or ""):
+                sheet.add(keyword)
         code = set(code_keywords.get((KIND_SINGULAR[kind], name), set()))
         if sheet == code:
             continue
@@ -950,6 +956,7 @@ def _skeleton(text: str, from_code: bool) -> str:
     else:
         t = text
     t = re.sub(r"\[/?[a-zA-Z]+\]", "", t)   # 富文本标记（[gold]/[blue]）不参与比对
+    t = re.sub(r"\[(消耗|保留|固有|虚无|永恒|不可打出)\]", "", t)   # 行内词条标记不参与比对
     t = re.sub(r"[|｜]", "，", t)          # 表里用 | 分隔多条效果，牌面用 ，
     t = re.sub(r"<br>", "", t, flags=re.I)
     t = t.replace("\\n", "").replace("\n", "")

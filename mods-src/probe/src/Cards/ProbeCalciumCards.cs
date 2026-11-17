@@ -69,7 +69,7 @@ public sealed class ProbeIgnite : CustomCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new PowerVar<VulnerablePower>(2m),
+        new PowerVar<VulnerablePower>(3m),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

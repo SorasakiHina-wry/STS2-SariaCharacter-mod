@@ -27,7 +27,7 @@ public sealed class ProbeWeaken : CustomCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new DamageVar(8m, ValueProp.Move),
+        new DamageVar(6m, ValueProp.Move),
         new PowerVar<WeakPower>(2m),
     };
 
@@ -84,7 +84,7 @@ public sealed class ProbeLimit : CustomCardModel
         }
     }
 
-    protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(5m);
+    protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(3m);
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
     {
@@ -125,7 +125,7 @@ public sealed class ProbeStrategySummary : CustomCardModel
         }
     }
 
-    public ProbeStrategySummary() : base(1, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy) { }
+    public ProbeStrategySummary() : base(2, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy) { }
 
     public override IEnumerable<CardKeyword> CanonicalKeywords => new[] { CardKeyword.Exhaust };
 
@@ -154,7 +154,7 @@ public sealed class ProbeStrategySummary : CustomCardModel
             ExtraHits += 1;
     }
 
-    protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(3m);
+    protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(4m);
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
     {
@@ -179,7 +179,7 @@ public sealed class ProbePortableSeal : CustomCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new PowerVar<CalciumArmorPower>(18m),
+        new PowerVar<CalciumArmorPower>(21m),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -239,7 +239,9 @@ public sealed class ProbeSwift : CustomCardModel
 [Pool(typeof(ProbeCardPool))]
 public sealed class ProbeReturn : CustomCardModel
 {
-    public ProbeReturn() : base(2, CardType.Skill, CardRarity.Rare, TargetType.Self) { }
+    public ProbeReturn() : base(1, CardType.Skill, CardRarity.Rare, TargetType.Self) { }
+
+    public override IEnumerable<CardKeyword> CanonicalKeywords => new[] { CardKeyword.Exhaust };
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
@@ -251,7 +253,7 @@ public sealed class ProbeReturn : CustomCardModel
         await PowerCmd.Apply<ProbeReturnPower>(ctx, Owner.Creature, DynamicVars["ProbeReturnPower"].BaseValue, Owner.Creature, this);
     }
 
-    protected override void OnUpgrade() => EnergyCost.UpgradeBy(-1);
+    protected override void OnUpgrade() => RemoveKeyword(CardKeyword.Exhaust);
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
     {

@@ -77,7 +77,7 @@ public sealed class ProbeElectrum : CustomCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new DamageVar(7m, ValueProp.Move),
+        new DamageVar(4m, ValueProp.Move),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -196,7 +196,7 @@ public sealed class ProbeRefine : CustomCardModel
 {
     public ProbeRefine() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
 
-    private int ArmorCost => IsUpgraded ? 7 : 9;
+    private int ArmorCost => IsUpgraded ? 4 : 6;
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
@@ -232,7 +232,7 @@ public sealed class ProbeRefine : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "精炼"),
-        ("description", "若拥有大于等于{IfUpgraded:show:7|9}层[gold]钙铠[/gold]，则失去{IfUpgraded:show:7|9}层[gold]钙铠[/gold]，获得{Energy:energyIcons()}。\n将此牌返回你的[gold]手牌[/gold]。"),
+        ("description", "若拥有大于等于{IfUpgraded:show:4|6}层[gold]钙铠[/gold]，则失去{IfUpgraded:show:4|6}层[gold]钙铠[/gold]，获得{Energy:energyIcons()}。\n将此牌返回你的[gold]手牌[/gold]。"),
     };
 }
 
@@ -253,7 +253,7 @@ public sealed class ProbeEnamel : CustomCardModel
 
         int amount = armour.Amount;
         await PowerCmd.ModifyAmount(ctx, armour, -amount, Owner.Creature, this);
-        await CreatureCmd.GainBlock(Owner.Creature, amount * 3, ValueProp.Unpowered, play);
+        await CreatureCmd.GainBlock(Owner.Creature, amount * 2, ValueProp.Unpowered, play);
     }
 
     protected override void OnUpgrade() => AddKeyword(CardKeyword.Retain);
@@ -268,7 +268,7 @@ public sealed class ProbeEnamel : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "珐琅质"),
-        ("description", "失去所有[gold]钙铠[/gold]，获得等量于失去[gold]钙铠[/gold]数值三倍的[gold]格挡[/gold]。"),
+        ("description", "失去所有[gold]钙铠[/gold]，获得等量于失去[gold]钙铠[/gold]数值两倍的[gold]格挡[/gold]。"),
     };
 }
 

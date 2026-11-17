@@ -71,7 +71,7 @@ public sealed class ProbeBurnPower : CustomPowerModel
 /// </summary>
 public sealed class ProbeFirstAidPower : CustomPowerModel
 {
-    private const int ArmorCap = 15;
+    private const int ArmorCap = 10;
     private const int HpThreshold = 25;
 
     public override PowerType Type => PowerType.Buff;
@@ -92,7 +92,7 @@ public sealed class ProbeFirstAidPower : CustomPowerModel
         if (loss > 0 && armour != null)
         {
             await PowerCmd.ModifyAmount(choiceContext, armour, -loss, Owner, null);
-            await CreatureCmd.Heal(Owner, loss);
+            await CreatureCmd.Heal(Owner, loss * 2);
         }
 
         Flash();
@@ -102,8 +102,8 @@ public sealed class ProbeFirstAidPower : CustomPowerModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "急救"),
-        ("description", "回合开始时，若生命垂危，则用[gold]钙铠[/gold]换取等量治疗。"),
-        ("smartDescription", "回合开始时，若生命小于等于[blue]25[/blue]，则失去至多[blue]15[/blue]层[gold]钙铠[/gold]并回复等量生命，然后次数 -1。当前剩余[blue]{Amount}[/blue]次。"),
+        ("description", "回合开始时，若生命小于等于25，则仅一次失去至多10层[gold]钙铠[/gold]，并回复等量于其数值两倍的生命。"),
+        ("smartDescription", "回合开始时，若生命小于等于25，则仅{Amount}次失去至多10层[gold]钙铠[/gold]，并回复等量于其数值两倍的生命。"),
     };
 }
 

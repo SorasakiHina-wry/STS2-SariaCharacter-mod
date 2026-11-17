@@ -28,7 +28,7 @@ public sealed class ProbeCausticize : CustomCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new DamageVar(6m, ValueProp.Move),
+        new DamageVar(3m, ValueProp.Move),
         new RepeatVar(2),
     };
 
@@ -62,11 +62,11 @@ public sealed class ProbeVascularize : CustomCardModel
 {
     public ProbeVascularize() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
 
-    private int ArmorCost => IsUpgraded ? 3 : 5;
+    private int ArmorCost => IsUpgraded ? 1 : 3;
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new CardsVar(3),
+        new CardsVar(5),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -102,7 +102,7 @@ public sealed class ProbeVascularize : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "脉化结构"),
-        ("description", "若拥有大于等于{IfUpgraded:show:3|5}层[gold]钙铠[/gold]，则失去{IfUpgraded:show:3|5}层[gold]钙铠[/gold]，抽{Cards:diff()}张牌，并将此牌返回你的[gold]手牌[/gold]。"),
+        ("description", "若拥有大于等于{IfUpgraded:show:1|3}层[gold]钙铠[/gold]，则失去{IfUpgraded:show:1|3}层[gold]钙铠[/gold]，抽{Cards:diff()}张牌，并将此牌返回你的[gold]手牌[/gold]。"),
     };
 }
 
@@ -180,7 +180,7 @@ public sealed class ProbeRehearsal : CustomCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new CardsVar(3),
+        new CardsVar(1),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -197,7 +197,7 @@ public sealed class ProbeRehearsal : CustomCardModel
         PlayerCmd.EndTurn(Owner, canBackOut: false);
     }
 
-    protected override void OnUpgrade() => EnergyCost.UpgradeBy(-1);
+    protected override void OnUpgrade() => DynamicVars.Cards.UpgradeValueBy(2m);
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
     {
@@ -221,7 +221,7 @@ public sealed class ProbeDecomposition : CustomCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new CardsVar(5),
+        new CardsVar(2),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -264,7 +264,7 @@ public sealed class ProbeSuppression : CustomCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new DamageVar(6m, ValueProp.Move),
+        new DamageVar(3m, ValueProp.Move),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -272,7 +272,7 @@ public sealed class ProbeSuppression : CustomCardModel
         ArgumentNullException.ThrowIfNull(play.Target, "cardPlay.Target");
 
         var armour = Owner.Creature.GetPower<CalciumArmorPower>();
-        int stacks = armour == null ? 0 : Math.Min(4, armour.Amount);
+        int stacks = armour == null ? 0 : Math.Min(3, armour.Amount);
         if (stacks <= 0)
             return;
 
@@ -289,7 +289,7 @@ public sealed class ProbeSuppression : CustomCardModel
         }
     }
 
-    protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(2m);
+    protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(1m);
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
     {
@@ -300,7 +300,7 @@ public sealed class ProbeSuppression : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "连续压制"),
-        ("description", "失去至多4层[gold]钙铠[/gold]。\n每失去1层[gold]钙铠[/gold]造成{Damage:diff()}点伤害，抽1张牌。"),
+        ("description", "失去至多3层[gold]钙铠[/gold]。\n每失去1层[gold]钙铠[/gold]造成{Damage:diff()}点伤害，抽1张牌。"),
     };
 }
 
@@ -489,30 +489,31 @@ public sealed class ProbeHeavyPunch : CustomCardModel
 [Pool(typeof(ProbeCardPool))]
 public sealed class ProbeImpale : CustomCardModel
 {
-    public ProbeImpale() : base(1, CardType.Attack, CardRarity.Rare, TargetType.AllEnemies) { }
+    public ProbeImpale() : base(1, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy) { }
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new DamageVar(1m, ValueProp.Move),
-        new RepeatVar(8),
+        new DamageVar(2m, ValueProp.Move),
+        new RepeatVar(6),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
+        ArgumentNullException.ThrowIfNull(play.Target, "cardPlay.Target");
         await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
             .FromCard(this, play)
-            .TargetingAllOpponents(CombatState)
+            .Targeting(play.Target)
             .WithHitCount((int)DynamicVars.Repeat.BaseValue)
             .WithHitFx("vfx/vfx_attack_slash")
             .Execute(ctx);
     }
 
-    protected override void OnUpgrade() => DynamicVars.Repeat.UpgradeValueBy(5m);
+    protected override void OnUpgrade() => DynamicVars.Repeat.UpgradeValueBy(2m);
 
     public override string? CustomPortraitPath => ProbeCardKit.StrikePortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "刺穿"),
-        ("description", "对所有敌人造成{Damage:diff()}点伤害{Repeat:diff()}次。"),
+        ("description", "造成{Damage:diff()}点伤害{Repeat:diff()}次。"),
     };
 }

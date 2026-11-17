@@ -131,10 +131,11 @@ public sealed class ProbeResonancePower : CustomPowerModel
 /// <summary>防卫经验 — tracks armour lost this turn; the first 8 stacks draw cards.</summary>
 public sealed class ProbeDefenseExperiencePower : CustomPowerModel
 {
-    public const int Threshold = 8;
+    /// <summary>每回合累计失去这么多层钙铠就触发一次。</summary>
+    public const int Threshold = 5;
 
-    /// <summary>Cards drawn per trigger (2 base, +2 per extra copy played).</summary>
-    public int ExtraCards = 2;
+    /// <summary>本回合到目前为止失去的层数。</summary>
+    private int _accumulated;
 
     private bool _triggeredThisTurn;
 
@@ -145,39 +146,34 @@ public sealed class ProbeDefenseExperiencePower : CustomPowerModel
     public override string? CustomPackedIconPath => "res://images/atlases/power_atlas.sprites/thorns_power.tres";
     public override string? CustomBigIconPath => "res://images/powers/thorns_power.png";
 
-    public override async Task AfterPlayerTurnStart(PlayerChoiceContext choiceContext, Player player)
+    public override Task AfterPlayerTurnStart(PlayerChoiceContext choiceContext, Player player)
     {
         if (player != Owner.Player)
-            return;
+            return Task.CompletedTask;
 
         _triggeredThisTurn = false;
-        if (Amount != Threshold)
-            await PowerCmd.ModifyAmount(choiceContext, this, Threshold - Amount, Owner, null);
+        _accumulated = 0;
+        return Task.CompletedTask;
     }
 
     /// <summary>Called by <see cref="CalciumArmorPower"/> whenever stacks are lost.</summary>
     public async Task OnArmourLost(PlayerChoiceContext choiceContext, int lost)
     {
-        if (_triggeredThisTurn || lost <= 0)
+        if (_triggeredThisTurn || lost <= 0 || Amount <= 0)
             return;
 
-        if (Amount - lost > 0)
-        {
-            await PowerCmd.ModifyAmount(choiceContext, this, -lost, Owner, null);
+        _accumulated += lost;
+        if (_accumulated < Threshold)
             return;
-        }
 
         _triggeredThisTurn = true;
         Flash();
-        await PowerCmd.ModifyAmount(choiceContext, this, -Amount, Owner, null);
-        if (ExtraCards > 0)
-            await CardPileCmd.Draw(choiceContext, ExtraCards, Owner.Player);
+        await CardPileCmd.Draw(choiceContext, Amount, Owner.Player);
     }
 
     public override List<(string, string)>? Localization => new()
     {
         ("title", "防卫经验"),
-        ("description", "本回合再失去8层[gold]钙铠[/gold]后，抽2张牌。"),
-        ("smartDescription", "本回合再失去[blue]{Amount}[/blue]层[gold]钙铠[/gold]后，抽2张牌。"),
+        ("description", "本回合首次失去5层[gold]钙铠[/gold]后，抽{Amount}张牌。"),
     };
 }

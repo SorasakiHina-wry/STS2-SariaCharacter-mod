@@ -26,8 +26,8 @@ public sealed class ProbeBrawl : CustomCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new DamageVar(10m, ValueProp.Move),
-        new RepeatVar(2),
+        new DamageVar(5m, ValueProp.Move),
+        new RepeatVar(3),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -42,7 +42,7 @@ public sealed class ProbeBrawl : CustomCardModel
             .Execute(ctx);
     }
 
-    protected override void OnUpgrade() => DynamicVars.Repeat.UpgradeValueBy(1m);
+    protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(2m);
 
     public override string? CustomPortraitPath => ProbeCardKit.BashPortrait;
     public override List<(string, string)>? Localization => new()
@@ -75,7 +75,7 @@ public sealed class ProbeArm : CustomCardModel
         await PowerCmd.Apply<VigorPower>(ctx, Owner.Creature, vigor, Owner.Creature, this);
     }
 
-    protected override void OnUpgrade() => DynamicVars["ProbeArmPower"].UpgradeValueBy(1m);
+    protected override void OnUpgrade() => DynamicVars["ProbeArmPower"].UpgradeValueBy(2m);
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
     {
@@ -87,7 +87,7 @@ public sealed class ProbeArm : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "持械"),
-        ("description", "失去1层[gold]钙铠[/gold]。\n在本回合获得{ProbeArmPower:diff()}点[gold]活力[/gold]。"),
+        ("description", "失去1层[gold]钙铠[/gold]。\n获得{ProbeArmPower:diff()}点[gold]活力[/gold]。"),
     };
 }
 
@@ -116,8 +116,7 @@ public sealed class ProbeCautious : CustomCardModel
 
     protected override void OnUpgrade()
     {
-        DynamicVars.Damage.UpgradeValueBy(2m);
-        DynamicVars.Block.UpgradeValueBy(1m);
+        DynamicVars.Damage.UpgradeValueBy(1m);
         DynamicVars["CalciumArmorPower"].UpgradeValueBy(1m);
     }
 
@@ -147,7 +146,7 @@ public sealed class ProbeLegArmor : CustomCardModel
     {
         new PowerVar<CalciumArmorPower>(8m),
         new PowerVar<ProbeLegArmorPower>(1m),
-        new BlockVar(8m, ValueProp.Move),
+        new BlockVar(10m, ValueProp.Move),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -290,7 +289,7 @@ public sealed class ProbeBoxingGloves : CustomCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new PowerVar<StrengthPower>(4m),
+        new PowerVar<StrengthPower>(3m),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)

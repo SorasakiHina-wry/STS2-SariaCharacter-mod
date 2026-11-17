@@ -233,7 +233,7 @@ $env:PYTHONUTF8='1'; $exe = 'D:\STS2\.python312\python.exe'; $t = 'D:\STS2\mods-
 | `sort_powers.py` | 按 cards.md 顺序重排 powers.md（钙铠恒在首位） |
 | `sort_cards.py` | 在 普通/罕见/稀有 各小节内按「攻击 → 技能 → 能力」重排卡牌（`--dry-run` / `--check`；空样板自动沉到小节末尾） |
 | `fill_templates.py` | 按计划数量补齐空样板 |
-| `card_ids.py` | 生成 `design/card-ids.md` |
+| `card_ids.py` | 生成 `design/card-ids.md`（中文名 ↔ 类名 ↔ 源文件，按批次分组，兼作批次索引） |
 | `card_stats.py` | 更新 cards.md 的「当前配比」表 |
 | `gold_tags.py` | 给卡面里需要提示的词加 `[gold]` |
 | `hover_tips.py` | 补 `ExtraHoverTips`，让卡面提到的状态可悬停 |

@@ -68,7 +68,7 @@ public sealed class ProbePuffUp : CustomCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new DamageVar(20m, ValueProp.Move),
+        new DamageVar(13m, ValueProp.Move),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -88,7 +88,7 @@ public sealed class ProbePuffUp : CustomCardModel
         }
     }
 
-    protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(5m);
+    protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(3m);
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
     {
@@ -112,9 +112,9 @@ public sealed class ProbeEncircle : CustomCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new DamageVar(7m, ValueProp.Move),
-        new PowerVar<VigorPower>(5m),
-        new DynamicVar("ArmorCost", 5m),
+        new DamageVar(3m, ValueProp.Move),
+        new PowerVar<VigorPower>(4m),
+        new DynamicVar("ArmorCost", 3m),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -210,21 +210,24 @@ public sealed class ProbeTangle : CustomCardModel
 {
     public ProbeTangle() : base(1, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy) { }
 
+    /// <summary>基础带消耗，升级后不再消耗。</summary>
+    public override IEnumerable<CardKeyword> CanonicalKeywords => new[] { CardKeyword.Exhaust };
+
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
-        int armour = Owner.Creature.GetPowerAmount<CalciumArmorPower>();
-        if (armour <= 0)
+        int damage = Owner.Creature.GetPowerAmount<CalciumArmorPower>() + (int)Owner.Creature.Block;
+        if (damage <= 0)
             return;
 
         ArgumentNullException.ThrowIfNull(play.Target, "cardPlay.Target");
-        await DamageCmd.Attack(armour)
+        await DamageCmd.Attack(damage)
             .FromCard(this, play)
             .Targeting(play.Target)
             .WithHitFx("vfx/vfx_attack_blunt")
             .Execute(ctx);
     }
 
-    protected override void OnUpgrade() => EnergyCost.UpgradeBy(-1);
+    protected override void OnUpgrade() => RemoveKeyword(CardKeyword.Exhaust);
 
     /// <summary>Goes on top of the draw pile instead of the discard pile.</summary>
     protected override CardLocation GetResultLocationForCardPlay()
@@ -241,13 +244,14 @@ public sealed class ProbeTangle : CustomCardModel
     protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
     {
         HoverTipFactory.FromPower<CalciumArmorPower>(),
+        HoverTipFactory.Static(StaticHoverTip.Block),
     };
 
     public override string? CustomPortraitPath => ProbeCardKit.BludgeonPortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "缠斗"),
-        ("description", "造成你当前[gold]钙铠[/gold]层数的伤害。\n将这张牌放置于你的[gold]抽牌堆[/gold]顶部。"),
+        ("description", "造成你当前[gold]钙铠[/gold]层数与[gold]格挡[/gold]值之和的伤害。\n将这张牌放置于你的[gold]抽牌堆[/gold]顶部。"),
     };
 }
 
@@ -270,7 +274,7 @@ public sealed class ProbeArmguard : CustomCardModel
         CardCmd.PreviewCardPileAdd(await CardPileCmd.AddGeneratedCardToCombat(copy, PileType.Discard, Owner), 2.2f);
     }
 
-    protected override void OnUpgrade() => EnergyCost.UpgradeBy(-1);
+    protected override void OnUpgrade() => DynamicVars["StrengthPower"].UpgradeValueBy(1m);
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
     {
@@ -402,21 +406,14 @@ public sealed class ProbeDefenseExperience : CustomCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new PowerVar<ProbeDefenseExperiencePower>(1m),
+        new PowerVar<ProbeDefenseExperiencePower>(2m),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
-        var existing = Owner.Creature.GetPower<ProbeDefenseExperiencePower>();
-        if (existing != null)
-        {
-            // 再打一张：抽牌数 +2，层数补回阈值
-            existing.ExtraCards += 2;
-            await PowerCmd.ModifyAmount(ctx, existing, ProbeDefenseExperiencePower.Threshold - existing.Amount, Owner.Creature, this);
-            return;
-        }
-
-        await PowerCmd.Apply<ProbeDefenseExperiencePower>(ctx, Owner.Creature, DynamicVars["ProbeDefenseExperiencePower"].BaseValue, Owner.Creature, this);
+        await CreatureCmd.TriggerAnim(Owner.Creature, "PowerUp", Owner.Character.PowerUpAnimDelay);
+        await PowerCmd.Apply<ProbeDefenseExperiencePower>(
+            ctx, Owner.Creature, DynamicVars["ProbeDefenseExperiencePower"].BaseValue, Owner.Creature, this);
     }
 
     protected override void OnUpgrade() => EnergyCost.UpgradeBy(-1);
@@ -430,6 +427,6 @@ public sealed class ProbeDefenseExperience : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "防卫经验"),
-        ("description", "你在每回合第一次累计失去8层[gold]钙铠[/gold]时，抽2张牌。"),
+        ("description", "你在每回合第一次累计失去5层[gold]钙铠[/gold]时，抽2张牌。"),
     };
 }

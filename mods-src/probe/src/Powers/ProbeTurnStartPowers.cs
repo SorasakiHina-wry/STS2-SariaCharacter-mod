@@ -71,9 +71,7 @@ public sealed class ProbeDistractPower : CustomPowerModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "分神"),
-        // 原版范式：description 不带数字（图鉴），smartDescription 用 [blue]{变量}[/blue] 显示实时数字
-        ("description", "回合开始时，失去[gold]格挡[/gold]，获得[gold]钙铠[/gold]。"),
-        ("smartDescription", "回合开始时，失去[blue]{Amount}[/blue]层[gold]格挡[/gold]，获得[blue]{ArmorGain}[/blue]点[gold]钙铠[/gold]。"),
+        ("description", "回合开始时，失去{Amount}层[gold]格挡[/gold]，获得{ArmorGain}层[gold]钙铠[/gold]。"),
     };
 }
 
@@ -125,7 +123,6 @@ public sealed class ProbeFocusMindPower : CustomPowerModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "凝神"),
-        ("description", "回合开始时，失去[gold]钙铠[/gold]，获得[gold]活力[/gold]。"),
-        ("smartDescription", "回合开始时，失去[blue]{ArmorLose}[/blue]层[gold]钙铠[/gold]，获得[blue]{Amount}[/blue]点[gold]活力[/gold]。"),
+        ("description", "回合开始时，失去{ArmorLose}层[gold]钙铠[/gold]，获得{Amount}点[gold]活力[/gold]。"),
     };
 }

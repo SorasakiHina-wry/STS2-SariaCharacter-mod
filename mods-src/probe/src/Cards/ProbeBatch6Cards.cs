@@ -95,7 +95,7 @@ public sealed class ProbeForcedWake : CustomCardModel
     protected override void OnUpgrade()
     {
         DynamicVars["CalciumArmorPower"].UpgradeValueBy(1m);
-        DynamicVars["ProbeNextTurnArmorPower"].UpgradeValueBy(4m);
+        DynamicVars["ProbeNextTurnArmorPower"].UpgradeValueBy(2m);
     }
 
     public override string? CustomPortraitPath => ProbeCardKit.DefendPortrait;
