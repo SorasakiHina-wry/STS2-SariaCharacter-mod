@@ -23,13 +23,25 @@ public sealed class Saria : PlaceholderCharacterModel
     /// <summary>Which vanilla character to borrow placeholder visuals from.</summary>
     public override string PlaceholderID => "ironclad";
 
-    /// <summary>能力牌动作改用骨架里的 powerup（由 Attack_2 复制并提速），其余沿用默认。</summary>
+    /// <summary>
+    /// 动画触发名 → 骨架剪辑名。**保持引擎默认的能力牌映射**：PowerUp 用 cast 剪辑
+    /// （原版 CharacterModel 的默认表就是 (new AnimState("cast"), "PowerUp")）。
+    /// 早期版本把它覆写成 Attack_2（powerup 剪辑），结果打能力牌时看起来像"又打了一下"，
+    /// 容易误认为播了旧素材动画。另外把原版卡可能触发的其它名字也接上，避免静默无动作。
+    /// </summary>
     protected override List<(AnimState, string)> AnimationStates => new()
     {
         (new AnimState("cast"), "Cast"),
+        (new AnimState("cast"), "PowerUp"),   // 引擎默认：能力牌 = cast
         (new AnimState("attack"), "Attack"),
         (new AnimState("hurt"), "Hit"),
-        (new AnimState("powerup"), "PowerUp"),
+        (new AnimState("cast"), "Buff"),
+        (new AnimState("cast"), "Heal"),
+        (new AnimState("cast"), "Summon"),
+        (new AnimState("stun"), "Stun"),
+        (new AnimState("stun"), "StunTrigger"),
+        (new AnimState("idle_loop"), "WakeUp"),
+        (new AnimState("idle_loop"), "WakeUpTrigger"),
     };
 
     public override Color NameColor => new("7FD4FF");
