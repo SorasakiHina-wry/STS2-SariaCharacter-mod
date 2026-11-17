@@ -40,9 +40,10 @@ public static class ArchitectWinRunPatch
         if (_placeholder != null)
             return _placeholder;
 
-        // One line is required by the constructor; a null LineText keeps it silent, and
-        // EndAttackers stays None so WinRun skips the architect attack animation.
-        var dialogue = new AncientDialogue("");
+        // One line is required by the constructor; a null LineText keeps it silent.
+        // EndAttackers must match vanilla (Both) so WinRun still plays the victory
+        // attack animation for player and architect.
+        var dialogue = new AncientDialogue("") { EndAttackers = ArchitectAttackers.Both };
         dialogue.Lines[0].LineText = null;
         dialogue.Lines[0].Speaker = AncientDialogueSpeaker.Character;
         _placeholder = dialogue;
