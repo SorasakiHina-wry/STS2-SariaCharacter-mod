@@ -3,3 +3,6 @@
 *.png binary
 *.dll binary
 *.pck binary
+*.skel binary
+*.zip binary
+*.ogg binary

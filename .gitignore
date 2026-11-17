@@ -16,6 +16,9 @@ GDRE_tools-v2.7.4-windows/
 **/out/
 mods-src/probe/lib/
 
+# build output
+dist/
+
 # noise
 *.log
 *.user
