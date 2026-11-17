@@ -11,12 +11,12 @@ using Probe.Powers;
 namespace Probe.Relics;
 
 /// <summary>
-/// 钙质操作 — starter relic: 5 stacks of 钙铠 at the start of every combat.
+/// 钙质技艺 — 初始遗物：每场战斗开始获得 5 层钙铠。
 ///
 /// Applying the stacks also creates the power instance, so the signature bar shows up from turn one.
 /// </summary>
 [Pool(typeof(ProbeRelicPool))]
-public sealed class CalciumOperation : CustomRelicModel
+public sealed class CalciumCraft : CustomRelicModel
 {
     private const int StartingArmour = 5;
 
@@ -32,8 +32,7 @@ public sealed class CalciumOperation : CustomRelicModel
 
     public override List<(string, string)>? Localization => new()
     {
-        ("title", "钙质操作"),
-        // 描述原样取自 design/relics.md
-        ("description", "在每场战斗开始时，获得[blue]5[/blue]层钙铠。"),
+        ("title", "钙质技艺"),
+        ("description", "在每场战斗开始时，获得[blue]5[/blue]层[gold]钙铠[/gold]。"),
     };
 }

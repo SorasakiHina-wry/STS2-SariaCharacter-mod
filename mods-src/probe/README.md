@@ -9,7 +9,7 @@
 |---|---|
 | Mod 加载 | `Found mod manifest ... mods\probe\mod_manifest.json` → `[probe] harmony patches: N applied` |
 | 角色 | 内部 ID `SARIA`（完整 `PROBE-SARIA`），显示名 **塞雷娅**，HP 70、金币 99 |
-| 起手遗物 | **钙质操作**（每场战斗开始获得 5 层钙铠） |
+| 起手遗物 | **钙质技艺**（每场战斗开始获得 5 层钙铠） |
 | 起手牌组 | 打击×4、防御×4、硬化×1、激发×1 |
 | 卡池 | **78 张**（含 2 张先古、4 张无色 token），配比表见 `design/cards.md` 顶部（自动生成） |
 | 自定义状态 | **31 个 power**，核心机制 **钙铠** |
@@ -69,7 +69,7 @@ probe/
     Pools/ProbePools.cs      卡池 / 遗物池 / 药水池
     Cards/*.cs               78 张卡
     Powers/*.cs              31 个状态
-    Relics/*.cs              4 张遗物
+    Relics/*.cs              8 张遗物（1 初始 + 1 普通 + 2 罕见 + 2 稀有 + 1 商店 + 1 先古）
     Patches/*.cs             钙铠常驻、建筑师胜利、钙质化加伤、止血计数
     ProbeSpineAssets.cs      加载自制 Spine 资源
     ProbeSpineVisuals.cs     运行时构建 NCreatureVisuals + 命中框

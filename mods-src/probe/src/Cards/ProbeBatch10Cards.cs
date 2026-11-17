@@ -180,7 +180,7 @@ public sealed class ProbeRehearsal : CustomCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new CardsVar(1),
+        new CardsVar(2),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -197,7 +197,7 @@ public sealed class ProbeRehearsal : CustomCardModel
         PlayerCmd.EndTurn(Owner, canBackOut: false);
     }
 
-    protected override void OnUpgrade() => DynamicVars.Cards.UpgradeValueBy(2m);
+    protected override void OnUpgrade() => DynamicVars.Cards.UpgradeValueBy(1m);
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
     {
