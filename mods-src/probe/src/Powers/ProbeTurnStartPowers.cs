@@ -46,6 +46,7 @@ public sealed class ProbeDistractPower : CustomPowerModel
     {
         AssertMutable();
         DynamicVars["ArmorGain"].BaseValue++;
+        DynamicVars["ArmorGain"].PreviewValue = DynamicVars["ArmorGain"].BaseValue;
     }
 
     public override async Task AfterPlayerTurnStart(PlayerChoiceContext choiceContext, Player player)
@@ -102,6 +103,7 @@ public sealed class ProbeFocusMindPower : CustomPowerModel
     {
         AssertMutable();
         DynamicVars["ArmorLose"].BaseValue++;
+        DynamicVars["ArmorLose"].PreviewValue = DynamicVars["ArmorLose"].BaseValue;
     }
 
     public override async Task AfterPlayerTurnStart(PlayerChoiceContext choiceContext, Player player)

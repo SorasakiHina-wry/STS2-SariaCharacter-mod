@@ -438,7 +438,7 @@ public sealed class ProbeAnnihilation : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "歼灭战术"),
-        ("description", "每有1张[gold]手牌[/gold]，就获得1点[gold]力量[/gold]一次。\n造成{Damage:diff()}点伤害{Repeat:diff()}次。"),
+        ("description", "每有1张[gold]手牌[/gold]，就获得1点[gold]力量[/gold]一次。\n对所有敌人造成{Damage:diff()}点伤害{Repeat:diff()}次。"),
     };
 }
 

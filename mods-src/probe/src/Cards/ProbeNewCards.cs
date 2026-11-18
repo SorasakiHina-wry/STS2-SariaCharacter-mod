@@ -64,7 +64,7 @@ public sealed class ProbeDeploy : CustomCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new PowerVar<CalciumArmorPower>(6m),
+        new PowerVar<CalciumArmorPower>(7m),
         new CardsVar(2),
     };
 

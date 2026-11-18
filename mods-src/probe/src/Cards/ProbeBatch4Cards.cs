@@ -277,7 +277,7 @@ public sealed class ProbeSpiritRecovery : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "精神回复"),
-        ("description", "你每获得18层[gold]钙铠[/gold]，获得{Energy:energyIcons()}。"),
+        ("description", "你每获得14层[gold]钙铠[/gold]，获得{Energy:energyIcons()}。"),
     };
 }
 

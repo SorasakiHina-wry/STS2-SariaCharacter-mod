@@ -69,7 +69,7 @@ public sealed class ProbeCycle : CustomCardModel
 [Pool(typeof(ProbeCardPool))]
 public sealed class ProbeElectrum : CustomCardModel
 {
-    private const int ARMOR_CAP = 3;
+    private const int ARMOR_CAP = 4;
 
     public ProbeElectrum() : base(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy) { }
 
@@ -115,7 +115,7 @@ public sealed class ProbeElectrum : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "电石"),
-        ("description", "失去至多3层[gold]钙铠[/gold]，每层失去的[gold]钙铠[/gold]造成{Damage:diff()}点伤害。"),
+        ("description", "失去至多4层[gold]钙铠[/gold]，每层失去的[gold]钙铠[/gold]造成{Damage:diff()}点伤害。"),
     };
 }
 
@@ -129,7 +129,7 @@ public sealed class ProbeInduce : CustomCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new PowerVar<VigorPower>(7m),
+        new PowerVar<VigorPower>(8m),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)

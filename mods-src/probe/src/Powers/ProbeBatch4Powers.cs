@@ -147,7 +147,7 @@ public sealed class ProbeTechniqueOverloadPower : CustomPowerModel
 public sealed class ProbeSpiritRecoveryPower : CustomPowerModel
 {
     /// <summary>每 18 层钙铠换 1 点能量（与 design/powers.md 一致）。</summary>
-    public const int Threshold = 18;
+    public const int Threshold = 14;
 
     private const string BASE_ARMOR_KEY = "BaseArmor";
 
@@ -199,7 +199,7 @@ public sealed class ProbeSpiritRecoveryPower : CustomPowerModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "精神回复"),
-        ("description", "你每获得[blue]18[/blue]层[gold]钙铠[/gold]时，获得[gold]能量[/gold]。"),
+        ("description", "你每获得[blue]14[/blue]层[gold]钙铠[/gold]时，获得[gold]能量[/gold]。"),
         ("smartDescription", "你每获得[blue]{" + BASE_ARMOR_KEY + "}[/blue]层[gold]钙铠[/gold]时，获得{Amount:energyIcons()}。"),
     };
 }

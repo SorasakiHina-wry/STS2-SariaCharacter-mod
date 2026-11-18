@@ -64,11 +64,11 @@ public sealed class ProbeEncapsulate : CustomCardModel
 [Pool(typeof(ProbeCardPool))]
 public sealed class ProbePuffUp : CustomCardModel
 {
-    public ProbePuffUp() : base(2, CardType.Attack, CardRarity.Uncommon, TargetType.AllEnemies) { }
+    public ProbePuffUp() : base(1, CardType.Attack, CardRarity.Uncommon, TargetType.AllEnemies) { }
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new DamageVar(13m, ValueProp.Move),
+        new DamageVar(7m, ValueProp.Move),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
