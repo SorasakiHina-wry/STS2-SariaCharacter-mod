@@ -79,28 +79,24 @@ git remote add origin https://github.com/SorasakiHina-wry/STS2-SariaCharacter-mo
 git branch -M main
 ```
 
-### 工作区配置：.dsh/repo.json
+### 临时令牌：`.local/repo.json`
 
-仓库地址、约定令牌名、以及**临时令牌**统一放在 .dsh/repo.json（已被 .gitignore 排除，不会入库）：
+`.dsh/` 只管 DSH 自己的东西（MCP、代理）；**令牌这类运维数据放在 `.local/`**，同样已被 `.gitignore` 排除：
 
-``json
+```json
 {
-  "repo_url": "https://github.com/SorasakiHina-wry/STS2-SariaCharacter-mod.git",
-  "branch": "main",
   "token_name": "dsh-push-temp",
   "token": null
 }
-``
+```
 
-流程：
+- 仓库地址不用写：git remote 就是 `origin`（URL 里不带凭据，已验证）；
+- 需要推送时，你把 fine-grained PAT 写进 `token`（只授权本仓库，Contents: Read and write，7 天有效），然后告诉 agent「token 已写入」；
+- agent 推送 / 发 Release 完，立刻把 `token` 改回 `null`；
+- 你再顺手到 GitHub 撤销该令牌。
 
-1. 需要推送时，你把 fine-grained PAT 写进 	oken 字段（只授权本仓库，Contents: Read and write，7 天有效）；
-2. 告诉 agent「token 已写入」；
-3. agent 读取文件、推送 / 发 Release，**完成后立刻把 	oken 改回 
-ull**；
-4. 你再顺手到 GitHub 撤销这个令牌。
-
-> 不要 git add -f .dsh/：这个目录只在本机存在。
+> 不需要额外的推送脚本：读一个 JSON 加一条 `git push origin main` 就是全部；包一层脚本反而让令牌多经过参数与日志。
+> 别 `git add -f .local/`，这个目录只在本机存在。
 
 ### 用令牌推送（一次性的做法）
 
