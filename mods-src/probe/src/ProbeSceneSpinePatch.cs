@@ -26,7 +26,8 @@ internal static class SceneSpineHelper
         player?.Character != null &&
         player.Character.Id.Entry.EndsWith("SARIA", StringComparison.Ordinal);
 
-    internal static void ApplyToChildren(Node root, string animation, bool loop, float scaleFactor = 1f)
+    internal static void ApplyToChildren(
+        Node root, string animation, bool loop, float scaleFactor = 1f, float? absoluteScale = null)
     {
         foreach (var child in root.GetChildren())
         {
@@ -35,7 +36,12 @@ internal static class SceneSpineHelper
 
             ProbeSpineAssets.Apply(spine, ProbeSpineAssets.BuildSkeleton, animation, loop);
 
-            if (scaleFactor != 1f)
+            if (absoluteScale.HasValue)
+            {
+                spine.Scale = new Vector2(absoluteScale.Value, absoluteScale.Value);
+                Log.Info($"[saria][spine] scale set to {spine.Scale}");
+            }
+            else if (scaleFactor != 1f)
             {
                 spine.Scale *= scaleFactor;
                 Log.Info($"[saria][spine] scale x{scaleFactor} -> {spine.Scale}");
@@ -98,7 +104,7 @@ public static class SariaMerchantSpinePatch
                     continue;
 
                 Log.Info("[saria][spine] merchant: swapping to build skeleton");
-                SceneSpineHelper.ApplyToChildren(node, "Relax", loop: true, scaleFactor: 2f);
+                SceneSpineHelper.ApplyToChildren(node, "Relax", loop: true, absoluteScale: 1.5f);
             }
         }
         catch (Exception ex)
