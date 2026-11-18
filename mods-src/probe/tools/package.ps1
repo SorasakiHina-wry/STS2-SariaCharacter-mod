@@ -70,7 +70,7 @@ if (Test-Path $pngDir) {
         Copy-Item $from (Join-Path $StageDir ('images\' + $imageMap[$src])) -Force
     }
     New-Item -ItemType Directory -Force -Path (Join-Path $StageDir 'spine') | Out-Null
-    foreach ($name in @('char_202_demkni.atlas', 'char_202_demkni.png', 'char_202_demkni.skel')) {
+    foreach ($name in @('char_202_demkni.atlas', 'char_202_demkni.png', 'char_202_demkni.skel', 'build_char_202_demkni.atlas', 'build_char_202_demkni.png', 'build_char_202_demkni.skel')) {
         $from = Join-Path $spineDir $name
         if (-not (Test-Path $from)) { throw "缺少 Spine 文件：$from" }
         Copy-Item $from (Join-Path $StageDir ('spine\' + $name)) -Force
