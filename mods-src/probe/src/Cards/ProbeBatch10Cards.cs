@@ -62,11 +62,11 @@ public sealed class ProbeVascularize : CustomCardModel
 {
     public ProbeVascularize() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
 
-    private int ArmorCost => IsUpgraded ? 1 : 3;
+    private int ArmorCost => IsUpgraded ? 2 : 4;
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new CardsVar(5),
+        new CardsVar(4),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -102,7 +102,7 @@ public sealed class ProbeVascularize : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "脉化结构"),
-        ("description", "若拥有大于等于{IfUpgraded:show:1|3}层[gold]钙铠[/gold]，则失去{IfUpgraded:show:1|3}层[gold]钙铠[/gold]，抽{Cards:diff()}张牌，并将此牌返回你的[gold]手牌[/gold]。"),
+        ("description", "若拥有大于等于{IfUpgraded:show:2|4}层[gold]钙铠[/gold]，则失去{IfUpgraded:show:2|4}层[gold]钙铠[/gold]，抽{Cards:diff()}张牌，并将此牌返回你的[gold]手牌[/gold]。"),
     };
 }
 

@@ -129,7 +129,7 @@ public sealed class ProbeInduce : CustomCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new PowerVar<VigorPower>(8m),
+        new PowerVar<VigorPower>(9m),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)

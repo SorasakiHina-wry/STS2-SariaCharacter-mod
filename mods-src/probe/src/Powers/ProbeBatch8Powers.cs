@@ -48,7 +48,8 @@ public sealed class ProbeLimitPower : CustomPowerModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "限位"),
-        ("description", "下{Amount}次获得[gold]格挡[/gold]时将被阻止。"),
+        ("description", "获得[gold]格挡[/gold]时将被阻止。"),
+        ("smartDescription", "下[blue]{Amount}[/blue]次获得[gold]格挡[/gold]时将被阻止。"),
     };
 }
 

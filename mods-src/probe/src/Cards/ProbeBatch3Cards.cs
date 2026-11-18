@@ -99,33 +99,38 @@ public sealed class ProbeLiveAmmo : CustomCardModel
 [Pool(typeof(ProbeCardPool))]
 public sealed class ProbeCoverGen : CustomCardModel
 {
-    public ProbeCoverGen() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
+    public ProbeCoverGen() : base(2, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
+
+    public override IEnumerable<CardKeyword> CanonicalKeywords => new[] { CardKeyword.Ethereal };
 
     public override bool GainsBlock => true;
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new PowerVar<CalciumArmorPower>(3m),
-        new BlockVar(5m, ValueProp.Move),
+        new BlockVar(25m, ValueProp.Move),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
-
-        await PowerCmd.Apply<CalciumArmorPower>(ctx, Owner.Creature, DynamicVars["CalciumArmorPower"].BaseValue, Owner.Creature, this);
         await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, play);
-        await PowerCmd.Apply<BlurPower>(ctx, Owner.Creature, 1m, Owner.Creature, this);
     }
 
-    protected override void OnUpgrade()
+    protected override void OnUpgrade() => AddKeyword(CardKeyword.Innate);
+
+    /// <summary>打出后放回抽牌堆顶部，而不是进弃牌堆。</summary>
+    protected override CardLocation GetResultLocationForCardPlay()
     {
-        DynamicVars["CalciumArmorPower"].UpgradeValueBy(2m);
-        DynamicVars.Block.UpgradeValueBy(4m);
+        var location = base.GetResultLocationForCardPlay();
+        if (location.pileType == PileType.Discard)
+        {
+            location.pileType = PileType.Draw;
+            location.position = CardPilePosition.Top;
+        }
+        return location;
     }
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
     {
-        HoverTipFactory.FromPower<CalciumArmorPower>(),
         HoverTipFactory.Static(StaticHoverTip.Block),
     };
 
@@ -133,7 +138,7 @@ public sealed class ProbeCoverGen : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "掩体生成"),
-        ("description", "获得{CalciumArmorPower:diff()}层[gold]钙铠[/gold]。\n获得{Block:diff()}点[gold]格挡[/gold]。\n你的下一回合开始时[gold]格挡[/gold]不会消失。"),
+        ("description", "获得{Block:diff()}点[gold]格挡[/gold]。\n将这张牌放置于你的[gold]抽牌堆[/gold]顶部。"),
     };
 }
 

@@ -147,7 +147,7 @@ public sealed class ProbeImprint : CustomCardModel
 [Pool(typeof(ProbeCardPool))]
 public sealed class ProbeDisorder : CustomCardModel
 {
-    public ProbeDisorder() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.AnyEnemy) { }
+    public ProbeDisorder() : base(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy) { }
 
     public override IEnumerable<CardKeyword> CanonicalKeywords => new[] { CardKeyword.Exhaust };
 
