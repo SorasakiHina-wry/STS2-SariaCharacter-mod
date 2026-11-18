@@ -151,8 +151,14 @@ public sealed class ProbeStrategySummary : CustomCardModel
             .Execute(ctx);
 
         if (shouldTriggerFatal && attack.Results.SelectMany(r => r).Any(r => r.WasTargetKilled))
-            ExtraHits += 1;
+        {
+            // 战斗内的临时副本 + 牌组里的持久副本都要成长（照原版「巨镰」的 DeckVersion 写法）
+            Grow();
+            (DeckVersion as ProbeStrategySummary)?.Grow();
+        }
     }
+
+    private void Grow() => ExtraHits += 1;
 
     protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(4m);
 
@@ -165,7 +171,7 @@ public sealed class ProbeStrategySummary : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "策略归纳"),
-        ("description", "造成{Damage:diff()}点伤害{Repeat:diff()}次。\n斩杀时，这张牌在本局游戏中永久性额外造成一次伤害。"),
+        ("description", "造成{Damage:diff()}点伤害。\n斩杀时，这张牌在本局游戏中永久性额外造成一次伤害。\n（命中{Repeat:diff()}次）。"),
     };
 }
 

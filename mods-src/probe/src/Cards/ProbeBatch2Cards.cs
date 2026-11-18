@@ -151,28 +151,31 @@ public sealed class ProbeChargeUp : CustomCardModel
 {
     public ProbeChargeUp() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
 
+    /// <summary>失去的钙铠层数：基础 4，升级 2。</summary>
+    private int ArmorCost => IsUpgraded ? 2 : 4;
+
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new PowerVar<CalciumArmorPower>(4m),
-        new PowerVar<VigorPower>(3m),
+        new PowerVar<StrengthPower>(3m),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
+        var armour = Owner.Creature.GetPower<CalciumArmorPower>();
+        if (armour != null && armour.Amount > 0)
+        {
+            int loss = Math.Min(ArmorCost, armour.Amount);
+            await PowerCmd.ModifyAmount(ctx, armour, -loss, Owner.Creature, this);
+        }
 
-        await PowerCmd.Apply<CalciumArmorPower>(ctx, Owner.Creature, DynamicVars["CalciumArmorPower"].BaseValue, Owner.Creature, this);
-        await PowerCmd.Apply<VigorPower>(ctx, Owner.Creature, DynamicVars["VigorPower"].BaseValue, Owner.Creature, this);
+        await PowerCmd.Apply<StrengthPower>(ctx, Owner.Creature, DynamicVars["StrengthPower"].BaseValue, Owner.Creature, this);
     }
 
-    protected override void OnUpgrade()
-    {
-        DynamicVars["CalciumArmorPower"].UpgradeValueBy(2m);
-        DynamicVars["VigorPower"].UpgradeValueBy(1m);
-    }
+    protected override void OnUpgrade() { }
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
     {
-        HoverTipFactory.FromPower<VigorPower>(),
+        HoverTipFactory.FromPower<StrengthPower>(),
         HoverTipFactory.FromPower<CalciumArmorPower>(),
     };
 
@@ -180,7 +183,7 @@ public sealed class ProbeChargeUp : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "充能"),
-        ("description", "获得{CalciumArmorPower:diff()}层[gold]钙铠[/gold]。\n获得{VigorPower:diff()}点[gold]活力[/gold]。"),
+        ("description", "失去{IfUpgraded:show:2|4}层[gold]钙铠[/gold]。\n获得{StrengthPower:diff()}点[gold]力量[/gold]。"),
     };
 }
 

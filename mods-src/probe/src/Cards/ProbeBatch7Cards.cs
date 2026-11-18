@@ -113,7 +113,7 @@ public sealed class ProbeEncircle : CustomCardModel
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
         new DamageVar(3m, ValueProp.Move),
-        new PowerVar<TemporaryStrengthPower>(4m),
+        new PowerVar<SetupStrikePower>(4m),
         new DynamicVar("ArmorCost", 3m),
     };
 
@@ -137,13 +137,13 @@ public sealed class ProbeEncircle : CustomCardModel
                 .Execute(ctx);
         }
 
-        await PowerCmd.Apply<TemporaryStrengthPower>(ctx, Owner.Creature, DynamicVars["TemporaryStrengthPower"].BaseValue, Owner.Creature, this);
+        await PowerCmd.Apply<SetupStrikePower>(ctx, Owner.Creature, DynamicVars["SetupStrikePower"].BaseValue, Owner.Creature, this);
     }
 
     protected override void OnUpgrade()
     {
         DynamicVars.Damage.UpgradeValueBy(1m);
-        DynamicVars["TemporaryStrengthPower"].UpgradeValueBy(2m);
+        DynamicVars["SetupStrikePower"].UpgradeValueBy(2m);
     }
 
     /// <summary>Returns to hand instead of the discard pile.</summary>
@@ -158,14 +158,14 @@ public sealed class ProbeEncircle : CustomCardModel
     protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
     {
         HoverTipFactory.FromPower<CalciumArmorPower>(),
-        HoverTipFactory.FromPower<TemporaryStrengthPower>(),
+        HoverTipFactory.FromPower<SetupStrikePower>(),
     };
 
     public override string? CustomPortraitPath => ProbeCardKit.BludgeonPortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "围歼"),
-        ("description", "失去至多{ArmorCost}层[gold]钙铠[/gold]，每层造成{Damage:diff()}点伤害。\n在本回合获得{TemporaryStrengthPower:diff()}点[gold]力量[/gold]。\n将此牌返回你的[gold]手牌[/gold]。"),
+        ("description", "失去至多{ArmorCost}层[gold]钙铠[/gold]，每层造成{Damage:diff()}点伤害。\n在本回合获得{SetupStrikePower:diff()}点[gold]力量[/gold]。\n将此牌返回你的[gold]手牌[/gold]。"),
     };
 }
 

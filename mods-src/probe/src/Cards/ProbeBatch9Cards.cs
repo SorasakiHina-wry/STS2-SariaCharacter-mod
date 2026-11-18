@@ -215,7 +215,7 @@ public sealed class ProbeEmergencyOrder : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "紧急指令"),
-        ("description", "获得{CalciumArmorPower:diff()}层[gold]钙铠[/gold]。获得{Energy:energyIcons()}。抽{Cards:diff()}张牌。"),
+        ("description", "获得{CalciumArmorPower:diff()}层[gold]钙铠[/gold]。\n获得{Energy:energyIcons()}。\n抽{Cards:diff()}张牌。"),
     };
 }
 

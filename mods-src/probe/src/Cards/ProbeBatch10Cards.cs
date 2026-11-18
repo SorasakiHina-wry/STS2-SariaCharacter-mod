@@ -407,6 +407,8 @@ public sealed class ProbeAnnihilation : CustomCardModel
 {
     public ProbeAnnihilation() : base(2, CardType.Attack, CardRarity.Rare, TargetType.AllEnemies) { }
 
+    public override IEnumerable<CardKeyword> CanonicalKeywords => new[] { CardKeyword.Exhaust };
+
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
         new DamageVar(6m, ValueProp.Move),
@@ -416,8 +418,9 @@ public sealed class ProbeAnnihilation : CustomCardModel
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
         int hand = PileType.Hand.GetPile(Owner).Cards.Count;
-        if (hand > 0)
-            await PowerCmd.Apply<StrengthPower>(ctx, Owner.Creature, hand, Owner.Creature, this);
+        // 逐次获得 1 点力量（不是一次性给 n 点），这样「获得力量」类联动会触发 n 次
+        for (int i = 0; i < hand; i++)
+            await PowerCmd.Apply<StrengthPower>(ctx, Owner.Creature, 1m, Owner.Creature, this);
 
         await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
             .FromCard(this, play)
