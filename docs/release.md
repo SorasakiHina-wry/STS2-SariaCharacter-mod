@@ -79,6 +79,29 @@ git remote add origin https://github.com/SorasakiHina-wry/STS2-SariaCharacter-mo
 git branch -M main
 ```
 
+### 工作区配置：.dsh/repo.json
+
+仓库地址、约定令牌名、以及**临时令牌**统一放在 .dsh/repo.json（已被 .gitignore 排除，不会入库）：
+
+``json
+{
+  "repo_url": "https://github.com/SorasakiHina-wry/STS2-SariaCharacter-mod.git",
+  "branch": "main",
+  "token_name": "dsh-push-temp",
+  "token": null
+}
+``
+
+流程：
+
+1. 需要推送时，你把 fine-grained PAT 写进 	oken 字段（只授权本仓库，Contents: Read and write，7 天有效）；
+2. 告诉 agent「token 已写入」；
+3. agent 读取文件、推送 / 发 Release，**完成后立刻把 	oken 改回 
+ull**；
+4. 你再顺手到 GitHub 撤销这个令牌。
+
+> 不要 git add -f .dsh/：这个目录只在本机存在。
+
 ### 用令牌推送（一次性的做法）
 
 不要把令牌写进 `.git/config`。用带凭据的 URL 推一次即可：
