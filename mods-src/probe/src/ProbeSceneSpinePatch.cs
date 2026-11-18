@@ -26,12 +26,20 @@ internal static class SceneSpineHelper
         player?.Character != null &&
         player.Character.Id.Entry.EndsWith("SARIA", StringComparison.Ordinal);
 
-    internal static void ApplyToChildren(Node root, string animation, bool loop)
+    internal static void ApplyToChildren(Node root, string animation, bool loop, float scaleFactor = 1f)
     {
         foreach (var child in root.GetChildren())
         {
-            if (child is Node2D && child.GetClass() == "SpineSprite")
-                ProbeSpineAssets.Apply(child, ProbeSpineAssets.BuildSkeleton, animation, loop);
+            if (child is not Node2D spine || child.GetClass() != "SpineSprite")
+                continue;
+
+            ProbeSpineAssets.Apply(spine, ProbeSpineAssets.BuildSkeleton, animation, loop);
+
+            if (scaleFactor != 1f)
+            {
+                spine.Scale *= scaleFactor;
+                Log.Info($"[saria][spine] scale x{scaleFactor} -> {spine.Scale}");
+            }
         }
     }
 }
@@ -49,7 +57,7 @@ public static class SariaRestSiteSpinePatch
                 return;
 
             Log.Info("[saria][spine] rest site: swapping to build skeleton");
-            SceneSpineHelper.ApplyToChildren(__instance, "Sit", loop: true);
+            SceneSpineHelper.ApplyToChildren(__instance, "Sit", loop: true, scaleFactor: 1.5f);
         }
         catch (Exception ex)
         {
@@ -90,7 +98,7 @@ public static class SariaMerchantSpinePatch
                     continue;
 
                 Log.Info("[saria][spine] merchant: swapping to build skeleton");
-                SceneSpineHelper.ApplyToChildren(node, "Relax", loop: true);
+                SceneSpineHelper.ApplyToChildren(node, "Relax", loop: true, scaleFactor: 2f);
             }
         }
         catch (Exception ex)
