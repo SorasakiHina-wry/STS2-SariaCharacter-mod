@@ -27,13 +27,15 @@ public sealed class ProbeWeaken : CustomCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new DamageVar(6m, ValueProp.Move),
+        new DamageVar(7m, ValueProp.Move),
         new PowerVar<WeakPower>(2m),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
         ArgumentNullException.ThrowIfNull(play.Target, "cardPlay.Target");
+        await ProbeCardKit.SpendArmor(ctx, this, 1);
+
         await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
             .FromCard(this, play)
             .Targeting(play.Target)
@@ -43,7 +45,11 @@ public sealed class ProbeWeaken : CustomCardModel
         await PowerCmd.Apply<WeakPower>(ctx, play.Target, DynamicVars.Weak.BaseValue, Owner.Creature, this);
     }
 
-    protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(3m);
+    protected override void OnUpgrade()
+    {
+        DynamicVars.Damage.UpgradeValueBy(3m);
+        DynamicVars.Weak.UpgradeValueBy(1m);
+    }
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
     {
@@ -54,7 +60,7 @@ public sealed class ProbeWeaken : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "弱化"),
-        ("description", "造成{Damage:diff()}点伤害。\n给予{WeakPower:diff()}层[gold]虚弱[/gold]。"),
+        ("description", "失去1层[gold]钙铠[/gold]。\n造成{Damage:diff()}点伤害。\n给予{WeakPower:diff()}层[gold]虚弱[/gold]。"),
     };
 }
 

@@ -62,47 +62,34 @@ public sealed class ProbeVascularize : CustomCardModel
 {
     public ProbeVascularize() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
 
-    private int ArmorCost => IsUpgraded ? 2 : 4;
+    public override bool GainsBlock => true;
+
+    private int ArmorCost => IsUpgraded ? 2 : 3;
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new CardsVar(4),
+        new BlockVar(12m, ValueProp.Move),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
-        var armour = Owner.Creature.GetPower<CalciumArmorPower>();
-        if (armour == null || armour.Amount < ArmorCost)
-            return;
-
-        await PowerCmd.ModifyAmount(ctx, armour, -ArmorCost, Owner.Creature, this);
-        await CardPileCmd.Draw(ctx, DynamicVars.Cards.BaseValue, Owner);
+        await ProbeCardKit.SpendArmor(ctx, this, ArmorCost);
+        await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, play);
     }
 
-    protected override void OnUpgrade() { }
-
-    /// <summary>打出后回到手牌。</summary>
-    protected override CardLocation GetResultLocationForCardPlay()
-    {
-        var location = base.GetResultLocationForCardPlay();
-        if (location.pileType == PileType.Discard)
-        {
-            location.pileType = PileType.Hand;
-            location.position = CardPilePosition.Top;
-        }
-        return location;
-    }
+    protected override void OnUpgrade() => DynamicVars.Block.UpgradeValueBy(3m);
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
     {
         HoverTipFactory.FromPower<CalciumArmorPower>(),
+        HoverTipFactory.Static(StaticHoverTip.Block),
     };
 
     public override string? CustomPortraitPath => ProbeCardKit.DefendPortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "脉化结构"),
-        ("description", "若拥有大于等于{IfUpgraded:show:2|4}层[gold]钙铠[/gold]，则失去{IfUpgraded:show:2|4}层[gold]钙铠[/gold]，抽{Cards:diff()}张牌，并将此牌返回你的[gold]手牌[/gold]。"),
+        ("description", "失去{IfUpgraded:show:2|3}层[gold]钙铠[/gold]。\n获得{Block:diff()}点[gold]格挡[/gold]。"),
     };
 }
 

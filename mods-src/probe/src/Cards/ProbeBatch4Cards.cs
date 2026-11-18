@@ -26,7 +26,7 @@ public sealed class ProbeBrawl : CustomCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new DamageVar(5m, ValueProp.Move),
+        new DamageVar(6m, ValueProp.Move),
         new RepeatVar(3),
     };
 
@@ -34,6 +34,8 @@ public sealed class ProbeBrawl : CustomCardModel
     {
 
         ArgumentNullException.ThrowIfNull(play.Target, "cardPlay.Target");
+        await ProbeCardKit.SpendArmor(ctx, this, 2);
+
         await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
             .FromCard(this, play)
             .Targeting(play.Target)
@@ -48,7 +50,7 @@ public sealed class ProbeBrawl : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "格斗"),
-        ("description", "造成{Damage:diff()}点伤害{Repeat:diff()}次。"),
+        ("description", "失去2层[gold]钙铠[/gold]。\n造成{Damage:diff()}点伤害{Repeat:diff()}次。"),
     };
 }
 

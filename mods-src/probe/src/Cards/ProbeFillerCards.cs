@@ -11,6 +11,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using Saria.Pools;
+using Saria.Powers;
 
 namespace Saria.Cards;
 
@@ -37,6 +38,20 @@ internal static class ProbeCardKit
     internal static async Task Guard(PlayerChoiceContext ctx, CardPlay play, CardModel self)
     {
         await CreatureCmd.GainBlock(self.Owner.Creature, self.DynamicVars.Block, play);
+    }
+
+    /// <summary>失去最多 want 层钙铠（不足时按剩余层数），返回实际失去的层数。</summary>
+    internal static async Task<int> SpendArmor(PlayerChoiceContext ctx, CardModel self, int want)
+    {
+        var armour = self.Owner.Creature.GetPower<CalciumArmorPower>();
+        if (armour == null || armour.Amount <= 0 || want <= 0)
+            return 0;
+
+        int loss = Math.Min(want, armour.Amount);
+        if (loss > 0)
+            await PowerCmd.ModifyAmount(ctx, armour, -loss, self.Owner.Creature, self);
+
+        return loss;
     }
 
     internal static List<(string, string)> DamageLoc(string title) => new()

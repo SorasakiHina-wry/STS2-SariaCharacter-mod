@@ -75,34 +75,34 @@ public sealed class ProbeForcedWake : CustomCardModel
     protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
     {
         HoverTipFactory.FromPower<CalciumArmorPower>(),
+        HoverTipFactory.FromPower<BlockNextTurnPower>(),
     };
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
         new PowerVar<CalciumArmorPower>(5m),
-        new PowerVar<ProbeNextTurnArmorPower>(8m),
+        new PowerVar<BlockNextTurnPower>(9m),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
-
         await PowerCmd.Apply<CalciumArmorPower>(
             ctx, Owner.Creature, DynamicVars["CalciumArmorPower"].BaseValue, Owner.Creature, this);
-        await PowerCmd.Apply<ProbeNextTurnArmorPower>(
-            ctx, Owner.Creature, DynamicVars["ProbeNextTurnArmorPower"].BaseValue, Owner.Creature, this);
+        await PowerCmd.Apply<BlockNextTurnPower>(
+            ctx, Owner.Creature, DynamicVars["BlockNextTurnPower"].BaseValue, Owner.Creature, this);
     }
 
     protected override void OnUpgrade()
     {
         DynamicVars["CalciumArmorPower"].UpgradeValueBy(1m);
-        DynamicVars["ProbeNextTurnArmorPower"].UpgradeValueBy(2m);
+        DynamicVars["BlockNextTurnPower"].UpgradeValueBy(2m);
     }
 
     public override string? CustomPortraitPath => ProbeCardKit.DefendPortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "强制唤醒"),
-        ("description", "获得{CalciumArmorPower:diff()}层[gold]钙铠[/gold]。\n在下个回合开始时，获得{ProbeNextTurnArmorPower:diff()}层[gold]钙铠[/gold]。"),
+        ("description", "获得{CalciumArmorPower:diff()}层[gold]钙铠[/gold]。\n在下个回合开始时，获得{BlockNextTurnPower:diff()}点[gold]格挡[/gold]。"),
     };
 }
 
@@ -237,6 +237,8 @@ public sealed class ProbeRushPunch : CustomCardModel
     {
 
         ArgumentNullException.ThrowIfNull(play.Target, "cardPlay.Target");
+        await ProbeCardKit.SpendArmor(ctx, this, 2);
+
         await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
             .FromCard(this, play)
             .Targeting(play.Target)
@@ -251,7 +253,7 @@ public sealed class ProbeRushPunch : CustomCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "冲拳"),
-        ("description", "造成{Damage:diff()}点伤害{Repeat:diff()}次。"),
+        ("description", "失去2层[gold]钙铠[/gold]。\n造成{Damage:diff()}点伤害{Repeat:diff()}次。"),
     };
 }
 

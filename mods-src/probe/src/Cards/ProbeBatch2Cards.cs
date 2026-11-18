@@ -232,31 +232,29 @@ public sealed class ProbeFocusMind : CustomCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        // 施加的层数 = 每回合获得的活力（4 / 升级 6）
-        new PowerVar<ProbeFocusMindPower>(4m),
+        // 每张「凝神」让每次攻击牌多给 2 点格挡；叠层时 Amount 相加
+        new PowerVar<ProbeFocusMindPower>(2m),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
-
         await CreatureCmd.TriggerAnim(Owner.Creature, "PowerUp", Owner.Character.PowerUpAnimDelay);
-        var power = await PowerCmd.Apply<ProbeFocusMindPower>(
+        await PowerCmd.Apply<ProbeFocusMindPower>(
             ctx, Owner.Creature, DynamicVars["ProbeFocusMindPower"].BaseValue, Owner.Creature, this);
-        power?.IncrementArmorLose();   // 每打出一次 → 回合开始时多失去 1 层钙铠（内部计数器）
     }
 
-    protected override void OnUpgrade() => DynamicVars["ProbeFocusMindPower"].UpgradeValueBy(2m);
+    protected override void OnUpgrade() => AddKeyword(CardKeyword.Innate);
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
     {
-        HoverTipFactory.FromPower<VigorPower>(),
-        HoverTipFactory.FromPower<CalciumArmorPower>(),
+        HoverTipFactory.FromPower<ProbeFocusMindPower>(),
+        HoverTipFactory.Static(StaticHoverTip.Block),
     };
 
     public override string? CustomPortraitPath => ProbeCardKit.InflamePortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "凝神"),
-        ("description", "在你的回合开始时，失去1层[gold]钙铠[/gold]，获得{ProbeFocusMindPower:diff()}点[gold]活力[/gold]。"),
+        ("description", "你每打出一张攻击牌，获得2点[gold]格挡[/gold]。"),
     };
 }

@@ -4,12 +4,14 @@ using System.Threading.Tasks;
 using BaseLib.Abstracts;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
 
 namespace Saria.Powers;
@@ -93,40 +95,24 @@ public sealed class ProbeFocusMindPower : CustomPowerModel
     public override string? CustomPackedIconPath => "res://images/atlases/power_atlas.sprites/thorns_power.tres";
     public override string? CustomBigIconPath => "res://images/powers/thorns_power.png";
 
-    protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
+    /// <summary>
+    /// 每打出一张攻击牌获得 Amount 点格挡。
+    /// cardSource 传 null —— 钙铠的"卡牌给格挡扣层"只对卡牌直接给的格挡生效，
+    /// 这条由 power 产出的格挡不应该再吃一次衰减。
+    /// </summary>
+    public override async Task BeforeCardPlayed(CardPlay cardPlay)
     {
-        new IntVar("ArmorLose", 0m),
-    };
-
-    /// <summary>Called by 凝神 / 凝神+ after applying: one more play means one more 钙铠 consumed.</summary>
-    public void IncrementArmorLose()
-    {
-        AssertMutable();
-        DynamicVars["ArmorLose"].BaseValue++;
-        DynamicVars["ArmorLose"].PreviewValue = DynamicVars["ArmorLose"].BaseValue;
-    }
-
-    public override async Task AfterPlayerTurnStart(PlayerChoiceContext choiceContext, Player player)
-    {
-        if (player != Owner.Player || Amount <= 0)
+        if (Amount <= 0 || cardPlay.Card.Owner != Owner.Player || cardPlay.Card.Type != CardType.Attack)
             return;
 
-        var armour = Owner.GetPower<CalciumArmorPower>();
-        if (armour != null && armour.Amount > 0)
-        {
-            int loss = Math.Min(DynamicVars["ArmorLose"].IntValue, armour.Amount);
-            if (loss > 0)
-                await PowerCmd.ModifyAmount(choiceContext, armour, -loss, Owner, null);
-        }
-
         Flash();
-        await PowerCmd.Apply<VigorPower>(choiceContext, Owner, Amount, Owner, null);
+        await CreatureCmd.GainBlock(Owner, Amount, ValueProp.Unpowered, null);
     }
 
     public override List<(string, string)>? Localization => new()
     {
         ("title", "凝神"),
-        ("description", "回合开始时，失去[gold]钙铠[/gold]，获得[gold]活力[/gold]。"),
-        ("smartDescription", "回合开始时，失去[blue]{ArmorLose}[/blue]层[gold]钙铠[/gold]，获得[blue]{Amount}[/blue]点[gold]活力[/gold]。"),
+        ("description", "你每打出一张[gold]攻击牌[/gold]，获得[gold]格挡[/gold]。"),
+        ("smartDescription", "你每打出一张[gold]攻击牌[/gold]，获得[blue]{Amount}[/blue]点[gold]格挡[/gold]。"),
     };
 }
