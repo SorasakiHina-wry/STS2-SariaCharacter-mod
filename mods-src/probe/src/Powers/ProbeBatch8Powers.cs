@@ -42,7 +42,24 @@ public sealed class ProbeLimitPower : CustomPowerModel
 
         SetAmount(Amount - 1, silent: true);
         Flash();
+
+        // 层数归零就把 power 本身移除，否则 buff 栏会留下一个 0 层的空图标
+        if (Amount <= 0)
+            RemoveWhenEmpty();
+
         return 0m;
+    }
+
+    private async void RemoveWhenEmpty()
+    {
+        try
+        {
+            await PowerCmd.Remove(this);
+        }
+        catch (Exception ex)
+        {
+            MegaCrit.Sts2.Core.Logging.Log.Warn($"[saria] 限位 removal failed: {ex.Message}");
+        }
     }
 
     public override List<(string, string)>? Localization => new()
