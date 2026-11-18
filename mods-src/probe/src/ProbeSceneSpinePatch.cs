@@ -63,7 +63,7 @@ public static class SariaRestSiteSpinePatch
                 return;
 
             Log.Info("[saria][spine] rest site: swapping to build skeleton");
-            SceneSpineHelper.ApplyToChildren(__instance, "Sit", loop: true, scaleFactor: 1.5f);
+            SceneSpineHelper.ApplyToChildren(__instance, "Sit", loop: true, scaleFactor: 1.6f);
         }
         catch (Exception ex)
         {
@@ -104,7 +104,7 @@ public static class SariaMerchantSpinePatch
                     continue;
 
                 Log.Info("[saria][spine] merchant: swapping to build skeleton");
-                SceneSpineHelper.ApplyToChildren(node, "Relax", loop: true, absoluteScale: 1.5f);
+                SceneSpineHelper.ApplyToChildren(node, "Relax", loop: true, absoluteScale: 1.15f);
             }
         }
         catch (Exception ex)
