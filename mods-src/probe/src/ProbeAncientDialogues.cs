@@ -11,14 +11,19 @@ using MegaCrit.Sts2.Core.Models;
 namespace Saria;
 
 /// <summary>
-/// 把塞雷娅的先古对话接进原版先古。
+/// 把塞雷娅的先古对话接进原版先古，并且**沿用原版的抽取优先级**。
 ///
-/// 原版每个先古的 <see cref="AncientDialogueSet"/> 里写死了 CharacterDialogues 字典（只含 5 位原版角色），
-/// GetValidDialogues 用 `characterId.Entry` 查表，自定义角色永远查不到，所以必须自己注入。
+/// 原版 <see cref="AncientDialogueSet.GetValidDialogues"/> 的规则（见其源码）：
+///   1. totalVisits == 0 且存在 FirstVisitEverDialogue → 只返回它（全存档首次，所有角色共用）
+///   2. 该角色在 charVisits 这一档的专属对话 → 有就直接返回（不与通用混合）
+///   3. 否则若允许通用对话：ANY 同档位的对话 → 有就返回
+///   4. 都不满足 → 取「重复池」：角色专属的重复对话 + ANY 的重复对话**混在一起**随机抽
 ///
-/// 做法：patch GetValidDialogues，先推断这个 set 属于哪位先古（从已有对话的本地化键前缀，
-/// 形如 `NEOW.talk.IRONCLAD.0-0.ancient`），再返回我们自己的对话列表。
-/// 全存档首次（totalVisits == 0）保持原版，因为 firstVisitEver 是所有角色共用的。
+/// 自定义角色不在原版 CharacterDialogues 字典里，所以原版只会拿到 ANY 那部分。
+/// 这里把我们自己的对话当成"该角色的专属对话"塞进同一套流程，于是：
+///   - 有专属的当次对话 → 用我们的（和原版角色一致）
+///   - 没有 → 退回 ANY（和原版一致）
+///   - 重复池 → 我们 + ANY 混合抽（和原版一致）
 /// </summary>
 [HarmonyPatch(typeof(AncientDialogueSet), nameof(AncientDialogueSet.GetValidDialogues))]
 public static class ProbeAncientDialoguePatch
@@ -37,32 +42,65 @@ public static class ProbeAncientDialoguePatch
         if (characterId.Entry != ProbeAncientDialogueData.CharacterEntry)
             return;
 
+        // 全存档首次：原版 firstVisitEver 是所有角色共用的，不插手
         if (totalVisits == 0)
-            return; // 全存档首次：原版 firstVisitEver（所有角色共用）
-
-        string? ancientEntry = GuessAncientEntry(__instance);
-        if (ancientEntry == null || !ProbeAncientDialogueData.Sets.TryGetValue(ancientEntry, out var sets))
             return;
+
+        var mine = TryBuildOurDialogues(__instance);
+        var any = __instance.AgnosticDialogues ?? Array.Empty<AncientDialogue>();
+
+        // 1) 角色专属（这一档访问次数）
+        if (mine != null)
+        {
+            var visitSpecific = mine.Where(d => d.VisitIndex == charVisits).ToList();
+            if (visitSpecific.Count > 0)
+            {
+                __result = visitSpecific;
+                return;
+            }
+        }
+
+        // 2) 通用对话（这一档访问次数）
+        if (allowAnyCharacterDialogues)
+        {
+            var genericSpecific = any.Where(d => d.VisitIndex == charVisits).ToList();
+            if (genericSpecific.Count > 0)
+            {
+                __result = genericSpecific;
+                return;
+            }
+        }
+
+        // 3) 重复池：角色专属 + 通用，混在一起由调用方随机抽
+        var pool = new List<AncientDialogue>();
+        if (mine != null)
+            AddRepeating(mine, pool, charVisits);
+        if (allowAnyCharacterDialogues)
+            AddRepeating(any, pool, charVisits);
+
+        if (pool.Count > 0)
+            __result = pool;
+        // 两者都空：保留原版结果
+    }
+
+    /// <summary>与原版 AncientDialogueSet.AddRepeatingDialogues 一致。</summary>
+    private static void AddRepeating(IEnumerable<AncientDialogue> source, List<AncientDialogue> destination, int charVisits)
+    {
+        foreach (var dialogue in source)
+        {
+            if (dialogue.IsRepeating && (!dialogue.VisitIndex.HasValue || charVisits >= dialogue.VisitIndex.Value))
+                destination.Add(dialogue);
+        }
+    }
+
+    private static List<AncientDialogue>? TryBuildOurDialogues(AncientDialogueSet set)
+    {
+        string? ancientEntry = GuessAncientEntry(set);
+        if (ancientEntry == null || !ProbeAncientDialogueData.Sets.TryGetValue(ancientEntry, out var sets))
+            return null;
 
         var dialogues = Build(ancientEntry, sets);
-        if (dialogues.Count == 0)
-            return;
-
-        var visitSpecific = dialogues.Where(d => d.VisitIndex == charVisits).ToList();
-        if (visitSpecific.Count > 0)
-        {
-            __result = visitSpecific;
-            return;
-        }
-
-        var repeating = dialogues.Where(d => d.IsRepeating).ToList();
-        if (repeating.Count > 0)
-        {
-            __result = repeating;
-            return;
-        }
-
-        __result = dialogues;
+        return dialogues.Count > 0 ? dialogues : null;
     }
 
     private static string? GuessAncientEntry(AncientDialogueSet set)
@@ -117,7 +155,8 @@ public static class ProbeAncientDialoguePatch
             }
         }
 
-        Log.Info($"[saria] ancient dialogues ready: {ancientEntry} -> {list.Count} 组");
+        Log.Info($"[saria] ancient dialogues ready: {ancientEntry} -> {list.Count} 组" +
+                 $" (repeating {list.Count(d => d.IsRepeating)})");
         Cache[ancientEntry] = list;
         return list;
     }
