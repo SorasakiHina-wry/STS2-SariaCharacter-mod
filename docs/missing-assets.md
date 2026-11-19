@@ -70,6 +70,7 @@
 | 项 | 位置 | 现状 | 建议 |
 |---|---|---|---|
 | 地图画线颜色 | `CharacterModel.MapDrawingColor` | `#e8ebbe` | 已设 |
+| 联机瞄准线 | `CharacterModel.RemoteTargetingLineColor` | `#e8ebbe` | 已设 |
 | 卡牌背景色 | `CardPoolModel.DeckEntryCardColor` | `#e8ebbe` | 已设 |
 | 卡框着色 | `CustomCardPoolModel.ShaderColor` | `#e8ebbe` | 已设（走 BaseLib HSV 着色，框材质仍是红色） |
 | 能量文字描边 | `CardPoolModel.EnergyOutlineColor` | 默认 `#5C5440` | 可按新卡框配色微调 |

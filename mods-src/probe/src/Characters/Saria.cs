@@ -49,6 +49,9 @@ public sealed class Saria : PlaceholderCharacterModel
     /// <summary>地图上的画线颜色（原版默认黑色）。</summary>
     public override Color MapDrawingColor => new("e8ebbe");
 
+    /// <summary>多人联机时的瞄准线颜色（原版默认黑色）。</summary>
+    public override Color RemoteTargetingLineColor => new("e8ebbe");
+
     /// <summary>角色选择界面的选中音效：哨兵值，由 ProbeSelectSfx 拦截后播本地 ogg。</summary>
     public override string CharacterSelectSfx => ProbeSelectSfx.Key;
 
