@@ -26,8 +26,11 @@ dist/
 __pycache__/
 *.pyc
 
-# 版权素材：仅本地构建用，不入库
-resources/
+# 版权素材：仅本地构建用，不入库（唯一例外：自制卡图压缩版 cards-little）
+resources/*
+!resources/png/
+resources/png/*
+!resources/png/cards-little/
 GDRE_tools*/
 
 # 本机 DSH 配置（代理、MCP、临时令牌），不入库

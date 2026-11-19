@@ -69,8 +69,9 @@ if (Test-Path $pngDir) {
         if (-not (Test-Path $from)) { throw "缺少图片：$from" }
         Copy-Item $from (Join-Path $StageDir ('images\' + $imageMap[$src])) -Force
     }
-    # 卡图：resources\png\cards\*.png -> images\portraits\（两个文件名多数了 png 后缀，这里顺手修正）
-    $cardArtDir = Join-Path $RepoRoot 'resources\png\cards'
+    # 卡图：优先用压缩版 resources\png\cards-little\*.png -> images\portraits\（没有则退回原图）
+    $cardArtDir = Join-Path $RepoRoot 'resources\png\cards-little'
+    if (-not (Test-Path $cardArtDir)) { $cardArtDir = Join-Path $RepoRoot 'resources\png\cards' }
     if (Test-Path $cardArtDir) {
         New-Item -ItemType Directory -Force -Path (Join-Path $StageDir 'images\portraits') | Out-Null
         $cardRenames = @{ 'ProbeArmpng.png' = 'ProbeArm.png'; 'ProbeInsightpng.png' = 'ProbeInsight.png' }
