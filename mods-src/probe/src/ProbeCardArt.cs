@@ -2,6 +2,7 @@ using System;
 using Godot;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Logging;
+using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Cards;
 
@@ -54,14 +55,32 @@ internal static class ProbeCardArt
         Cache[className] = texture;
         return texture;
     }
+
+    /// <summary>把塞雷娅卡牌的贴图换掉；不是我们的卡或没素材就原样返回。</summary>
+    internal static bool TryApply(NCard card)
+    {
+        try
+        {
+            var model = card.Model;
+            if (model == null)
+                return false;
+
+            string entry = model.Id.Entry;
+            if (entry == null || !entry.StartsWith("SARIA-", StringComparison.Ordinal))
+                return false;
+
+            var texture = Load(model.GetType().Name);
+            return texture != null && CardPortraitFields.Set(card, texture, model.Rarity);
+        }
+        catch (Exception ex)
+        {
+            Log.Warn($"[saria][art] apply failed: {ex.Message}");
+            return false;
+        }
+    }
 }
 
-/// <summary>
-/// 卡面刷新完之后，把塞雷娅卡牌的贴图换成散文件里的自制卡图。
-/// 挂 <c>NCard.UpdatePortrait</c>（方法，不会被内联），原版的字号/模糊参数保持不动。
-/// </summary>
-[HarmonyPatch(typeof(NCard), "UpdatePortrait")]
-public static class ProbeCardPortraitPatch
+internal static class CardPortraitFields
 {
     private static readonly AccessTools.FieldRef<NCard, TextureRect> PortraitRef =
         AccessTools.FieldRefAccess<NCard, TextureRect>("_portrait");
@@ -69,34 +88,40 @@ public static class ProbeCardPortraitPatch
     private static readonly AccessTools.FieldRef<NCard, TextureRect> AncientPortraitRef =
         AccessTools.FieldRefAccess<NCard, TextureRect>("_ancientPortrait");
 
-    [HarmonyPostfix]
-    private static void Postfix(NCard __instance)
+    internal static bool Set(NCard card, Texture2D texture, CardRarity rarity)
     {
-        try
+        if (rarity != CardRarity.Ancient)
         {
-            var model = __instance.Model;
-            if (model == null)
-                return;
-
-            string entry = model.Id.Entry;
-            if (entry == null || !entry.StartsWith("SARIA-", StringComparison.Ordinal))
-                return;
-
-            var texture = ProbeCardArt.Load(model.GetType().Name);
-            if (texture == null)
-                return;
-
-            var portrait = PortraitRef(__instance);
-            if (portrait != null)
-                portrait.Texture = texture;
-
-            var ancient = AncientPortraitRef(__instance);
-            if (ancient != null && ancient.Visible)
-                ancient.Texture = texture;
+            var portrait = PortraitRef(card);
+            if (portrait == null)
+                return false;
+            portrait.Texture = texture;
+            return true;
         }
-        catch (Exception ex)
-        {
-            Log.Warn($"[saria][art] NCard portrait hook failed: {ex.Message}");
-        }
+
+        var ancient = AncientPortraitRef(card);
+        if (ancient == null)
+            return false;
+        ancient.Texture = texture;
+        return true;
     }
+}
+
+/// <summary>卡面刷新完之后替换贴图（手牌、牌库、卡牌奖励）。</summary>
+[HarmonyPatch(typeof(NCard), "UpdatePortrait")]
+public static class ProbeCardPortraitPatch
+{
+    [HarmonyPostfix]
+    private static void Postfix(NCard __instance) => ProbeCardArt.TryApply(__instance);
+}
+
+/// <summary>
+/// 检视大图：NInspectCardScreen 会在 UpdateVisuals 之后再调一次
+/// <c>SetPortraitTexture(card.BigPortrait)</c>，把我们的贴图覆盖回去，所以这里再补一刀。
+/// </summary>
+[HarmonyPatch(typeof(NCard), nameof(NCard.SetPortraitTexture))]
+public static class ProbeCardBigPortraitPatch
+{
+    [HarmonyPostfix]
+    private static void Postfix(NCard __instance) => ProbeCardArt.TryApply(__instance);
 }
