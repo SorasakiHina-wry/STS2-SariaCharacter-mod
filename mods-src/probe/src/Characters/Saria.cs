@@ -44,7 +44,13 @@ public sealed class Saria : PlaceholderCharacterModel
         (new AnimState("idle_loop"), "WakeUpTrigger"),
     };
 
-    public override Color NameColor => new("7FD4FF");
+    public override Color NameColor => new("e8ebbe");
+
+    /// <summary>地图上的画线颜色（原版默认黑色）。</summary>
+    public override Color MapDrawingColor => new("e8ebbe");
+
+    /// <summary>角色选择界面的选中音效：哨兵值，由 ProbeSelectSfx 拦截后播本地 ogg。</summary>
+    public override string CharacterSelectSfx => ProbeSelectSfx.Key;
 
     public override CharacterGender Gender => CharacterGender.Neutral;
 

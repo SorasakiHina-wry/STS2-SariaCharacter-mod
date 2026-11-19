@@ -69,6 +69,8 @@ if (Test-Path $pngDir) {
         if (-not (Test-Path $from)) { throw "缺少图片：$from" }
         Copy-Item $from (Join-Path $StageDir ('images\' + $imageMap[$src])) -Force
     }
+    New-Item -ItemType Directory -Force -Path (Join-Path $StageDir 'audio') | Out-Null
+    Copy-Item (Join-Path $RepoRoot 'resources\ogg\selected.ogg') (Join-Path $StageDir 'audio\selected.ogg') -Force
     New-Item -ItemType Directory -Force -Path (Join-Path $StageDir 'spine') | Out-Null
     foreach ($name in @('char_202_demkni.atlas', 'char_202_demkni.png', 'char_202_demkni.skel', 'build_char_202_demkni.atlas', 'build_char_202_demkni.png', 'build_char_202_demkni.skel')) {
         $from = Join-Path $spineDir $name
