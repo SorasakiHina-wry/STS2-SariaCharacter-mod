@@ -69,13 +69,35 @@ if (Test-Path $pngDir) {
         if (-not (Test-Path $from)) { throw "缺少图片：$from" }
         Copy-Item $from (Join-Path $StageDir ('images\' + $imageMap[$src])) -Force
     }
+    # 卡图：resources\png\cards\*.png -> images\portraits\（两个文件名多数了 png 后缀，这里顺手修正）
+    $cardArtDir = Join-Path $RepoRoot 'resources\png\cards'
+    if (Test-Path $cardArtDir) {
+        New-Item -ItemType Directory -Force -Path (Join-Path $StageDir 'images\portraits') | Out-Null
+        $cardRenames = @{ 'ProbeArmpng.png' = 'ProbeArm.png'; 'ProbeInsightpng.png' = 'ProbeInsight.png' }
+        foreach ($png in Get-ChildItem $cardArtDir -Filter '*.png') {
+            $target = if ($cardRenames.ContainsKey($png.Name)) { $cardRenames[$png.Name] } else { $png.Name }
+            Copy-Item $png.FullName (Join-Path $StageDir ('images\portraits\' + $target)) -Force
+        }
+    }
+    else {
+        Write-Warning "resources\png\cards 不存在，本次不含卡图。"
+    }
     New-Item -ItemType Directory -Force -Path (Join-Path $StageDir 'audio') | Out-Null
     Copy-Item (Join-Path $RepoRoot 'resources\ogg\selected.ogg') (Join-Path $StageDir 'audio\selected.ogg') -Force
     New-Item -ItemType Directory -Force -Path (Join-Path $StageDir 'spine') | Out-Null
-    foreach ($name in @('char_202_demkni.atlas', 'char_202_demkni.png', 'char_202_demkni.skel', 'build_char_202_demkni.atlas', 'build_char_202_demkni.png', 'build_char_202_demkni.skel')) {
-        $from = Join-Path $spineDir $name
+    # 战斗骨骼在 fight\4.2，非战斗（商店/火堆）骨骼在 4.2
+    $spineSources = @{
+        'char_202_demkni.atlas'       = $spineDir
+        'char_202_demkni.png'         = $spineDir
+        'char_202_demkni.skel'        = $spineDir
+        'build_char_202_demkni.atlas' = (Join-Path $RepoRoot 'resources\spine\4.2')
+        'build_char_202_demkni.png'   = (Join-Path $RepoRoot 'resources\spine\4.2')
+        'build_char_202_demkni.skel'  = (Join-Path $RepoRoot 'resources\spine\4.2')
+    }
+    foreach ($kv in $spineSources.GetEnumerator()) {
+        $from = Join-Path $kv.Value $kv.Key
         if (-not (Test-Path $from)) { throw "缺少 Spine 文件：$from" }
-        Copy-Item $from (Join-Path $StageDir ('spine\' + $name)) -Force
+        Copy-Item $from (Join-Path $StageDir ('spine\' + $kv.Key)) -Force
     }
 }
 else {
