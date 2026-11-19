@@ -42,6 +42,13 @@ public static class ProbeMain
             }
 
             Log.Info($"[saria] harmony patches: {applied} applied, {skipped} skipped");
+
+        // 诊断：确认 pck 里的卡图能被 ResourceLoader 看到、选中音效文件存在
+        string probePath = "res://saria/images/portraits/ProbeStrike.png";
+        bool probeExists = Godot.ResourceLoader.Exists(probePath);
+        var probeTex = probeExists ? Godot.ResourceLoader.Load<Godot.Texture2D>(probePath) : null;
+        Log.Info($"[saria][art] pck portrait: exists={probeExists} loaded={probeTex != null} size={(probeTex != null ? probeTex.GetSize().ToString() : "n/a")}");
+        Log.Info($"[saria][art] select ogg exists = {Godot.FileAccess.FileExists(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Godot.OS.GetExecutablePath()) ?? "", "mods", "saria", "audio", "selected.ogg"))}");
         }
         catch (Exception ex)
         {

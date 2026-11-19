@@ -19,17 +19,22 @@
 
 ---
 
-## 2. 卡图规格（已实装）
+## 2. 卡图（已实装）
 
-89 张卡图已就位（
-esources/png/cards/*.png → mods/saria/images/portraits/*.png），
-游戏侧通过给 CardModel.Portrait 打补丁按需加载（不走 PCK，避免读不到自己的 .ctex）。
+89 张自制卡图已接入：
 
-| 项目 | 一般卡 | 先古卡 |
-|---|---|---|
-| 实际尺寸 | 1536×1024（87 张） | 1024×1536（2 张：渗透、极限功率） |
-| 显示区域 | 250×190（1.32:1） | 约 410×573（0.72:1） |
-| 命名 | 与 design/card-ids.md 的英文别名一致（如 ProbeStrike.png） | 同左 |
+| 项 | 说明 |
+|---|---|
+| 源图 | 
+esources/png/cards/（不入库） |
+| 发布用压缩图 | 
+esources/png/cards-little/（入库，5.7 MB）：500×380 / 820×1146，256 色抖动 |
+| 运行时位置 | mods/saria/images/portraits/<类名>.png（散文件） |
+| 加载方式 | Image.LoadPngFromBuffer → ImageTexture，在 NCard.UpdatePortrait 之后替换贴图 |
+
+> 卡图**不能**放 mod PCK：里面贴图的 import remap 指向游戏的 
+es://.godot/imported/，
+> ResourceLoader.Exists 为 true 但 Load 返回 null（实测）。所以卡图必须走散文件。
 
 ## 3. 音效（角色选择选中）—— 已实装
 

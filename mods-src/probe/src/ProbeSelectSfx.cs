@@ -2,6 +2,7 @@ using System;
 using Godot;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Nodes.Screens.CharacterSelect;
 using MegaCrit.Sts2.Core.Logging;
 
 namespace Saria;
@@ -35,8 +36,24 @@ public static class ProbeSelectSfx
 
             player.Stream = _stream;
             player.VolumeDb = Mathf.LinearToDb(Math.Max(volume, 0.001f));
-            player.Play();
-            Log.Info("[saria] character select sfx played (selected.ogg)");
+
+            // 素材本身没有留白，按需求在播放前加 0.2 秒空档（不改文件，避免重新编码 ogg）
+            const float leadIn = 0.2f;
+            if (Engine.GetMainLoop() is SceneTree tree)
+            {
+                var timer = tree.CreateTimer(leadIn);
+                timer.Timeout += () =>
+                {
+                    if (GodotObject.IsInstanceValid(player))
+                        player.Play();
+                };
+            }
+            else
+            {
+                player.Play();
+            }
+
+            Log.Info($"[saria] character select sfx scheduled (+{leadIn}s lead-in)");
         }
         catch (Exception ex)
         {
@@ -95,17 +112,30 @@ public static class ProbeSelectSfx
     }
 }
 
-/// <summary>把「角色选择选中音效」的 FMOD 调用换成本地 ogg。</summary>
-[HarmonyPatch(typeof(SfxCmd), nameof(SfxCmd.Play), new[] { typeof(string), typeof(float) })]
+/// <summary>
+/// 角色选择界面点选角色时播我们自己的 ogg。
+/// 直接挂在 NCharacterSelectScreen.SelectCharacter 上：SfxCmd.Play 的分发在不同版本里不总是走同一条路，
+/// 挂在界面上更稳；CharacterSelectSfx 仍返回哨兵值，保证原版不会同时播铁甲战士的音效。
+/// </summary>
+[HarmonyPatch(typeof(MegaCrit.Sts2.Core.Nodes.Screens.CharacterSelect.NCharacterSelectScreen), "SelectCharacter")]
 public static class ProbeSelectSfxPatch
 {
-    [HarmonyPrefix]
-    private static bool Prefix(string sfx, float volume)
+    [HarmonyPostfix]
+    private static void Postfix(NCharacterSelectButton charSelectButton)
     {
-        if (sfx != ProbeSelectSfx.Key)
-            return true;
+        try
+        {
+            var character = charSelectButton?.Character;
+            if (character == null)
+                return;
+            if (!character.Id.Entry.EndsWith("SARIA", StringComparison.Ordinal))
+                return;
 
-        ProbeSelectSfx.Play(volume);
-        return false;
+            ProbeSelectSfx.Play(1f);
+        }
+        catch (Exception ex)
+        {
+            Log.Warn($"[saria] select sfx hook failed: {ex.Message}");
+        }
     }
 }

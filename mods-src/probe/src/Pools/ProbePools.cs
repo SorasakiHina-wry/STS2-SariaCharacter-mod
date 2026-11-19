@@ -11,14 +11,14 @@ public sealed class ProbeCardPool : CustomCardPoolModel
 {
     public override string Title => "saria";
 
-    public override Color DeckEntryCardColor => new("e8ebbe");
+    public override Color DeckEntryCardColor => new("7FD4FF");
 
     public override bool IsColorless => false;
 
     /// <summary>
     /// Tints the card frame through BaseLib's HSV shader (CardFrameMaterialPath stays "card_frame_red").
     /// </summary>
-    public override Color ShaderColor => new("e8ebbe");
+    public override Color ShaderColor => new("7FD4FF");
 
     /// <summary>
     /// Reuse the Ironclad energy orb/icon art until custom energy icons exist.

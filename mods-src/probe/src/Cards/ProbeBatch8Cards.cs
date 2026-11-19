@@ -21,7 +21,7 @@ namespace Saria.Cards;
 
 /// <summary>弱化 — 伤害 + 两层虚弱。</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeWeaken : CustomCardModel
+public sealed class ProbeWeaken : SariaCardModel
 {
     public ProbeWeaken() : base(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy) { }
 
@@ -55,8 +55,6 @@ public sealed class ProbeWeaken : CustomCardModel
     {
         HoverTipFactory.FromPower<WeakPower>(),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.BashPortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "弱化"),
@@ -66,7 +64,7 @@ public sealed class ProbeWeaken : CustomCardModel
 
 /// <summary>限位 — 全体伤害，并给每个敌人 1 层限位（下一次获得格挡被阻止）。</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeLimit : CustomCardModel
+public sealed class ProbeLimit : SariaCardModel
 {
     public ProbeLimit() : base(1, CardType.Attack, CardRarity.Common, TargetType.AllEnemies) { }
 
@@ -96,8 +94,6 @@ public sealed class ProbeLimit : CustomCardModel
     {
         HoverTipFactory.FromPower<ProbeLimitPower>(),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.BashPortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "限位"),
@@ -107,7 +103,7 @@ public sealed class ProbeLimit : CustomCardModel
 
 /// <summary>策略归纳 — 命中次数随斩杀永久成长（整局跨战斗保留）。</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeStrategySummary : CustomCardModel
+public sealed class ProbeStrategySummary : SariaCardModel
 {
     private int _extraHits;
 
@@ -172,8 +168,6 @@ public sealed class ProbeStrategySummary : CustomCardModel
     {
         HoverTipFactory.Static(StaticHoverTip.Fatal),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.BludgeonPortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "策略归纳"),
@@ -183,7 +177,7 @@ public sealed class ProbeStrategySummary : CustomCardModel
 
 /// <summary>便携刻印 — 一次性的大笔钙铠。</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbePortableSeal : CustomCardModel
+public sealed class ProbePortableSeal : SariaCardModel
 {
     public ProbePortableSeal() : base(3, CardType.Skill, CardRarity.Rare, TargetType.Self) { }
 
@@ -206,8 +200,6 @@ public sealed class ProbePortableSeal : CustomCardModel
     {
         HoverTipFactory.FromPower<CalciumArmorPower>(),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.DefendPortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "便携刻印"),
@@ -217,7 +209,7 @@ public sealed class ProbePortableSeal : CustomCardModel
 
 /// <summary>迅捷 — 常驻：回合开始扣钙铠，从抽牌堆随机几张里选牌。</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeSwift : CustomCardModel
+public sealed class ProbeSwift : SariaCardModel
 {
     public ProbeSwift() : base(1, CardType.Power, CardRarity.Rare, TargetType.Self) { }
 
@@ -238,8 +230,6 @@ public sealed class ProbeSwift : CustomCardModel
     {
         HoverTipFactory.FromPower<CalciumArmorPower>(),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.InflamePortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "迅捷"),
@@ -249,7 +239,7 @@ public sealed class ProbeSwift : CustomCardModel
 
 /// <summary>覆还 — 本回合失去的钙铠，在下回合开始时还回来。</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeReturn : CustomCardModel
+public sealed class ProbeReturn : SariaCardModel
 {
     public ProbeReturn() : base(1, CardType.Skill, CardRarity.Rare, TargetType.Self) { }
 
@@ -272,8 +262,6 @@ public sealed class ProbeReturn : CustomCardModel
         HoverTipFactory.FromPower<CalciumArmorPower>(),
         HoverTipFactory.FromPower<ProbeNextTurnArmorPower>(),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.DefendPortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "覆还"),

@@ -20,7 +20,7 @@ namespace Saria.Cards;
 
 /// <summary>格斗 — two hits, upgraded to three.</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeBrawl : CustomCardModel
+public sealed class ProbeBrawl : SariaCardModel
 {
     public ProbeBrawl() : base(2, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy) { }
 
@@ -45,8 +45,6 @@ public sealed class ProbeBrawl : CustomCardModel
     }
 
     protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(2m);
-
-    public override string? CustomPortraitPath => ProbeCardKit.BashPortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "格斗"),
@@ -56,7 +54,7 @@ public sealed class ProbeBrawl : CustomCardModel
 
 /// <summary>持械 — spend armour for Vigor that lapses at end of turn.</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeArm : CustomCardModel
+public sealed class ProbeArm : SariaCardModel
 {
     public ProbeArm() : base(1, CardType.Skill, CardRarity.Common, TargetType.Self) { }
 
@@ -84,8 +82,6 @@ public sealed class ProbeArm : CustomCardModel
         HoverTipFactory.FromPower<VigorPower>(),
         HoverTipFactory.FromPower<CalciumArmorPower>(),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.InflamePortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "持械"),
@@ -95,7 +91,7 @@ public sealed class ProbeArm : CustomCardModel
 
 /// <summary>谨慎 — damage, block, then armour.</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeCautious : CustomCardModel
+public sealed class ProbeCautious : SariaCardModel
 {
     public ProbeCautious() : base(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy) { }
 
@@ -127,8 +123,6 @@ public sealed class ProbeCautious : CustomCardModel
         HoverTipFactory.FromPower<CalciumArmorPower>(),
         HoverTipFactory.Static(StaticHoverTip.Block),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.StrikePortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "谨慎"),
@@ -138,7 +132,7 @@ public sealed class ProbeCautious : CustomCardModel
 
 /// <summary>腿甲 — armour plus card draw on the following turns.</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeLegArmor : CustomCardModel
+public sealed class ProbeLegArmor : SariaCardModel
 {
     public ProbeLegArmor() : base(2, CardType.Skill, CardRarity.Common, TargetType.Self) { }
 
@@ -169,8 +163,6 @@ public sealed class ProbeLegArmor : CustomCardModel
         HoverTipFactory.FromPower<CalciumArmorPower>(),
         HoverTipFactory.Static(StaticHoverTip.Block),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.DefendPortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "腿甲"),
@@ -180,7 +172,7 @@ public sealed class ProbeLegArmor : CustomCardModel
 
 /// <summary>骨矿化 — armour whenever a card grants block.</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeBoneMineralize : CustomCardModel
+public sealed class ProbeBoneMineralize : SariaCardModel
 {
     public ProbeBoneMineralize() : base(2, CardType.Power, CardRarity.Uncommon, TargetType.Self) { }
 
@@ -204,8 +196,6 @@ public sealed class ProbeBoneMineralize : CustomCardModel
         HoverTipFactory.FromPower<CalciumArmorPower>(),
         HoverTipFactory.Static(StaticHoverTip.Block),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.InflamePortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "骨矿化"),
@@ -215,7 +205,7 @@ public sealed class ProbeBoneMineralize : CustomCardModel
 
 /// <summary>技艺超载 — refill the hand now, pay armour next turn.</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeTechniqueOverload : CustomCardModel
+public sealed class ProbeTechniqueOverload : SariaCardModel
 {
     private const int ARMOR_LOSS = 6;
 
@@ -240,8 +230,6 @@ public sealed class ProbeTechniqueOverload : CustomCardModel
     {
         HoverTipFactory.FromPower<CalciumArmorPower>(),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.BashPortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "技艺超载"),
@@ -251,7 +239,7 @@ public sealed class ProbeTechniqueOverload : CustomCardModel
 
 /// <summary>精神回复 — every 18 armour becomes one energy.</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeSpiritRecovery : CustomCardModel
+public sealed class ProbeSpiritRecovery : SariaCardModel
 {
     public ProbeSpiritRecovery() : base(1, CardType.Power, CardRarity.Uncommon, TargetType.Self) { }
 
@@ -274,8 +262,6 @@ public sealed class ProbeSpiritRecovery : CustomCardModel
     {
         HoverTipFactory.FromPower<CalciumArmorPower>(),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.InflamePortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "精神回复"),
@@ -285,7 +271,7 @@ public sealed class ProbeSpiritRecovery : CustomCardModel
 
 /// <summary>拳击手套 — trade one Dexterity for Strength.</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeBoxingGloves : CustomCardModel
+public sealed class ProbeBoxingGloves : SariaCardModel
 {
     public ProbeBoxingGloves() : base(1, CardType.Power, CardRarity.Uncommon, TargetType.Self) { }
 
@@ -309,8 +295,6 @@ public sealed class ProbeBoxingGloves : CustomCardModel
         HoverTipFactory.FromPower<StrengthPower>(),
         HoverTipFactory.FromPower<DexterityPower>(),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.InflamePortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "拳击手套"),
@@ -320,7 +304,7 @@ public sealed class ProbeBoxingGloves : CustomCardModel
 
 /// <summary>“科技新星” — extra Strength whenever Strength comes from elsewhere.</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeTechNova : CustomCardModel
+public sealed class ProbeTechNova : SariaCardModel
 {
     public ProbeTechNova() : base(1, CardType.Power, CardRarity.Rare, TargetType.Self) { }
 
@@ -343,8 +327,6 @@ public sealed class ProbeTechNova : CustomCardModel
     {
         HoverTipFactory.FromPower<StrengthPower>(),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.InflamePortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "“科技新星”"),

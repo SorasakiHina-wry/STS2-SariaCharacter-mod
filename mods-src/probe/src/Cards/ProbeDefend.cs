@@ -14,7 +14,7 @@ namespace Saria.Cards;
 
 /// <summary>Starter skill. Mirrors Defend for the first build.</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeDefend : CustomCardModel
+public sealed class ProbeDefend : SariaCardModel
 {
     public ProbeDefend()
         : base(1, CardType.Skill, CardRarity.Basic, TargetType.Self)
@@ -43,8 +43,6 @@ public sealed class ProbeDefend : CustomCardModel
     {
         HoverTipFactory.Static(StaticHoverTip.Block),
     };
-
-    public override string? CustomPortraitPath => "res://images/packed/card_portraits/ironclad/defend_ironclad.png";
 
     public override List<(string, string)>? Localization => new()
     {

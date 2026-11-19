@@ -20,7 +20,7 @@ namespace Saria.Cards;
 
 /// <summary>封装 — armour, block, and a card back from the discard pile next turn.</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeEncapsulate : CustomCardModel
+public sealed class ProbeEncapsulate : SariaCardModel
 {
     public ProbeEncapsulate() : base(1, CardType.Skill, CardRarity.Common, TargetType.Self) { }
 
@@ -51,8 +51,6 @@ public sealed class ProbeEncapsulate : CustomCardModel
         HoverTipFactory.FromPower<CalciumArmorPower>(),
         HoverTipFactory.Static(StaticHoverTip.Block),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.DefendPortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "封装"),
@@ -62,7 +60,7 @@ public sealed class ProbeEncapsulate : CustomCardModel
 
 /// <summary>膨化 — hit everything, then cash every armour stack into block.</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbePuffUp : CustomCardModel
+public sealed class ProbePuffUp : SariaCardModel
 {
     public ProbePuffUp() : base(1, CardType.Attack, CardRarity.Uncommon, TargetType.AllEnemies) { }
 
@@ -95,8 +93,6 @@ public sealed class ProbePuffUp : CustomCardModel
         HoverTipFactory.FromPower<CalciumArmorPower>(),
         HoverTipFactory.Static(StaticHoverTip.Block),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.BashPortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "膨化"),
@@ -106,7 +102,7 @@ public sealed class ProbePuffUp : CustomCardModel
 
 /// <summary>围歼 — spend up to five armour stacks as separate hits, gain Vigor, return to hand.</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeEncircle : CustomCardModel
+public sealed class ProbeEncircle : SariaCardModel
 {
     public ProbeEncircle() : base(1, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy) { }
 
@@ -160,8 +156,6 @@ public sealed class ProbeEncircle : CustomCardModel
         HoverTipFactory.FromPower<CalciumArmorPower>(),
         HoverTipFactory.FromPower<SetupStrikePower>(),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.BludgeonPortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "围歼"),
@@ -171,7 +165,7 @@ public sealed class ProbeEncircle : CustomCardModel
 
 /// <summary>战略终结 — damage grows with every armour stack gained this combat.</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeStrategicEnd : CustomCardModel
+public sealed class ProbeStrategicEnd : SariaCardModel
 {
     public ProbeStrategicEnd() : base(1, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy) { }
 
@@ -199,8 +193,6 @@ public sealed class ProbeStrategicEnd : CustomCardModel
     {
         HoverTipFactory.FromPower<CalciumArmorPower>(),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.BashPortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "战略终结"),
@@ -210,7 +202,7 @@ public sealed class ProbeStrategicEnd : CustomCardModel
 
 /// <summary>缠斗 — damage equal to current armour, then back on top of the draw pile.</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeTangle : CustomCardModel
+public sealed class ProbeTangle : SariaCardModel
 {
     public ProbeTangle() : base(1, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy) { }
 
@@ -250,8 +242,6 @@ public sealed class ProbeTangle : CustomCardModel
         HoverTipFactory.FromPower<CalciumArmorPower>(),
         HoverTipFactory.Static(StaticHoverTip.Block),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.BludgeonPortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "缠斗"),
@@ -261,7 +251,7 @@ public sealed class ProbeTangle : CustomCardModel
 
 /// <summary>臂甲 — cheap Strength that copies itself into the discard pile.</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeArmguard : CustomCardModel
+public sealed class ProbeArmguard : SariaCardModel
 {
     public ProbeArmguard() : base(1, CardType.Skill, CardRarity.Rare, TargetType.Self) { }
 
@@ -284,8 +274,6 @@ public sealed class ProbeArmguard : CustomCardModel
     {
         HoverTipFactory.FromPower<StrengthPower>(),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.DefendPortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "臂甲"),
@@ -295,7 +283,7 @@ public sealed class ProbeArmguard : CustomCardModel
 
 /// <summary>渗透 — spend a stack, then apply Vulnerable + Weak several times to everything.</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeOsmosis : CustomCardModel
+public sealed class ProbeOsmosis : SariaCardModel
 {
     public ProbeOsmosis() : base(1, CardType.Skill, CardRarity.Ancient, TargetType.AllEnemies) { }
 
@@ -330,8 +318,6 @@ public sealed class ProbeOsmosis : CustomCardModel
         HoverTipFactory.FromPower<VulnerablePower>(),
         HoverTipFactory.FromPower<WeakPower>(),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.BashPortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "渗透"),
@@ -341,7 +327,7 @@ public sealed class ProbeOsmosis : CustomCardModel
 
 /// <summary>极限功率 — the permanent power behind the card of the same name.</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeOverclock : CustomCardModel
+public sealed class ProbeOverclock : SariaCardModel
 {
     public ProbeOverclock() : base(2, CardType.Power, CardRarity.Ancient, TargetType.Self) { }
 
@@ -361,8 +347,6 @@ public sealed class ProbeOverclock : CustomCardModel
     {
         HoverTipFactory.FromPower<CalciumArmorPower>(),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.BashPortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "极限功率"),
@@ -372,7 +356,7 @@ public sealed class ProbeOverclock : CustomCardModel
 
 /// <summary>共振 — every armour stack gained this turn hits the chosen enemy once.</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeResonance : CustomCardModel
+public sealed class ProbeResonance : SariaCardModel
 {
     public ProbeResonance() : base(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy) { }
 
@@ -393,8 +377,6 @@ public sealed class ProbeResonance : CustomCardModel
     {
         HoverTipFactory.FromPower<CalciumArmorPower>(),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.BashPortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "共振"),
@@ -404,7 +386,7 @@ public sealed class ProbeResonance : CustomCardModel
 
 /// <summary>防卫经验 — the first eight armour stacks lost each turn draw cards.</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeDefenseExperience : CustomCardModel
+public sealed class ProbeDefenseExperience : SariaCardModel
 {
     public ProbeDefenseExperience() : base(1, CardType.Power, CardRarity.Uncommon, TargetType.Self) { }
 
@@ -426,8 +408,6 @@ public sealed class ProbeDefenseExperience : CustomCardModel
     {
         HoverTipFactory.FromPower<CalciumArmorPower>(),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.BashPortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "防卫经验"),

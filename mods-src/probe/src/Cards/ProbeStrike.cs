@@ -17,7 +17,7 @@ namespace Saria.Cards;
 /// "new card class -> new pool -> playable" works end to end.
 /// </summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeStrike : CustomCardModel
+public sealed class ProbeStrike : SariaCardModel
 {
     public ProbeStrike()
         : base(1, CardType.Attack, CardRarity.Basic, TargetType.AnyEnemy)
@@ -43,8 +43,6 @@ public sealed class ProbeStrike : CustomCardModel
     {
         DynamicVars.Damage.UpgradeValueBy(3m);
     }
-
-    public override string? CustomPortraitPath => "res://images/packed/card_portraits/ironclad/strike_ironclad.png";
 
     public override List<(string, string)>? Localization => new()
     {

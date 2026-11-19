@@ -22,7 +22,7 @@ namespace Saria.Cards;
 
 /// <summary>苛化 — 全体多段伤害，每一段未被格挡的伤害抽一张牌。</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeCausticize : CustomCardModel
+public sealed class ProbeCausticize : SariaCardModel
 {
     public ProbeCausticize() : base(1, CardType.Attack, CardRarity.Uncommon, TargetType.AllEnemies) { }
 
@@ -47,8 +47,6 @@ public sealed class ProbeCausticize : CustomCardModel
     }
 
     protected override void OnUpgrade() => DynamicVars.Repeat.UpgradeValueBy(1m);
-
-    public override string? CustomPortraitPath => ProbeCardKit.BashPortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "苛化"),
@@ -58,7 +56,7 @@ public sealed class ProbeCausticize : CustomCardModel
 
 /// <summary>脉化结构 — 花钙铠抽牌，并回到手牌。</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeVascularize : CustomCardModel
+public sealed class ProbeVascularize : SariaCardModel
 {
     public ProbeVascularize() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
 
@@ -84,8 +82,6 @@ public sealed class ProbeVascularize : CustomCardModel
         HoverTipFactory.FromPower<CalciumArmorPower>(),
         HoverTipFactory.Static(StaticHoverTip.Block),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.DefendPortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "脉化结构"),
@@ -95,7 +91,7 @@ public sealed class ProbeVascularize : CustomCardModel
 
 /// <summary>低姿搏斗 — 保留越久越便宜、段数越少。</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeLowStance : CustomCardModel
+public sealed class ProbeLowStance : SariaCardModel
 {
     public ProbeLowStance() : base(3, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy) { }
 
@@ -150,8 +146,6 @@ public sealed class ProbeLowStance : CustomCardModel
     {
         HoverTipFactory.FromPower<VulnerablePower>(),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.BashPortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "低姿搏斗"),
@@ -161,7 +155,7 @@ public sealed class ProbeLowStance : CustomCardModel
 
 /// <summary>预演 — 自选消耗一张手牌，抽牌、保留手牌、结束回合。</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeRehearsal : CustomCardModel
+public sealed class ProbeRehearsal : SariaCardModel
 {
     public ProbeRehearsal() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
 
@@ -191,8 +185,6 @@ public sealed class ProbeRehearsal : CustomCardModel
         HoverTipFactory.FromKeyword(CardKeyword.Retain),
         HoverTipFactory.FromKeyword(CardKeyword.Exhaust),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.DefendPortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "预演"),
@@ -202,7 +194,7 @@ public sealed class ProbeRehearsal : CustomCardModel
 
 /// <summary>复分解 — 最多 5 张手牌随机变化，然后回到抽牌堆顶。</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeDecomposition : CustomCardModel
+public sealed class ProbeDecomposition : SariaCardModel
 {
     public ProbeDecomposition() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
 
@@ -234,8 +226,6 @@ public sealed class ProbeDecomposition : CustomCardModel
         }
         return location;
     }
-
-    public override string? CustomPortraitPath => ProbeCardKit.DefendPortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "复分解"),
@@ -245,7 +235,7 @@ public sealed class ProbeDecomposition : CustomCardModel
 
 /// <summary>连续压制 — 每失去 1 层钙铠打一段、抽一张。</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeSuppression : CustomCardModel
+public sealed class ProbeSuppression : SariaCardModel
 {
     public ProbeSuppression() : base(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy) { }
 
@@ -282,8 +272,6 @@ public sealed class ProbeSuppression : CustomCardModel
     {
         HoverTipFactory.FromPower<CalciumArmorPower>(),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.BashPortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "连续压制"),
@@ -293,7 +281,7 @@ public sealed class ProbeSuppression : CustomCardModel
 
 /// <summary>护身打击 — 全体伤害、按总伤害获得格挡，并反弹本回合被格挡的伤害。</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeGuardStrike : CustomCardModel
+public sealed class ProbeGuardStrike : SariaCardModel
 {
     public ProbeGuardStrike() : base(2, CardType.Attack, CardRarity.Uncommon, TargetType.AllEnemies) { }
 
@@ -326,8 +314,6 @@ public sealed class ProbeGuardStrike : CustomCardModel
         HoverTipFactory.FromPower<ReflectPower>(),
         HoverTipFactory.Static(StaticHoverTip.Block),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.BludgeonPortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "护身打击"),
@@ -337,7 +323,7 @@ public sealed class ProbeGuardStrike : CustomCardModel
 
 /// <summary>锋刃 — 每次打出自身伤害降低，被消耗时补一张。</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeEdge : CustomCardModel
+public sealed class ProbeEdge : SariaCardModel
 {
     public ProbeEdge() : base(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy) { }
 
@@ -379,8 +365,6 @@ public sealed class ProbeEdge : CustomCardModel
     }
 
     protected override void OnUpgrade() => DynamicVars.Damage.UpgradeValueBy(2m);
-
-    public override string? CustomPortraitPath => ProbeCardKit.StrikePortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "锋刃"),
@@ -390,7 +374,7 @@ public sealed class ProbeEdge : CustomCardModel
 
 /// <summary>歼灭战术 — 手牌越多力量越高，然后全体多段伤害。</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeAnnihilation : CustomCardModel
+public sealed class ProbeAnnihilation : SariaCardModel
 {
     public ProbeAnnihilation() : base(2, CardType.Attack, CardRarity.Rare, TargetType.AllEnemies) { }
 
@@ -423,8 +407,6 @@ public sealed class ProbeAnnihilation : CustomCardModel
     {
         HoverTipFactory.FromPower<StrengthPower>(),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.BludgeonPortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "歼灭战术"),
@@ -434,7 +416,7 @@ public sealed class ProbeAnnihilation : CustomCardModel
 
 /// <summary>超重拳 — 高伤 + 击晕。</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeHeavyPunch : CustomCardModel
+public sealed class ProbeHeavyPunch : SariaCardModel
 {
     public ProbeHeavyPunch() : base(3, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy) { }
 
@@ -466,8 +448,6 @@ public sealed class ProbeHeavyPunch : CustomCardModel
     };
 
     private static IHoverTip StunIntentHelpTip => MegaCrit.Sts2.Core.MonsterMoves.Intents.StunIntent.GetStaticHoverTip();
-
-    public override string? CustomPortraitPath => ProbeCardKit.BludgeonPortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "超重拳"),
@@ -477,7 +457,7 @@ public sealed class ProbeHeavyPunch : CustomCardModel
 
 /// <summary>刺穿 — 全体多段小额伤害。</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeImpale : CustomCardModel
+public sealed class ProbeImpale : SariaCardModel
 {
     public ProbeImpale() : base(1, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy) { }
 
@@ -499,8 +479,6 @@ public sealed class ProbeImpale : CustomCardModel
     }
 
     protected override void OnUpgrade() => DynamicVars.Repeat.UpgradeValueBy(2m);
-
-    public override string? CustomPortraitPath => ProbeCardKit.StrikePortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "刺穿"),

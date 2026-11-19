@@ -16,7 +16,7 @@ namespace Saria.Cards;
 
 /// <summary>硬化 — basic skill: gain 钙铠 stacks.</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeHardening : CustomCardModel
+public sealed class ProbeHardening : SariaCardModel
 {
     public ProbeHardening()
         : base(1, CardType.Skill, CardRarity.Basic, TargetType.Self)
@@ -46,8 +46,6 @@ public sealed class ProbeHardening : CustomCardModel
         HoverTipFactory.FromPower<CalciumArmorPower>(),
     };
 
-    public override string? CustomPortraitPath => "res://images/packed/card_portraits/ironclad/defend_ironclad.png";
-
     public override List<(string, string)>? Localization => new()
     {
         ("title", "硬化"),
@@ -60,7 +58,7 @@ public sealed class ProbeHardening : CustomCardModel
 /// Upgrading only lowers the cost (1 -> 0).
 /// </summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeIgnite : CustomCardModel
+public sealed class ProbeIgnite : SariaCardModel
 {
     public ProbeIgnite()
         : base(1, CardType.Skill, CardRarity.Basic, TargetType.AnyEnemy)
@@ -97,8 +95,6 @@ public sealed class ProbeIgnite : CustomCardModel
         HoverTipFactory.FromPower<VulnerablePower>(),
         HoverTipFactory.FromPower<CalciumArmorPower>(),
     };
-
-    public override string? CustomPortraitPath => "res://images/packed/card_portraits/ironclad/bash.png";
 
     public override List<(string, string)>? Localization => new()
     {

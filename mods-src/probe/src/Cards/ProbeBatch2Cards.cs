@@ -17,7 +17,7 @@ namespace Saria.Cards;
 
 /// <summary>稳定 — block, then armour.</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeSteady : CustomCardModel
+public sealed class ProbeSteady : SariaCardModel
 {
     public ProbeSteady() : base(1, CardType.Skill, CardRarity.Common, TargetType.Self) { }
 
@@ -48,8 +48,6 @@ public sealed class ProbeSteady : CustomCardModel
         HoverTipFactory.FromPower<CalciumArmorPower>(),
         HoverTipFactory.Static(StaticHoverTip.Block),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.DefendPortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "稳定"),
@@ -59,7 +57,7 @@ public sealed class ProbeSteady : CustomCardModel
 
 /// <summary>爆裂 — cash every armour stack into one hit per stack, against everything.</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeDetonate : CustomCardModel
+public sealed class ProbeDetonate : SariaCardModel
 {
     public ProbeDetonate() : base(2, CardType.Attack, CardRarity.Uncommon, TargetType.AllEnemies) { }
 
@@ -91,8 +89,6 @@ public sealed class ProbeDetonate : CustomCardModel
     {
         HoverTipFactory.FromPower<CalciumArmorPower>(),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.BludgeonPortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "爆裂"),
@@ -102,7 +98,7 @@ public sealed class ProbeDetonate : CustomCardModel
 
 /// <summary>全弹发射 — X-cost: X Vulnerable, then X hits.</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeFullSalvo : CustomCardModel
+public sealed class ProbeFullSalvo : SariaCardModel
 {
     public ProbeFullSalvo() : base(0, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy) { }
 
@@ -136,8 +132,6 @@ public sealed class ProbeFullSalvo : CustomCardModel
     {
         HoverTipFactory.FromPower<VulnerablePower>(),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.StrikePortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "全弹发射"),
@@ -147,7 +141,7 @@ public sealed class ProbeFullSalvo : CustomCardModel
 
 /// <summary>充能 — armour and Vigor.</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeChargeUp : CustomCardModel
+public sealed class ProbeChargeUp : SariaCardModel
 {
     public ProbeChargeUp() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
 
@@ -178,8 +172,6 @@ public sealed class ProbeChargeUp : CustomCardModel
         HoverTipFactory.FromPower<StrengthPower>(),
         HoverTipFactory.FromPower<CalciumArmorPower>(),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.InflamePortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "充能"),
@@ -189,7 +181,7 @@ public sealed class ProbeChargeUp : CustomCardModel
 
 /// <summary>分神 — power: turn start loses block, gains armour.</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeDistract : CustomCardModel
+public sealed class ProbeDistract : SariaCardModel
 {
     public ProbeDistract() : base(1, CardType.Power, CardRarity.Uncommon, TargetType.Self) { }
 
@@ -215,8 +207,6 @@ public sealed class ProbeDistract : CustomCardModel
         HoverTipFactory.FromPower<CalciumArmorPower>(),
         HoverTipFactory.Static(StaticHoverTip.Block),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.InflamePortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "分神"),
@@ -226,7 +216,7 @@ public sealed class ProbeDistract : CustomCardModel
 
 /// <summary>凝神 — power: turn start spends armour, grants Vigor.</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeFocusMind : CustomCardModel
+public sealed class ProbeFocusMind : SariaCardModel
 {
     public ProbeFocusMind() : base(1, CardType.Power, CardRarity.Uncommon, TargetType.Self) { }
 
@@ -250,8 +240,6 @@ public sealed class ProbeFocusMind : CustomCardModel
         HoverTipFactory.FromPower<ProbeFocusMindPower>(),
         HoverTipFactory.Static(StaticHoverTip.Block),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.InflamePortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "凝神"),

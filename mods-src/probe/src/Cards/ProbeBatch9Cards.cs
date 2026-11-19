@@ -21,7 +21,7 @@ namespace Saria.Cards;
 
 /// <summary>蒸氨回收 — 花掉一大笔钙铠换一层缓冲。</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeAmmoniaRecovery : CustomCardModel
+public sealed class ProbeAmmoniaRecovery : SariaCardModel
 {
     public ProbeAmmoniaRecovery() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
 
@@ -46,8 +46,6 @@ public sealed class ProbeAmmoniaRecovery : CustomCardModel
         HoverTipFactory.FromPower<CalciumArmorPower>(),
         HoverTipFactory.FromPower<BufferPower>(),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.DefendPortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "蒸氨回收"),
@@ -57,7 +55,7 @@ public sealed class ProbeAmmoniaRecovery : CustomCardModel
 
 /// <summary>澄清 — 加钙铠、从抽牌堆消耗一张，然后自己回到抽牌堆顶。</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeClarify : CustomCardModel
+public sealed class ProbeClarify : SariaCardModel
 {
     public ProbeClarify() : base(1, CardType.Skill, CardRarity.Rare, TargetType.Self) { }
 
@@ -100,8 +98,6 @@ public sealed class ProbeClarify : CustomCardModel
         HoverTipFactory.FromPower<CalciumArmorPower>(),
         HoverTipFactory.FromKeyword(CardKeyword.Exhaust),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.DefendPortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "澄清"),
@@ -111,7 +107,7 @@ public sealed class ProbeClarify : CustomCardModel
 
 /// <summary>抗酸化 — 格挡 + 一层人工制品。</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeAcidResist : CustomCardModel
+public sealed class ProbeAcidResist : SariaCardModel
 {
     public ProbeAcidResist() : base(1, CardType.Skill, CardRarity.Rare, TargetType.Self) { }
 
@@ -138,8 +134,6 @@ public sealed class ProbeAcidResist : CustomCardModel
         HoverTipFactory.FromPower<ArtifactPower>(),
         HoverTipFactory.Static(StaticHoverTip.Block),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.DefendPortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "抗酸化"),
@@ -149,7 +143,7 @@ public sealed class ProbeAcidResist : CustomCardModel
 
 /// <summary>全身武装 — 常驻：每回合开始往手里塞破阵。</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeFullArmament : CustomCardModel
+public sealed class ProbeFullArmament : SariaCardModel
 {
     public ProbeFullArmament() : base(1, CardType.Power, CardRarity.Uncommon, TargetType.Self) { }
 
@@ -170,8 +164,6 @@ public sealed class ProbeFullArmament : CustomCardModel
     {
         HoverTipFactory.FromCard<ProbeBreach>(),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.InflamePortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "全身武装"),
@@ -181,7 +173,7 @@ public sealed class ProbeFullArmament : CustomCardModel
 
 /// <summary>紧急指令 — 钙铠 + 能量 + 抽牌，消耗。</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeEmergencyOrder : CustomCardModel
+public sealed class ProbeEmergencyOrder : SariaCardModel
 {
     public ProbeEmergencyOrder() : base(0, CardType.Skill, CardRarity.Rare, TargetType.Self) { }
 
@@ -210,8 +202,6 @@ public sealed class ProbeEmergencyOrder : CustomCardModel
     {
         HoverTipFactory.FromPower<CalciumArmorPower>(),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.InflamePortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "紧急指令"),
@@ -221,7 +211,7 @@ public sealed class ProbeEmergencyOrder : CustomCardModel
 
 /// <summary>破阵 — 全身武装塞进手里的无色 Token 攻击牌（和 升温/捕集 一样进 Token 池，不会出现在百科）。</summary>
 [Pool(typeof(TokenCardPool))]
-public sealed class ProbeBreach : CustomCardModel
+public sealed class ProbeBreach : SariaCardModel
 {
     public ProbeBreach() : base(0, CardType.Attack, CardRarity.Token, TargetType.AnyEnemy) { }
 
@@ -245,8 +235,6 @@ public sealed class ProbeBreach : CustomCardModel
     }
 
     protected override void OnUpgrade() => DynamicVars.Repeat.UpgradeValueBy(1m);
-
-    public override string? CustomPortraitPath => ProbeCardKit.StrikePortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "破阵"),
@@ -256,7 +244,7 @@ public sealed class ProbeBreach : CustomCardModel
 
 /// <summary>熟能生巧 — 常驻：每累计获得 7 层钙铠抽牌。</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbePractice : CustomCardModel
+public sealed class ProbePractice : SariaCardModel
 {
     public ProbePractice() : base(2, CardType.Power, CardRarity.Rare, TargetType.Self) { }
 
@@ -277,8 +265,6 @@ public sealed class ProbePractice : CustomCardModel
     {
         HoverTipFactory.FromPower<CalciumArmorPower>(),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.InflamePortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "熟能生巧"),
@@ -288,7 +274,7 @@ public sealed class ProbePractice : CustomCardModel
 
 /// <summary>飞龙形态 — 常驻：每回合开始获得钙铠（在钙铠结算格挡之后加，当回合只涨层数）。</summary>
 [Pool(typeof(ProbeCardPool))]
-public sealed class ProbeDragonForm : CustomCardModel
+public sealed class ProbeDragonForm : SariaCardModel
 {
     public ProbeDragonForm() : base(3, CardType.Power, CardRarity.Rare, TargetType.Self) { }
 
@@ -309,8 +295,6 @@ public sealed class ProbeDragonForm : CustomCardModel
     {
         HoverTipFactory.FromPower<CalciumArmorPower>(),
     };
-
-    public override string? CustomPortraitPath => ProbeCardKit.InflamePortrait;
     public override List<(string, string)>? Localization => new()
     {
         ("title", "飞龙形态"),
