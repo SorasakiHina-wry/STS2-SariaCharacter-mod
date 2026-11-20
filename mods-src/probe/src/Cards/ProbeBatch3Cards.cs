@@ -61,7 +61,7 @@ public sealed class ProbeSoften : SariaCardModel
 [Pool(typeof(ProbeCardPool))]
 public sealed class ProbeLiveAmmo : SariaCardModel
 {
-    public ProbeLiveAmmo() : base(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy) { }
+    public ProbeLiveAmmo() : base(1, CardType.Attack, CardRarity.Uncommon, TargetType.AllEnemies) { }
 
     public override IEnumerable<CardKeyword> CanonicalKeywords => new[] { CardKeyword.Exhaust };
 
@@ -74,10 +74,9 @@ public sealed class ProbeLiveAmmo : SariaCardModel
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
 
-        ArgumentNullException.ThrowIfNull(play.Target, "cardPlay.Target");
         await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
             .FromCard(this, play)
-            .Targeting(play.Target)
+            .TargetingAllOpponents(CombatState)
             .WithHitCount((int)DynamicVars.Repeat.BaseValue)
             .WithHitFx("vfx/vfx_attack_slash")
             .Execute(ctx);
@@ -147,7 +146,7 @@ public sealed class ProbeCondense : SariaCardModel
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
         new EnergyVar(1),
-        new CardsVar(2),
+        new CardsVar(5),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)

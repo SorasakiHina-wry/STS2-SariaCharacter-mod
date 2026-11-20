@@ -96,38 +96,6 @@ public sealed class ProbeOverclockPower : CustomPowerModel
     };
 }
 
-/// <summary>共振 — every armour stack gained this turn deals damage to the chosen target once.</summary>
-public sealed class ProbeResonancePower : CustomPowerModel
-{
-    public const decimal DamagePerStack = 4m;
-
-    /// <summary>The enemy the card was played on; armour gained during this turn keeps hitting it.</summary>
-    public Creature? Target { get; set; }
-
-    public override PowerType Type => PowerType.Buff;
-
-    public override PowerStackType StackType => PowerStackType.Counter;
-
-    public override string? CustomPackedIconPath => "res://images/atlases/power_atlas.sprites/thorns_power.tres";
-    public override string? CustomBigIconPath => "res://images/powers/thorns_power.png";
-
-    /// <summary>Only lasts for the current turn: removed at the start of your next turn.</summary>
-    public override async Task AfterPlayerTurnStartEarly(PlayerChoiceContext choiceContext, Player player)
-    {
-        if (player != Owner.Player)
-            return;
-
-        await PowerCmd.Remove(this);
-    }
-
-    public override List<(string, string)>? Localization => new()
-    {
-        ("title", "共振"),
-        ("description", "本回合你每获得1层[gold]钙铠[/gold]，就对目标造成4点伤害。"),
-        ("smartDescription", "本回合你每获得1层[gold]钙铠[/gold]，就对目标造成[blue]{Amount}[/blue]×4点伤害。"),
-    };
-}
-
 /// <summary>防卫经验 — tracks armour lost this turn; the first 8 stacks draw cards.</summary>
 public sealed class ProbeDefenseExperiencePower : CustomPowerModel
 {

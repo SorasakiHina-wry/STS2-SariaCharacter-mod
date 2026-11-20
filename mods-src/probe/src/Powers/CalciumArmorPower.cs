@@ -107,18 +107,6 @@ public sealed class CalciumArmorPower : CustomPowerModel
             var practice = Owner.GetPower<ProbePracticePower>();
             if (practice != null)
                 await practice.OnArmourGained(choiceContext, gained);
-
-            var resonance = Owner.GetPower<ProbeResonancePower>();
-            if (resonance != null && resonance.Amount > 0 && resonance.Target != null && resonance.Target.IsAlive)
-            {
-                Flash();
-                int hits = gained * (int)resonance.Amount;
-                for (int i = 0; i < hits; i++)
-                {
-                    await CreatureCmd.Damage(choiceContext, resonance.Target, ProbeResonancePower.DamagePerStack,
-                        ValueProp.Unpowered, Owner, null, null);
-                }
-            }
         }
         else if (amount < 0)
         {

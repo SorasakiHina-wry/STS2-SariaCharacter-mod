@@ -289,7 +289,7 @@ public sealed class ProbeDragonForm : SariaCardModel
         await PowerCmd.Apply<ProbeDragonFormPower>(ctx, Owner.Creature, DynamicVars["ProbeDragonFormPower"].BaseValue, Owner.Creature, this);
     }
 
-    protected override void OnUpgrade() => DynamicVars["ProbeDragonFormPower"].UpgradeValueBy(1m);
+    protected override void OnUpgrade() => DynamicVars["ProbeDragonFormPower"].UpgradeValueBy(2m);
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
     {

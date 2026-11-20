@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using BaseLib.Abstracts;
+using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Combat.History.Entries;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
@@ -358,17 +361,39 @@ public sealed class ProbeOverclock : SariaCardModel
 [Pool(typeof(ProbeCardPool))]
 public sealed class ProbeResonance : SariaCardModel
 {
+    private const string HitsKey = "CalculatedHits";
+
     public ProbeResonance() : base(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy) { }
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new PowerVar<ProbeResonancePower>(1m),
+        new DamageVar(4m, ValueProp.Move),
+        new CalculationBaseVar(0m),
+        new CalculationExtraVar(1m),
+        new CalculatedHitCountVar(HitsKey).WithMultiplier((card, _) =>
+            CombatManager.Instance.History.Entries
+                .OfType<PowerReceivedEntry>()
+                .Where(e => e.Power is CalciumArmorPower
+                            && e.Actor == card.Owner.Creature
+                            && e.Amount > 0
+                            && e.HappenedThisTurn(card.CombatState))
+                .Sum(e => (int)e.Amount)),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
-        await PowerCmd.Apply<ProbeResonancePower>(ctx, Owner.Creature, DynamicVars["ProbeResonancePower"].BaseValue, Owner.Creature, this);
-        Owner.Creature.GetPower<ProbeResonancePower>()!.Target = play.Target;
+        ArgumentNullException.ThrowIfNull(play.Target, "cardPlay.Target");
+
+        int hits = (int)((CalculatedVar)DynamicVars[HitsKey]).Calculate(play.Target);
+        if (hits <= 0)
+            return;
+
+        await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
+            .FromCard(this, play)
+            .Targeting(play.Target)
+            .WithHitCount(hits)
+            .WithHitFx("vfx/vfx_attack_blunt")
+            .Execute(ctx);
     }
 
     protected override void OnUpgrade() => EnergyCost.UpgradeBy(-1);
@@ -377,10 +402,11 @@ public sealed class ProbeResonance : SariaCardModel
     {
         HoverTipFactory.FromPower<CalciumArmorPower>(),
     };
+
     public override List<(string, string)>? Localization => new()
     {
         ("title", "共振"),
-        ("description", "在本回合每获得1层[gold]钙铠[/gold]，就造成4点伤害一次。"),
+        ("description", "在本回合每获得1层[gold]钙铠[/gold]，就造成{Damage:diff()}点伤害一次。"),
     };
 }
 
