@@ -5,6 +5,7 @@ using BaseLib.Utils;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Relics;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Models;
 using Saria.Pools;
 using Saria.Powers;
 
@@ -23,6 +24,12 @@ public sealed class CalciumCraft : CustomRelicModel
     public override RelicRarity Rarity => RelicRarity.Starter;
 
     protected override string IconBaseName => "anchor";
+
+    /// <summary>
+    /// 欧洛巴斯事件里的「欧洛巴斯之触」会把初始遗物换成升级版：
+    /// 原版靠 TouchOfOrobas.GetUpgradedStarterRelic，BaseLib 对自定义遗物走这个钩子。
+    /// </summary>
+    public override RelicModel? GetUpgradeReplacement() => ModelDb.Relic<CalciumManipulation>();
 
     public override async Task BeforeCombatStart()
     {
