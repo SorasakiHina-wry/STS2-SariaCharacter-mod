@@ -26,10 +26,14 @@ OUT = SRC / "derived"
 
 # vanilla reference sizes (measured from the game):
 #   square avatar 85x85, map marker 49x64, select portrait 132x195, select bg 2560x1200
+# 地图标记有专用图时优先用它（用户可按 98×128 / 196×256 单独导出），
+# 没有才从 head.png 居中裁剪派生。
+_MARKER_MASTER = "map_marker_saria.png" if (SRC / "map_marker_saria.png").exists() else "head.png"
+
 TARGETS = [
     # (source, output, target_size, mode)
     ("head.png", "character_icon_saria.png", (170, 170), "square"),
-    ("head.png", "map_marker_saria.png", (98, 128), "portrait"),
+    (_MARKER_MASTER, "map_marker_saria.png", (98, 128), "portrait"),
     ("38_i01_head.png", "char_select_saria.png", (264, 390), "portrait"),
     ("38_i01_fix.png", "char_select_bg_saria.png", (1600, 750), "wide"),
 ]

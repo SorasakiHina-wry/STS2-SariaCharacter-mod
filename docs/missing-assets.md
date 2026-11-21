@@ -231,7 +231,7 @@ es://.godot/imported/，
 | 内容 | 角色头部特写，透明背景，底部对齐地图节点 |
 | 建议 | 按 **49×64 的 2 倍图（98×128）** 出图；深色描边，保证浅色地图上可读 |
 
-**已实现**：`tools/prepare_icons.py` 从 `head.png`（840×840 母图）按 49:64 **居中裁剪**，
+**已实现**：优先使用专用图 `resources/png/map_marker_saria.png`（196×256，等比 49:64）；缺失时 `tools/prepare_icons.py` 才从 `head.png` **居中裁剪**，
 再 Lanczos 缩放到 **98×128**，输出 `resources/png/derived/map_marker_saria.png`；
 运行时由 `ProbeMapMarkerPatch`（`NMapMarker.Initialize` 后置）把 `TextureRect.Texture` 换成该图
 （原版 `CharacterModel.MapMarker` 返回 `CompressedTexture2D`，mod 造不出来，所以换在出口处）。
