@@ -22,6 +22,9 @@ internal static class ProbeEnergyIcons
     /// <summary>与 ProbeCardPool.EnergyColorName 保持一致。</summary>
     internal const string Prefix = "saria";
 
+    /// <summary>正文内联图标的边长（原版 sprite_fonts 图标就是 24×24）。</summary>
+    internal const int TextIconSize = 24;
+
     /// <summary>正文内联图标（原版 24×24）。</summary>
     internal const string TextIconPath = "res://images/packed/sprite_fonts/" + Prefix + "_energy_icon.png";
 
@@ -49,7 +52,11 @@ internal static class ProbeEnergyIcons
                 return;
             }
 
-            _textTexture = ImageTexture.CreateFromImage(image);
+            // 正文 [img] 按贴图原始像素渲染，原版 sprite_fonts 图标是 24×24；
+            // 直接注册 148×148 会让正文里出现一张巨大的图，所以这里缩到原版尺寸。
+            var textImage = (Image)image.Duplicate();
+            textImage.Resize(TextIconSize, TextIconSize, Image.Interpolation.Lanczos);
+            _textTexture = ImageTexture.CreateFromImage(textImage);
             _textTexture.TakeOverPath(TextIconPath);
 
             _packedTexture = ImageTexture.CreateFromImage(image);
