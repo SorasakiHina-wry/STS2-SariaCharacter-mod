@@ -34,6 +34,10 @@
 
 > `energy_orb_burst.png` / `energy_orb_shine.png`（各 512×512）是通用特效贴图，与角色球体无关，不用重画。
 
+> **参考素材已导出**：铁甲战士整套原版资源（5 张图层 PNG、场景、粒子、材质、shader、字体）在
+> `resources/vanilla/energy_counter_ironclad/`，可直接打开对照着画。
+> 该目录被 `.gitignore` 排除，不会入库，也不随 Release 分发（游戏资源，仅作参考）。
+
 #### 1.1.2 场景节点树（原版 `ironclad_energy_counter.tscn`）
 
 ```
