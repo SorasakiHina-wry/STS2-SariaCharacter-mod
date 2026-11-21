@@ -9,12 +9,122 @@
 
 | # | 资源 | 数量 | 现状 | 规格要点 |
 |---|---|---|---|---|
-| 1 | 能量球（能量计数器） | 1 套 | 借用铁甲战士场景 | 5 张图层 **256×256 PNG**，显示 128×128；另加前后 2 个 VFX 场景 |
+| 1 | 能量球（能量计数器） | 1 套 | 借用铁甲战士场景 | 5 张图层 **256×256 PNG**（显示 128×128）+ 前后 2 个粒子场景，详见 §1.1 |
 | 2 | 遗物图标 | 8 个 | 借原版图集（anchor/vajra/lantern…） | 见 §4 |
 | 3 | 能量图标（卡面/UI） | 2–3 个 | 借铁甲战士 | `EnergyColorName = ironclad` |
 | 4 | 地图标记 | 1 个 | 借铁甲战士 | 小图，见 §4 |
 | 5 | 多人（猜拳）手部贴图 | 3 张 | 借铁甲战士 | 石头/剪刀/布 + 指人 |
 | 6 | 角色选择过渡材质 | 1 个 | 借铁甲战士 | `.tres` 材质 |
+
+### 1.1 能量球（能量计数器）详解
+
+原版每个角色一套，结构完全一致（铁甲战士 / 静默猎手 / 缺陷 / 观者 都是同一套骨架，只换贴图和配色）。
+下面按「文件 → 节点树 → 运行时行为 → 粒子参数 → 制作清单」拆开写。
+
+#### 1.1.1 需要的文件
+
+| 文件 | 是否必需 | 规格 |
+|---|---|---|
+| `images/ui/combat/energy_counters/<角色>/<角色>_orb_layer_1.png` | ✅ | **256×256 PNG**，透明背景 |
+| …`_orb_layer_2.png` … `_orb_layer_5.png` | ✅ | 同上，共 5 张 |
+| `scenes/vfx/energy/<角色>/<角色>_energy_vfx_back.tscn` | 建议 | 背景辉光粒子（可先留空） |
+| `scenes/vfx/energy/<角色>/<角色>_energy_vfx_front.tscn` | 建议 | 前景火焰/火星/光环粒子 |
+| `materials/ui/energy_orb_dark.tres` | 复用 | 现成的 HSV 材质（h=1, s=0.5, v=0.85），能量为 0 时自动套上 |
+| `themes/kreon_bold_shared.tres` | 复用 | 数字字体，36 px |
+
+> `energy_orb_burst.png` / `energy_orb_shine.png`（各 512×512）是通用特效贴图，与角色球体无关，不用重画。
+
+#### 1.1.2 场景节点树（原版 `ironclad_energy_counter.tscn`）
+
+```
+Control                       ← 128×128，pivot (64,64)，脚本 NEnergyCounter
+├─ EnergyVfxBack              ← 背景粒子容器，position (64,64)，unique_name
+├─ Layers                     ← %Layers，全铺满
+│  ├─ Layer1  (TextureRect)   ← 静态
+│  └─ RotationLayers          ← %RotationLayers，全铺满
+│     ├─ Layer2 (TextureRect) ← pivot (64,64)，会旋转
+│     └─ Layer3 (TextureRect) ← pivot (64,64)，会旋转
+│  ├─ Layer4  (TextureRect)   ← 静态
+│  └─ Layer5  (TextureRect)   ← 静态
+├─ EnergyVfxFront             ← 前景粒子容器，position (64,64)，unique_name
+└─ Label                      ← MegaLabel，"3/3"，36 px（Min 32 / Max 36）
+```
+
+所有 `TextureRect` 的 `expand_mode = 1`、`stretch_mode = 5`，即**按 128×128 拉伸铺满**，
+所以源图 256×256 是「2 倍图」，缩到一半显示。
+
+#### 1.1.3 运行时行为（代码里写死的，做素材时按这个来设计）
+
+| 时机 | 表现 |
+|---|---|
+| **每帧** | 只有 `RotationLayers` 里的 **Layer2 / Layer3** 在转：<br>能量 > 0 时速度 **30°/s × (i+1)** → Layer2 = 30°/s，Layer3 = 60°/s；<br>能量 = 0 时降到 **5°/s × (i+1)** → 5°/s、10°/s |
+| **能量 = 0** | 全部 5 层套上 `energy_orb_dark.tres`（HSV 压暗）+ `Layers.Modulate = 暗灰`；数字变**红色**、描边换成「费用不足」色 |
+| **获得能量** | `EnergyVfxBack` 与 `EnergyVfxFront` 各 `Restart()` 一次（粒子重新爆发） |
+| **进入战斗** | 整个控件从 `(-480, 128)` 补间到 `(0, 0)`，**0.6 s**，`Expo/Out` |
+| **离开战斗** | 反向补间到 `(-480, 128)`，0.6 s，`Back/In` |
+| **鼠标悬停** | 弹出能量说明，位置偏移 `(-70, -200)` |
+
+#### 1.1.4 各层画什么（按旋转与否区分职责）
+
+| 层 | 是否旋转 | 建议内容 |
+|---|---|---|
+| Layer1 | 否 | **球体本体**：底色、内发光、外轮廓（不透明主体都在这层） |
+| Layer2 | **是** | 环形能量流 / 旋转光带 —— 必须**360° 无缝**，转到任何角度都不能看出接缝 |
+| Layer3 | **是** | 更细的一圈：粒子带、电弧、旋转高光点（同样要无缝） |
+| Layer4 | 否 | 前景高光 / 反光 / 球面上的亮斑 |
+| Layer5 | 否 | 最上层叠加：边缘辉光、飘出的能量火花 |
+
+> 关键：**Layer2 / Layer3 是整圈旋转的**，如果画的是不对称图形（比如一个亮斑），转起来会很明显；
+> 这两层请画成中心对称或整圈重复的图案。其余三层是静态，可以自由构图。
+
+#### 1.1.5 背景粒子（`*_energy_vfx_back.tscn`）
+
+原版就是一个 `vfx_common_glow` 粒子实例，参数：
+
+| 参数 | 值 |
+|---|---|
+| `self_modulate` | `(1, 0.485, 0.303, 1)` 橙色 |
+| gravity | 0 |
+| `scale_min / scale_max` | 3.5 / 3.5 |
+| `scale_curve` | (0 → 0) 起、0.2 处 0.84、1 处 1.0 |
+| `alpha_curve` | 0 处 0.35 → 1 处 0 |
+| `particle_flag_disable_z` | true |
+
+作用：球体外围一圈缓慢辉光，获得能量时闪一下。
+
+#### 1.1.6 前景粒子（`*_energy_vfx_front.tscn`）
+
+5 个子发射器（都用 `NParticlesContainer` 统一 Restart）：
+
+| 子节点 | 位置 | 特点 |
+|---|---|---|
+| `vfx_fire_flipbook_1` | (11, -55) | 火焰 flipbook，`lifetime 0.3`，角度抖动 ±10°，scale 0.4~0.6 |
+| `vfx_fire_flipbook_2` | (-51, -3)，旋转 -45° | 角度 ±30°，scale 0.2~0.3 |
+| `vfx_fire_flipbook_3` | (50, 9) | 角度 ±20°，scale 0.2~0.3 |
+| `vfx_fire_embers_straight` | (0, 0) | 火星直线上升 |
+| `vfx_common_ring_polar_a` | (1, -3) | 橙色光环 `(1, 0.33, 0.11, 1)`，`lifetime 0.4` |
+
+共同点：`gravity = 0`、`emission_shape = sphere(0.01)`、颜色渐变 HDR（白 → 灰）、`alpha` 在 0.5 处开始衰减。
+
+#### 1.1.7 给美术的制作清单
+
+1. 画 **5 张 256×256 透明 PNG**，命名 `<角色>_orb_layer_1..5.png`；
+2. Layer1 放不透明球体，Layer2 / Layer3 画成**可整圈循环**的环状图案（这两层会被转）；
+3. Layer4 / Layer5 放静态高光与叠加辉光；
+4. 中心对齐画布中心（游戏按 128×128 拉伸，pivot 在中心）；
+5. 想省事可以先只做 5 张图、粒子场景复用铁甲战士的（颜色会偏暖，但可用）；
+6. 想完全自定义氛围，再单独做 back/front 两个粒子场景。
+
+#### 1.1.8 技术接入（mod 侧，暂未实现）
+
+`PlaceholderCharacterModel` 提供 `CustomEnergyCounterPath` / `CustomEnergyCounter`，但有两个已知限制：
+
+- **.tscn 不能塞进 mod 的 PCK**（PCK 内的场景加载有问题，和贴图一样受限）；
+- 因此要用自定义能量球，需要**运行时用代码构建**这个 Control（5 个 TextureRect + 2 个粒子容器 + Label），
+  再由补丁替换 `EnergyCounterPath` 的实例化结果。
+
+这条属于实现工作量，不是素材门槛：**素材照上面规格出图即可**，接入方式我可以在你出图之后再做。
+
 
 ---
 ## 2. 卡图（已实装）
