@@ -18,6 +18,7 @@
 | 顶部栏 / 先古头像 | `resources/png/head.png` | 固定文件名 | `mods/saria/images/character_icon_saria.png` | ❌ |
 | 战斗立绘（Spine） | `resources/spine/fight/4.2/char_202_demkni.{atlas,png,skel}` | 固定文件名 | `mods/saria/spine/` | ❌ |
 | 商店 / 火堆立绘（Spine） | `resources/spine/4.2/build_char_202_demkni.{atlas,png,skel}` | 固定文件名 | `mods/saria/spine/` | ❌ |
+| 能量球图层 | `resources/png/orb/`（`Layer1..5.png`，各 256×256） | 固定文件名 | `mods/saria/images/orb/` | ❌ |
 | 选中音效 | `resources/ogg/selected.ogg` | 固定文件名 | `mods/saria/audio/selected.ogg` | ❌ |
 | 原版参考素材 | `resources/vanilla/energy_counter_ironclad/` | 见目录内 README | —（只作参考） | ❌ |
 
