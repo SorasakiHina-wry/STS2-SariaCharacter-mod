@@ -15,7 +15,9 @@
 | 状态图标 PSD 源文件 | `resources/psd/` | `<类名>.psd` | —（设计稿） | ❌ |
 | 角色选择背景 | `resources/png/38_i01_fix.png` | 固定文件名 | `mods/saria/images/char_select_bg_saria.png` | ❌ |
 | 角色选择栏头像 | `resources/png/38_i01_head.png` | 固定文件名 | `mods/saria/images/char_select_saria.png` | ❌ |
-| 顶部栏 / 先古头像 | `resources/png/head.png` | 固定文件名 | `mods/saria/images/character_icon_saria.png` | ❌ |
+| 顶部栏 / 先古头像 | `resources/png/head.png`（840×840 母图） | 固定文件名 | `mods/saria/images/character_icon_saria.png`（派生 170×170） | ❌ |
+| 地图标记 | `resources/png/head.png` | 派生 `map_marker_saria.png` | `mods/saria/images/map_marker_saria.png`（98×128，居中裁剪 49:64） | ❌ |
+| 派生图生成 | `tools/prepare_icons.py` | — | 输出 `resources/png/derived/`（不入库） | ❌ |
 | 战斗立绘（Spine） | `resources/spine/fight/4.2/char_202_demkni.{atlas,png,skel}` | 固定文件名 | `mods/saria/spine/` | ❌ |
 | 商店 / 火堆立绘（Spine） | `resources/spine/4.2/build_char_202_demkni.{atlas,png,skel}` | 固定文件名 | `mods/saria/spine/` | ❌ |
 | 能量球图层 | `resources/png/orb/`（`saria_orb_layer_1..5.png`，各 256×256） | `<角色>_orb_layer_<n>.png` | `mods/saria/images/orb/` | ❌ |

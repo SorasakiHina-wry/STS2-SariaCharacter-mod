@@ -10,7 +10,7 @@
 | # | 资源 | 数量 | 现状 | 规格 |
 |---|---|---|---|---|
 | 1 | 遗物图标 | 8 个 | 借原版图集（anchor / vajra / lantern…） | §4.1 |
-| 2 | 地图标记 | 1 个 | 借铁甲战士 | §4.3 |
+| 2 | 地图标记 | 1 个 | **已用 head.png 派生（98×128）** | §4.3 |
 | 3 | 多人（猜拳）手部贴图 | 4 张 | 借铁甲战士 | §4.4 |
 | 4 | 角色选择过渡材质 | 1 个 | 借铁甲战士 | §4.5 |
 
@@ -222,7 +222,7 @@ es://.godot/imported/，
 
 > 注意：`energy_orb_burst.png` / `energy_orb_shine.png`（512×512）是能量球特效贴图，**不是**这个图标。
 
-### 4.3 地图标记（角色在地图上的小头像）
+### 4.3 地图标记（已完成：由 head.png 派生）
 
 | 项 | 内容 |
 |---|---|
@@ -231,7 +231,10 @@ es://.godot/imported/，
 | 内容 | 角色头部特写，透明背景，底部对齐地图节点 |
 | 建议 | 按 **49×64 的 2 倍图（98×128）** 出图；深色描边，保证浅色地图上可读 |
 
-我们 mod 现在用 `CustomMapMarkerPath` 指向铁甲战士的标记。
+**已实现**：`tools/prepare_icons.py` 从 `head.png`（840×840 母图）按 49:64 **居中裁剪**，
+再 Lanczos 缩放到 **98×128**，输出 `resources/png/derived/map_marker_saria.png`；
+运行时由 `ProbeMapMarkerPatch`（`NMapMarker.Initialize` 后置）把 `TextureRect.Texture` 换成该图
+（原版 `CharacterModel.MapMarker` 返回 `CompressedTexture2D`，mod 造不出来，所以换在出口处）。
 
 ### 4.4 多人猜拳手部贴图（4 张）
 

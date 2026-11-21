@@ -20,16 +20,21 @@ namespace Saria;
 public static class ProbeCharacterIcons
 {
     public const string PortraitFile = "char_select_saria.png";     // 264×390，比例 0.677
-    public const string SquareFile = "character_icon_saria.png";    // 220×220
+    public const string SquareFile = "character_icon_saria.png";    // 170×170（由 head.png 居中裁剪+缩放）
+    public const string MapMarkerFile = "map_marker_saria.png";     // 98×128（原版 49×64 的 2 倍）
 
     private static Texture2D? _portrait;
     private static Texture2D? _square;
+    private static Texture2D? _mapMarker;
     private static Texture2D? _blank;
 
     public static bool IsSaria(ModelId id) => id.Entry.EndsWith("SARIA", StringComparison.Ordinal);
 
     public static Texture2D? Portrait => _portrait ??= LoadPng(PortraitFile);
     public static Texture2D? Square => _square ??= LoadPng(SquareFile);
+
+    /// <summary>地图上代表角色当前位置的小头像（原版 `map_marker_&lt;entry&gt;.png`）。</summary>
+    public static Texture2D? MapMarker => _mapMarker ??= LoadPng(MapMarkerFile);
     public static Texture2D Blank
     {
         get

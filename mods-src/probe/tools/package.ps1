@@ -56,18 +56,33 @@ Copy-Item (Join-Path $ProjectDir 'mod_manifest.json') (Join-Path $StageDir 'mod_
 Write-Host "[4/5] 复制图片与 Spine（运行时按散文件读取）..."
 $pngDir   = Join-Path $RepoRoot 'resources\png'
 $spineDir = Join-Path $RepoRoot 'resources\spine\fight\4.2'
-$imageMap = @{
-    '38_i01_fix.png'  = 'char_select_bg_saria.png'
-    '38_i01_head.png' = 'char_select_saria.png'
-    'head.png'        = 'character_icon_saria.png'
+# 顺序有意义：先拷原图兜底，再拷 derived（居中裁剪 + 缩放的派生图），后者覆盖前者。
+$imageMap = @(
+    @('38_i01_fix.png',  'char_select_bg_saria.png'),
+    @('38_i01_head.png', 'char_select_saria.png'),
+    @('head.png',        'character_icon_saria.png'),
+    @('derived\char_select_bg_saria.png', 'char_select_bg_saria.png'),
+    @('derived\char_select_saria.png',    'char_select_saria.png'),
+    @('derived\character_icon_saria.png', 'character_icon_saria.png'),
+    @('derived\map_marker_saria.png',     'map_marker_saria.png')
+)
+
+# 派生图缺失时自动生成（需要 Pillow；可用环境变量 SARIA_PYTHON 指定解释器）
+$derivedDir = Join-Path $pngDir 'derived'
+if (-not (Test-Path (Join-Path $derivedDir 'map_marker_saria.png'))) {
+    $py = $env:SARIA_PYTHON
+    if (-not $py) { $py = 'python' }
+    Write-Host "派生图标缺失，先运行 tools\prepare_icons.py ..."
+    & $py (Join-Path $PSScriptRoot 'prepare_icons.py')
+    if ($LASTEXITCODE -ne 0) { throw "prepare_icons.py 失败（请设置 SARIA_PYTHON 指向带 Pillow 的 python）" }
 }
 
 if (Test-Path $pngDir) {
     New-Item -ItemType Directory -Force -Path (Join-Path $StageDir 'images') | Out-Null
-    foreach ($src in $imageMap.Keys) {
-        $from = Join-Path $pngDir $src
+    foreach ($pair in $imageMap) {
+        $from = Join-Path $pngDir $pair[0]
         if (-not (Test-Path $from)) { throw "缺少图片：$from" }
-        Copy-Item $from (Join-Path $StageDir ('images\' + $imageMap[$src])) -Force
+        Copy-Item $from (Join-Path $StageDir ('images\' + $pair[1])) -Force
     }
     # 状态图标：resources\png\powers\*.png -> images\powers\
     $powerArtDir = Join-Path $RepoRoot 'resources\png\powers'
