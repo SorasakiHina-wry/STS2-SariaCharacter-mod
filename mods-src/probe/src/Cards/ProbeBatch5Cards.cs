@@ -282,7 +282,7 @@ public sealed class ProbeInsight : SariaCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "洞察"),
-        ("description", "在本回合，你每次获得[gold]钙铠[/gold]时，给予所有敌人2层[gold]易伤[/gold]与1层[gold]虚弱[/gold]。"),
+        ("description", "在本回合，你每次获得或失去[gold]钙铠[/gold]时，给予所有敌人1层[gold]易伤[/gold]与1层[gold]虚弱[/gold]。"),
     };
 }
 

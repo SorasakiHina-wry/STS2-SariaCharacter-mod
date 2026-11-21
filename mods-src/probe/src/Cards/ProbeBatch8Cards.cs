@@ -171,7 +171,7 @@ public sealed class ProbeStrategySummary : SariaCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "策略归纳"),
-        ("description", "造成{Damage:diff()}点伤害。\n斩杀时，这张牌在本局游戏中永久性额外造成一次伤害。\n（命中{Repeat:diff()}次）。"),
+        ("description", "造成{Damage:diff()}点伤害。\n[gold]斩杀[/gold]时，这张牌在本局游戏中永久性额外造成一次伤害。\n（命中{Repeat:diff()}次）。"),
     };
 }
 

@@ -119,7 +119,7 @@ public sealed class ProbeFullSalvo : SariaCardModel
         ArgumentNullException.ThrowIfNull(play.Target, "cardPlay.Target");
 
         // 易伤层数 = X；命中次数 = X（升级 +1）
-        await PowerCmd.Apply<VulnerablePower>(ctx, play.Target, x, Owner.Creature, this);
+        await PowerCmd.Apply<VulnerablePower>(ctx, play.Target, IsUpgraded ? 2m : 1m, Owner.Creature, this);
         await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
             .FromCard(this, play)
             .Targeting(play.Target)
@@ -135,7 +135,7 @@ public sealed class ProbeFullSalvo : SariaCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "全弹发射"),
-        ("description", "给予1层[gold]易伤[/gold]。\n造成{Damage:diff()}点伤害{IfUpgraded:show:X+1|X}次。"),
+        ("description", "给予{IfUpgraded:show:2|1}层[gold]易伤[/gold]。\n造成{Damage:diff()}点伤害{IfUpgraded:show:X+1|X}次。"),
     };
 }
 

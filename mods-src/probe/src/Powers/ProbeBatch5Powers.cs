@@ -67,20 +67,20 @@ public sealed class ProbeInsightPower : CustomPowerModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new MultipliedAmountVar("Vulnerable", 2m),   // 每层 = 2 易伤
+        new MultipliedAmountVar("Vulnerable", 1m),   // 每层 = 1 易伤
         new MultipliedAmountVar("Weak", 1m),         // 每层 = 1 虚弱
     };
 
     public override async Task AfterPowerAmountChanged(
         PlayerChoiceContext choiceContext, PowerModel power, decimal amount, Creature? applier, CardModel? cardSource)
     {
-        if (power is not CalciumArmorPower || power.Owner != Owner || amount <= 0 || Amount <= 0)
+        if (power is not CalciumArmorPower || power.Owner != Owner || amount == 0 || Amount <= 0)
             return;
 
         Flash();
         foreach (var enemy in CombatState.HittableEnemies)
         {
-            await PowerCmd.Apply<VulnerablePower>(choiceContext, enemy, Amount * 2m, Owner, null);
+            await PowerCmd.Apply<VulnerablePower>(choiceContext, enemy, Amount, Owner, null);
             await PowerCmd.Apply<WeakPower>(choiceContext, enemy, Amount, Owner, null);
         }
     }
@@ -101,7 +101,7 @@ public sealed class ProbeInsightPower : CustomPowerModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "洞察"),
-        ("description", "你在本回合每次获得[gold]钙铠[/gold]时，给予所有敌人[gold]易伤[/gold]与[gold]虚弱[/gold]。"),
-        ("smartDescription", "你在本回合每次获得[gold]钙铠[/gold]时，给予所有敌人[blue]{Vulnerable}[/blue]层[gold]易伤[/gold]与[blue]{Weak}[/blue]层[gold]虚弱[/gold]。"),
+        ("description", "你在本回合每次获得或失去[gold]钙铠[/gold]时，给予所有敌人[gold]易伤[/gold]与[gold]虚弱[/gold]。"),
+        ("smartDescription", "你在本回合每次获得或失去[gold]钙铠[/gold]时，给予所有敌人[blue]{Vulnerable}[/blue]层[gold]易伤[/gold]与[blue]{Weak}[/blue]层[gold]虚弱[/gold]。"),
     };
 }

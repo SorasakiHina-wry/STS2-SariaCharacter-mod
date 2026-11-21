@@ -26,7 +26,7 @@ public sealed class ProbeSoften : SariaCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new PowerVar<WeakPower>(2m),
+        new PowerVar<WeakPower>(4m),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -39,8 +39,7 @@ public sealed class ProbeSoften : SariaCardModel
             return; // 条件不足：可以打出，但没有效果
 
         await PowerCmd.ModifyAmount(ctx, armour, -2m, Owner.Creature, this);
-        for (int i = 0; i < 2; i++)
-            await PowerCmd.Apply<WeakPower>(ctx, play.Target, DynamicVars.Weak.BaseValue, Owner.Creature, this);
+        await PowerCmd.Apply<WeakPower>(ctx, play.Target, DynamicVars.Weak.BaseValue, Owner.Creature, this);
     }
 
     protected override void OnUpgrade() => DynamicVars.Weak.UpgradeValueBy(1m);
@@ -53,7 +52,7 @@ public sealed class ProbeSoften : SariaCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "软化"),
-        ("description", "若拥有大于等于2层[gold]钙铠[/gold]，则失去2层[gold]钙铠[/gold]，并给予{WeakPower:diff()}层[gold]虚弱[/gold]2次。"),
+        ("description", "若拥有大于等于2层[gold]钙铠[/gold]，则失去2层[gold]钙铠[/gold]，并给予{WeakPower:diff()}层[gold]虚弱[/gold]。"),
     };
 }
 

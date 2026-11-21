@@ -209,9 +209,6 @@ public sealed class ProbeTangle : SariaCardModel
 {
     public ProbeTangle() : base(1, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy) { }
 
-    /// <summary>基础带消耗，升级后不再消耗。</summary>
-    public override IEnumerable<CardKeyword> CanonicalKeywords => new[] { CardKeyword.Exhaust };
-
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
         int damage = Owner.Creature.GetPowerAmount<CalciumArmorPower>() + (int)Owner.Creature.Block;
@@ -226,7 +223,7 @@ public sealed class ProbeTangle : SariaCardModel
             .Execute(ctx);
     }
 
-    protected override void OnUpgrade() => RemoveKeyword(CardKeyword.Exhaust);
+    protected override void OnUpgrade() => EnergyCost.UpgradeBy(-1);
 
     /// <summary>Goes on top of the draw pile instead of the discard pile.</summary>
     protected override CardLocation GetResultLocationForCardPlay()

@@ -11,9 +11,9 @@
 > 小图规格：`CustomPackedIconPath`（图集小图，游戏内显示约 32×32）与
 > `CustomBigIconPath`（悬停大图，约 64×64），两者都要提供。
 
-> 当前共 **31** 个状态。
+> 当前共 **32** 个状态。
 
-## 全部状态（31 个）
+## 全部状态（32 个）
 
 钙铠,CalciumArmorPower,CalciumArmorPower.cs
 下回合钙铠,ProbeNextTurnArmorPower,ProbeBatch6Powers.cs
@@ -46,3 +46,4 @@
 覆还,ProbeReturnPower,ProbeBatch8Powers.cs
 熟能生巧,ProbePracticePower,ProbeBatch9Powers.cs
 飞龙形态,ProbeDragonFormPower,ProbeBatch9Powers.cs
+极限功率,ProbeOverclockPower,ProbeBatch7Powers.cs
