@@ -75,7 +75,7 @@
 |---|---|
 | `get_Portrait` 补丁 | 早期尝试，属性 getter 可能被内联，已删除；改用 `NCard.UpdatePortrait` |
 | `SfxCmd.Play` 补丁 | 早期尝试，日志显示未触发；改用 `NCharacterSelectScreen.SelectCharacter` |
-| 文本内联能量图标（卡面描述里的 `{Energy}`） | **未实装**：走 RichTextLabel `[img]res://…`，mod 的 PCK 贴图加载不了 |
+| 文本内联能量图标（卡面描述里的 `{Energy}`） | **已实装**（v0.4.12–14）：不走补丁，见 §5「虚拟 res:// 路径」 |
 
 ---
 
@@ -86,3 +86,43 @@
 3. 至少一条**成功或失败日志**（带 `[saria]` 前缀），否则出问题无法定位；
 4. 在本文件登记：目标、类型、作用、日志关键词、已知限制；
 5. 启动日志里的补丁计数 +1，确认 `applied` 数量对得上。
+
+---
+
+## 5. 虚拟 res:// 路径（能量图标用的机制，不是补丁）
+
+正文里的 `{Energy}` 走的是 RichTextLabel 的 BBCode：
+
+```csharp
+"[img]res://images/packed/sprite_fonts/<前缀>_energy_icon.png[/img]"
+```
+
+这类图片由引擎按 `res://` 路径加载，mod 的 PCK 贴图加载不了（`Exists=True / Load=null`）。
+解决办法不是补丁，而是 **`Resource.TakeOverPath()`**：
+
+```csharp
+var tex = ImageTexture.CreateFromImage(image);
+tex.TakeOverPath("res://images/packed/sprite_fonts/saria_energy_icon.png");
+// 之后 ResourceLoader.Load(该路径) 直接返回这张运行时贴图
+```
+
+配套：`ProbeCardPool / ProbeRelicPool / ProbePotionPool` 的 `EnergyColorName` 改成 `saria`，
+这样只有我们的内容用这个前缀，**不会劫持原版角色**。
+
+### 两个必须记住的坑
+
+1. **一个 Resource 只能占住一个路径**：对同一张贴图连续 `TakeOverPath` 两次，第二次会覆盖第一次
+   （先前表现为 `text=False packed=True`，正文图标变成缺失图）。→ 每条路径各建一张 `ImageTexture`。
+2. **正文 `[img]` 按贴图原始像素渲染**：注册 148×148 会在正文里显示成巨图。
+   → 正文那条路径要单独注册一张 **24×24**（原版 sprite_fonts 尺寸）的副本；
+   卡面/提示那条保留原尺寸。
+
+### 相关日志
+
+```
+[saria][energy-icon] registered: text=True packed=True size=148x148
+```
+
+`text` / `packed` 分别对应「正文内联」与「卡面/提示」两条虚拟路径是否可被 `ResourceLoader` 取到。
+
+---

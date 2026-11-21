@@ -41,7 +41,7 @@ D:\STS2\mods-src\probe\
   tools\cardspec.py         设计表校验（可选）
 ```
 
-游戏安装后 mod 的文件在：`D:\SteamLibrary\steamapps\common\Slay the Spire 2\mods\probe\`
+游戏安装后 mod 的文件在：`D:\SteamLibrary\steamapps\common\Slay the Spire 2\mods\saria\`
 
 ---
 
@@ -211,7 +211,7 @@ powershell -ExecutionPolicy Bypass -File D:\STS2\mods-src\probe\tools\apply.ps1
 powershell -ExecutionPolicy Bypass -File D:\STS2\mods-src\probe\tools\apply.ps1 -Launch
 ```
 
-- 游戏**必须重启**才能加载新的 `probe.dll`（mod 只在启动时加载）；
+- 游戏**必须重启**才能加载新的 `saria.dll`（mod 只在启动时加载）；
 - `apply.ps1` 会自动处理「游戏占用 DLL」的问题。
 
 ### 出问题看哪里
@@ -219,7 +219,7 @@ powershell -ExecutionPolicy Bypass -File D:\STS2\mods-src\probe\tools\apply.ps1 
 | 现象 | 看哪里 |
 |---|---|
 | 编译报错 | `apply.ps1` 的输出（红字，带文件:行号） |
-| 游戏启动后没变化 | 游戏日志 `%APPDATA%\SlayTheSpire2\logs\godot.log`，搜 `[probe]` |
+| 游戏启动后没变化 | 游戏日志 `%APPDATA%\SlayTheSpire2\logs\godot.log`，搜 `[saria]` |
 | 卡面文字显示成 `{Damage:diff()}` 原文 | 描述里变量名写错，或该卡没有对应 `DynamicVar` |
 | 卡面数字不随升级变化 | `OnUpgrade()` 里没写对应加成 |
 

@@ -76,7 +76,7 @@
 | 卡背色（牌组/历史） | `#7FD4FF` | [`ProbePools.cs`](../../mods-src/probe/src/Pools/ProbePools.cs) → `DeckEntryCardColor` |
 | 卡框着色 | `#7FD4FF` | 同上 → `ShaderColor`（BaseLib HSV 着色，底材质仍是红色框） |
 | 地图画线 / 联机瞄准线 | 原版默认（黑） | 未覆写 |
-| 能量图标配色池 | 借用 `ironclad` | `ProbePools.cs` → `EnergyColorName` |
+| 能量图标配色池 | `saria`（自制） | `ProbePools.cs` → `EnergyColorName`；图标由 `ProbeEnergyIcons` 用 `TakeOverPath` 注册虚拟 res:// 路径 |
 
 改色只需要改这三处常量，**不用动素材**。
 

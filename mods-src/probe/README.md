@@ -1,23 +1,24 @@
-# Probe / 塞雷娅 — 自定义角色 Mod
+# Saria / 塞雷娅 — 自定义角色 Mod
 
-在《杀戮尖塔2》v0.113.0 上新增一个**可玩的原创角色「塞雷娅」**与**一整套原创卡牌**（钙铠机制）。
-美术部分自绘资源逐步替换中，未画的部位暂借原版。
+在《杀戮尖塔2》v0.113.x 上新增一个**可玩的原创角色「塞雷娅」**与**一整套原创卡牌**（钙铠机制）。
+美术已大部分换成自制资源，剩余占位项见下表。
 
 ## 当前状态（实测通过）
 
 | 项目 | 状态 |
 |---|---|
-| Mod 加载 | `Found mod manifest ... mods\probe\mod_manifest.json` → `[probe] harmony patches: N applied` |
+| Mod 加载 | `Found mod manifest ... mods\saria\mod_manifest.json` → `[saria] harmony patches: N applied` |
 | 角色 | Mod ID `saria`，角色 entry `SARIA-SARIA`，显示名 **塞雷娅**，HP 70、金币 99 |
 | 起手遗物 | **钙质技艺**（每场战斗开始获得 5 层钙铠） |
 | 起手牌组 | 打击×4、防御×4、硬化×1、激发×1 |
-| 卡池 | **78 张**（含 2 张先古、4 张无色 token），配比表见 `design/cards.md` 顶部（自动生成） |
-| 自定义状态 | **31 个 power**，核心机制 **钙铠** |
+| 卡池 | **89 张**（含 2 张先古、4 张无色 token），配比表见 `design/cards.md` 顶部（自动生成） |
+| 自定义状态 | **32 个 power**，核心机制 **钙铠** |
 | 先古对话 | 9 位先古共 **54 行**，通过 `design/character-writing.md` → `assets/localization/zhs/ancients.json` 注入 |
 | 战斗立绘 | Spine 骨骼动画（自制），死亡/受击/攻击/能力动画已接 |
 | 选人界面 | 背景大图 + 底部头像 + 顶栏头像均已换成自定义资源 |
 | 通关 | 战胜建筑师可正常结算（`ArchitectWinRunPatch` 补占位台词） |
-| 仍占位 | 能量球、地图标记、休息处/商店动画、开局过渡、卡框、卡图 |
+| 已自制 | 卡图 89 张、状态图标 32 个、能量球 5 层图层 + 能量图标、选中音效、战斗/商店/火堆 Spine |
+| 仍占位 | 遗物图标（8）、地图标记、多人猜拳手部、角色选择过渡材质 |
 
 角色/卡牌文本仍在 C# 的 `Localization` 里；只有**先古对话**走 PCK 里的 JSON（原因见「已知的坑」）。
 
@@ -48,8 +49,8 @@
 
 ```
 probe/
-  probe.csproj              net9.0，引用游戏自带 sts2 / GodotSharp / 0Harmony + lib/BaseLib.dll
-  mod_manifest.json         id=probe，依赖 BaseLib
+  saria.csproj              net9.0，引用游戏自带 sts2 / GodotSharp / 0Harmony + lib/BaseLib.dll
+  mod_manifest.json         id=saria，依赖 BaseLib
   lib/BaseLib.dll           编译期引用（工坊 v3.4.7，不随 mod 分发）
   README.md                 本文件
   design/                   ★ 设计表（你写，我读）
@@ -67,8 +68,8 @@ probe/
     ProbeMain.cs             入口 + 逐类应用 Harmony 补丁
     Characters/Saria.cs      角色模型
     Pools/ProbePools.cs      卡池 / 遗物池 / 药水池
-    Cards/*.cs               78 张卡
-    Powers/*.cs              31 个状态
+    Cards/*.cs               89 张卡
+    Powers/*.cs              32 个状态
     Relics/*.cs              8 张遗物（1 初始 + 1 普通 + 2 罕见 + 2 稀有 + 1 商店 + 1 先古）
     Patches/*.cs             钙铠常驻、建筑师胜利、钙质化加伤、止血计数
     ProbeSpineAssets.cs      加载自制 Spine 资源
@@ -78,10 +79,10 @@ probe/
     ProbeAncientDialogues.cs 把自定义角色的先古对话注入原版先古
 ```
 
-部署到 `<game>\mods\probe\`：
+部署到 `<game>\mods\saria\`：
 
 ```
-probe.dll  probe.pck  mod_manifest.json
+saria.dll  saria.pck  mod_manifest.json
 images\   char_select_bg_saria.png / char_select_saria.png / character_icon_saria.png
 spine\    char_202_demkni.{skel,atlas,png}
 ```
@@ -117,9 +118,14 @@ BaseLib 的 `CustomCharacterModel` 构造时调用 `CustomContentDictionary.AddC
 | 选人背景 | ✅ | `NCharacterSelectScreen.SelectCharacter` 后替换背景容器内容 |
 | 选人栏头像 | ✅ | `NCharacterSelectButton.Init` 后覆盖 `%Icon` 纹理 |
 | 顶栏/对话头像 | ✅ | `CharacterModel.Icon` getter 返回运行时 TextureRect |
-| 能量球 / 地图标记 / 休息处 / 商店 / 过渡 / 卡框 / 卡图 | ⬜ 仍占位 | — |
+| 卡图（89 张） | ✅ | `NCard.UpdatePortrait` / `SetPortraitTexture` 后置替换（散文件解码） |
+| 状态图标（32） | ✅ | `NPower.Reload` 后置替换，`PowerModel.Icon` 同步 |
+| 能量球 | ✅ | `NEnergyCounter.Create` 后换 5 层贴图 + 粒子染色 `#f5f98e` |
+| 能量图标 | ✅ | `TakeOverPath` 注册虚拟 res:// 路径（正文 24×24、卡面/提示原尺寸） |
+| 商店 / 火堆 Spine | ✅ | 运行时换骨骼：`Relax` / `Sit` |
+| 遗物图标 / 地图标记 / 猜拳手部 / 过渡材质 | ⬜ 仍占位 | — |
 
-素材对照（哪一处用哪张 png、各自尺寸）见 [`resources/png/素材对照.md`](D:\STS2\resources\png\素材对照.md)。
+素材索引（哪一处用哪张 png、命名规则、打包去向）见仓库根目录 [`docs/art-assets.md`](../../docs/art-assets.md)。
 
 ## 自定义角色接入的四个「必须」
 
@@ -160,10 +166,10 @@ Set-Location D:\STS2\mods-src\probe; dotnet build -c Release
 #   用 MCP 的 build_pck，或阅读 tools/ 里的说明；产物 build\probe.pck
 
 # 部署：游戏必须关闭
-#   probe.dll → <game>\mods\probe\probe.dll
-#   build\probe.pck → <game>\mods\probe\probe.pck
-#   resources\png\*.png → <game>\mods\probe\images\
-#   resources\spine\fight\4.2\* → <game>\mods\probe\spine\
+#   saria.dll → <game>\mods\saria\saria.dll
+#   build\saria.pck → <game>\mods\saria\saria.pck
+#   resources\png\{cards-little,powers,orb}\*.png → <game>\mods\saria\images\
+#   resources\spine\{fight\4.2,4.2}\* → <game>\mods\saria\spine\
 
 # 启动（直接启动 exe 会 No appID found）
 Start-Process 'steam://rungameid/2868840'
