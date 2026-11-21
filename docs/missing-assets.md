@@ -158,39 +158,137 @@ es://.godot/imported/，
 > 以后换音效：直接替换 `resources/ogg/selected.ogg`，重新打包即可，不用改代码。
 > 仍走 FMOD 的音效（攻击 / 施法 / 死亡）继续借用铁甲战士事件。
 
-## 4. 图标与小图规格
+## 4. 图标与小图规格（逐项详解）
 
-| 资源 | 推荐尺寸 | 说明 |
+下面每项都给出「原版用什么文件 / 多大 / 我们缺什么」，可以直接照着出图。
+统一约定：**PNG、透明背景、不要圆角与外发光外的底色**（圆角/边框由游戏叠加或另有限定）。
+
+### 4.1 遗物图标（8 个）
+
+原版每个遗物**两张图**：
+
+| 用途 | 文件 | 规格 |
 |---|---|---|
-| 遗物图标 | **128×128**（大图）+ 图集小图 | 现在用 `IconBaseName` 借原版（anchor / vajra / lantern / bag_of_marbles / burning_blood） |
-| 能量图标 | 32×32（文本内）/ 64×64（大） | `CustomCardPoolModel.BigEnergyIconPath`、`TextEnergyIconPath` |
-| 地图标记 | 48×48 左右 | `CustomMapMarkerPath`；建议等比图标，深色描边保证浅色地图可读 |
-| 猜拳手部 | 与铁甲战士同尺寸即可 | `CustomArmPointingTexturePath` / Rock / Paper / Scissors |
+| 状态栏小图标 | 图集区域 `images/atlases/relic_atlas.png` 里的 `relic_atlas.sprites/<IconBaseName>.tres` | 原版 `burning_blood` 区域 **71×81**，`margin = (8, 2, 14, 4)`（九宫格，用来拉伸） |
+| 悬停/详情大图 | `images/relics/<IconBaseName>.png` | **256×256** |
 
----
+细节：
+
+- 小图标是**图集里的一块**，带 9-slice 边距；自制时按 71×81 画、四周留 8/2/14/4 的可拉伸边即可；
+- 大图 256×256 是独立 PNG，游戏直接缩放显示；
+- 我们 mod 现在用 `IconBaseName` 借原版（`anchor` / `vajra` / `lantern` / `bag_of_marbles` / `burning_blood`），
+  自制后需要**运行时替换**（做法同卡图：`NRelic.Icon` / `BigIcon` 后置补丁 + 散文件加载）。
+
+需要出的 8 个（中文名 → 建议文件名，与类名一致）：
+
+| 中文名 | 建议文件名 |
+|---|---|
+| 钙质技艺 | `CalciumCraft.png` |
+| 校准装置 | `CalibrationDevice.png` |
+| 富集仓 | `EnrichmentVat.png` |
+| 工作牌 | `WorkBadge.png` |
+| 谐振回路 | `ResonanceCircuit.png` |
+| 腕带绷带 | `WristBandage.png` |
+| 源石样本 | `OriginiumSample.png` |
+| 钙质操纵 | `CalciumManipulation.png` |
+
+### 4.2 能量图标（卡面 / 提示 / 消耗文本）
+
+三种使用场景，实际用的是**同一张图标**：
+
+| 场景 | 来源 |
+|---|---|
+| 卡面左上角费用 | `CardPoolModel.EnergyIconPath` → 图集区域 `ui_atlas.sprites/card/energy_<pool>.tres` |
+| 卡牌/状态提示文本里的 `{Energy}` | 同上 |
+| 部分 UI 的大号能量图标 | `CustomCardPoolModel.BigEnergyIconPath`（可单独指定） |
+
+规格：
+
+- 图集区域原版 **74×74**（`energy_ironclad`），游戏内按约 32×32 显示 → **2 倍图**；
+- 没有图集版本时会退回 `images/packed/energy_icons/energy_<pool>.png`（同样是 74×74）；
+- 我们 mod 现在 `EnergyColorName = "ironclad"`，即**直接借铁甲战士的火焰能量图标**；
+- 自制时建议出 **74×74 PNG**，另可出一个 148×148 的用于大图位（可选）。
+
+> 注意：`energy_orb_burst.png` / `energy_orb_shine.png`（512×512）是能量球特效贴图，**不是**这个图标。
+
+### 4.3 地图标记（角色在地图上的小头像）
+
+| 项 | 内容 |
+|---|---|
+| 路径 | `images/packed/map/icons/map_marker_<角色>.png` |
+| 原版尺寸 | **46×60**（另有 49×64 的高分辨率导入版本） |
+| 内容 | 角色头部特写，透明背景，底部对齐地图节点 |
+| 建议 | 按 **49×64 的 2 倍图（98×128）** 出图；深色描边，保证浅色地图上可读 |
+
+我们 mod 现在用 `CustomMapMarkerPath` 指向铁甲战士的标记。
+
+### 4.4 多人猜拳手部贴图（4 张）
+
+多人模式里的「石头剪刀布」要用**手臂**贴图，每个角色 4 张：
+
+| 文件 | 手势 |
+|---|---|
+| `images/ui/hands/multiplayer_hand_<角色>_rock.png` | 石头 |
+| `..._paper.png` | 布 |
+| `..._scissors.png` | 剪刀 |
+| `..._point.png` | 指向（选人/指向队友） |
+
+规格：原版 **422×1200**（竖长构图，整条手臂从画布底部伸上来），透明背景；
+游戏内会缩放并做轻微旋转动画，所以**手臂根部要留在画布底边**，手指朝上。
+
+我们 mod 现在用 `CustomArmPointingTexturePath` / `Rock` / `Paper` / `Scissors` 指向铁甲战士。
+
+### 4.5 角色选择过渡材质（转场遮罩）
+
+| 项 | 内容 |
+|---|---|
+| 路径 | `materials/transitions/<角色>_transition_mat.tres` |
+| 用到的贴图 | `images/ui/transitions/<角色>_transition.png`，原版 **2560×1200** |
+| 材质类型 | `ShaderMaterial`，内联 shader（见下） |
+
+原版 shader 逻辑：把贴图的**红通道**当遮罩，`threshold`（默认 **0.332**）控制扫描进度，
+`COLOR.a = step(1.0 - tex.r, mix(-0.1, 1.1, threshold))` —— 也就是**用一张灰度图做「擦除/显现」动画**。
+
+出图要求：
+
+1. 一张 **2560×1200 的灰度 PNG**（用红通道即可，白=显现、黑=遮住）；
+2. 图案建议做成角色的标志性元素（塞雷娅可用钙质结晶/盾形裂纹的扩散）；
+3. `.tres` 素材可以复用原版结构，只把 `transitionTex` 换成自己的图，`threshold` 保持 0.332。
+
+> 该图只出现在「进入/退出战斗、进入角色选择」的转场瞬间，属于锦上添花项。
+
+### 4.6 本节汇总（出图清单）
+
+| 资源 | 张数 | 尺寸 | 备注 |
+|---|---|---|---|
+| 遗物小图标 | 8 | 71×81（九宫格边距 8/2/14/4） | 图集风格 |
+| 遗物大图标 | 8 | 256×256 | 独立 PNG |
+| 能量图标 | 1 | 74×74（可选 148×148） | 卡面/提示/文本通用 |
+| 地图标记 | 1 | 49×64（建议 98×128） | 头肩特写 |
+| 猜拳手部 | 4 | 422×1200 | 手臂竖构图，根部贴底边 |
+| 过渡遮罩 | 1 | 2560×1200 | 红通道遮罩，可复用原版材质 |
 
 ## 5. 纯代码配置（不用画图）
 
 | 项 | 位置 | 现状 | 建议 |
 |---|---|---|---|
-| 地图画线颜色 | `CharacterModel.MapDrawingColor` | `#e8ebbe` | 已设 |
-| 联机瞄准线 | `CharacterModel.RemoteTargetingLineColor` | `#e8ebbe` | 已设 |
-| 卡牌背景色 | `CardPoolModel.DeckEntryCardColor` | `#e8ebbe` | 已设 |
-| 卡框着色 | `CustomCardPoolModel.ShaderColor` | `#e8ebbe` | 已设（走 BaseLib HSV 着色，框材质仍是红色） |
+| 地图画线颜色 | `CharacterModel.MapDrawingColor` | 原版默认（黑） | 已回退，未覆写 |
+| 联机瞄准线 | `CharacterModel.RemoteTargetingLineColor` | 原版默认（黑） | 已回退，未覆写 |
+| 卡牌背景色 | `CardPoolModel.DeckEntryCardColor` | `#7FD4FF` | 已设 |
+| 卡框着色 | `CustomCardPoolModel.ShaderColor` | `#7FD4FF` | 已设（走 BaseLib HSV 着色，框材质仍是红色） |
 | 能量文字描边 | `CardPoolModel.EnergyOutlineColor` | 默认 `#5C5440` | 可按新卡框配色微调 |
-| 角色名颜色 | `CharacterModel.NameColor` | `#e8ebbe` | 已设 |
+| 角色名颜色 | `CharacterModel.NameColor` | `#7FD4FF` | 已设 |
 
 ---
 
 ## 6. 优先级建议
 
-2. **商店 / 火堆骨骼** —— 只是把同一套骨骼的 `Relax` / `Sit` 复制成引擎要的动画名（见 §8），成本很低。
-3. **能力图标 31 个 + 遗物图标 8 个** —— 数量多但单张成本低，适合批量出。
-4. **能量球** —— 场景固定、复用度高。
-5. **能量球** 与剩下的 **角色选择过渡材质** —— 都只影响观感的一小块。
+1. **遗物图标 8 个**（详细规格见 §4.1）—— 数量少、单张成本低，做完角色栏就完整了。
+2. **能量球**（§1.1）—— 场景固定、复用度高，一次做完长期受益。
+3. **能量图标 + 地图标记 + 猜拳手部**（§4.2–§4.4）—— 都是小图，可批量处理。
+4. **角色选择过渡材质**（§4.5）—— 只影响转场瞬间，优先级最低。
 
 ---
-
 ## 7. 技术约束备忘
 
 - Spine 版必须是 **4.2.43**（spine-godot 4.2），骨架/图集/贴图三件套；PCK 里只装 `.atlas/.skel` 与本地化 JSON，图片走散文件（见 [spine-conversion.md](spine-conversion.md)）。
