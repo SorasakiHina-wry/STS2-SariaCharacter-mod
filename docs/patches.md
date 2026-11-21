@@ -10,7 +10,7 @@
 启动日志（`%APPDATA%\SlayTheSpire2\logs\godot.log`）里有且只有一行：
 
 ```
-[saria] harmony patches: 24 applied, 0 skipped
+[saria] harmony patches: 28 applied, 0 skipped
 ```
 
 - **数量不对**（比如少了一个） → 说明某个类没被 `PatchAll` 扫到，或目标方法改名（游戏更新）；
@@ -39,6 +39,9 @@
 | `ProbePowerHoverIconPatch` | `PowerModel.get_Icon` | Postfix | 状态悬停提示图标 | 同上 |
 | `ProbeOrbPatch` | `NEnergyCounter.Create` | Postfix | 能量球 5 层换图 + 粒子染色 `#f5f98e` | `[saria][orb] custom energy orb applied` |
 | `ProbeCardEnergyIconPatch` | `NCard.Reload` | Postfix | 卡面费用图标换成 `energy_saria.png` | 无（失败才 warn） |
+| `ProbeEnergyPrefixPatch` | `EnergyIconHelper.GetPrefix(AbstractModel)` | Postfix | 文本里的 `{Energy}` 用 `saria` 前缀（**只有这里**用虚拟路径） | 无 |
+| `ProbeEnergyGetPathPatch` | `EnergyIconHelper.GetPath(AbstractModel)` | Postfix | 取路径时回退铁甲战士真实路径，避免同步加载失败 | 无 |
+| `ProbeEnergyGetPathStringPatch` | `EnergyIconHelper.GetPath(string)` | Postfix | 同上（字符串重载），命中时打 warn | `[saria][energy-icon] GetPath(...) fell back` |
 | `ProbeEnergyHoverTipPatch` | `HoverTipFactory.ForEnergyWithIconPath` | Postfix | **能量悬停提示框图标**（原版按 res:// 路径取图，mod 加载不了） | `[saria][orb] energy hover tip icon replaced` |
 | `ProbeCharacterSelectBgPatch` | `NCharacterSelectScreen.SelectCharacter` | Postfix | 选人界面背景换成自制图 | `[saria] character select background replaced` |
 | `ProbeCharacterIconPatch` | `CharacterModel.get_Icon` / `get_IconTexture` / `get_IconOutlineTexture`、`NCharacterSelectButton.Init` | Postfix | 顶部栏/选人栏头像 | `[saria] character select portrait applied` |
@@ -106,8 +109,14 @@ tex.TakeOverPath("res://images/packed/sprite_fonts/saria_energy_icon.png");
 // 之后 ResourceLoader.Load(该路径) 直接返回这张运行时贴图
 ```
 
-配套：`ProbeCardPool / ProbeRelicPool / ProbePotionPool` 的 `EnergyColorName` 改成 `saria`，
-这样只有我们的内容用这个前缀，**不会劫持原版角色**。
+配套（v0.5.4 修正后）：
+- `EnergyColorName` **保持 `ironclad`** —— `PreloadManager` 会预加载 `ModelDb.AllCardPools` 的
+  `EnergyIconPath`，指到只存在于缓存的虚拟路径会抛 `AssetLoadException`、房间加载中断
+  （事故表现：**开局卡在涅奥对话界面、点不动**）；
+- 只把**文本前缀**换成 `saria`（`ProbeEnergyPrefixPatch` 打在 `EnergyIconHelper.GetPrefix`），
+  这条路径只出现在 BBCode 里，不参与预加载；
+- `EnergyIconHelper.GetPath` 对 `saria` 一律回退铁甲战士的真实路径
+  （`ProbeEnergyGetPathPatch` / `ProbeEnergyGetPathStringPatch`），保证任何同步加载都成功。
 
 ### 两个必须记住的坑
 

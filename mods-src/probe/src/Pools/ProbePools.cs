@@ -24,15 +24,24 @@ public sealed class ProbeCardPool : CustomCardPoolModel
     /// Reuse the Ironclad energy orb/icon art until custom energy icons exist.
     /// BaseLib's default would build a pool-specific icon key that has no texture yet.
     /// </summary>
-    public override string EnergyColorName => ProbeEnergyIcons.Prefix;
+    // 必须是游戏里真实存在的能量配色池：PreloadManager 会预加载 EnergyIconPath，
+    // 指到只存在于资源缓存的虚拟路径会抛 AssetLoadException（曾导致卡在涅奥对话）。
+    // 文本内联图标的前缀单独由 ProbeEnergyPrefixPatch 提供 "saria"。
+    public override string EnergyColorName => "ironclad";
 }
 
 public sealed class ProbeRelicPool : CustomRelicPoolModel
 {
-    public override string EnergyColorName => ProbeEnergyIcons.Prefix;
+    // 必须是游戏里真实存在的能量配色池：PreloadManager 会预加载 EnergyIconPath，
+    // 指到只存在于资源缓存的虚拟路径会抛 AssetLoadException（曾导致卡在涅奥对话）。
+    // 文本内联图标的前缀单独由 ProbeEnergyPrefixPatch 提供 "saria"。
+    public override string EnergyColorName => "ironclad";
 }
 
 public sealed class ProbePotionPool : CustomPotionPoolModel
 {
-    public override string EnergyColorName => ProbeEnergyIcons.Prefix;
+    // 必须是游戏里真实存在的能量配色池：PreloadManager 会预加载 EnergyIconPath，
+    // 指到只存在于资源缓存的虚拟路径会抛 AssetLoadException（曾导致卡在涅奥对话）。
+    // 文本内联图标的前缀单独由 ProbeEnergyPrefixPatch 提供 "saria"。
+    public override string EnergyColorName => "ironclad";
 }
