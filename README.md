@@ -70,6 +70,7 @@ powershell -ExecutionPolicy Bypass -File tools\package.ps1
 
 > 发版（版本号、打包、推送、Release）见 [docs/release.md](docs/release.md)。
 > 还缺哪些美术/音频资源、各自尺寸规格见 [docs/missing-assets.md](docs/missing-assets.md)。
+> 已完成的素材在哪个目录、怎么命名、打包去哪见 [docs/art-assets.md](docs/art-assets.md)。
 >
 > 注意：`saria.pck` 只装 Spine 与本地化 JSON；图片走散文件（`images/`），
 > 详见 `mods-src/probe/README.md` 的「已知的坑」。
