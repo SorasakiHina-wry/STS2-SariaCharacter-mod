@@ -24,15 +24,15 @@ public sealed class ProbeCardPool : CustomCardPoolModel
     /// Reuse the Ironclad energy orb/icon art until custom energy icons exist.
     /// BaseLib's default would build a pool-specific icon key that has no texture yet.
     /// </summary>
-    public override string EnergyColorName => "ironclad";
+    public override string EnergyColorName => ProbeEnergyIcons.Prefix;
 }
 
 public sealed class ProbeRelicPool : CustomRelicPoolModel
 {
-    public override string EnergyColorName => "ironclad";
+    public override string EnergyColorName => ProbeEnergyIcons.Prefix;
 }
 
 public sealed class ProbePotionPool : CustomPotionPoolModel
 {
-    public override string EnergyColorName => "ironclad";
+    public override string EnergyColorName => ProbeEnergyIcons.Prefix;
 }

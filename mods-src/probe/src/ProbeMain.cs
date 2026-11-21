@@ -43,6 +43,9 @@ public static class ProbeMain
 
             Log.Info($"[saria] harmony patches: {applied} applied, {skipped} skipped");
 
+            // 能量图标：把运行时贴图占住 res:// 路径，正文 {Energy} 与卡面图标都会用它
+            ProbeEnergyIcons.Register();
+
         // 诊断：确认 pck 里的卡图能被 ResourceLoader 看到、选中音效文件存在
         string probePath = "res://saria/images/portraits/ProbeStrike.png";
         bool probeExists = Godot.ResourceLoader.Exists(probePath);
