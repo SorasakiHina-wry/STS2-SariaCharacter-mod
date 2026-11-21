@@ -69,8 +69,19 @@ if (Test-Path $pngDir) {
         if (-not (Test-Path $from)) { throw "缺少图片：$from" }
         Copy-Item $from (Join-Path $StageDir ('images\' + $imageMap[$src])) -Force
     }
+    # 状态图标：resources\png\powers\*.png -> images\powers\
+    $powerArtDir = Join-Path $RepoRoot 'resources\png\powers'
+    if (Test-Path $powerArtDir) {
+        New-Item -ItemType Directory -Force -Path (Join-Path $StageDir 'images\powers') | Out-Null
+        Copy-Item (Join-Path $powerArtDir '*.png') (Join-Path $StageDir 'images\powers') -Force
+    }
+    else {
+        Write-Warning "resources\png\powers 不存在，本次不含状态图标。"
+    }
+
     # 卡图：优先用压缩版 resources\png\cards-little\*.png -> images\portraits\（没有则退回原图）
-    $cardArtDir = Join-Path $RepoRoot 'resources\png\cards-little'
+    $cardArtDir = Join-Path $RepoRoot 'resources\png\cards-little'
+
     if (-not (Test-Path $cardArtDir)) { $cardArtDir = Join-Path $RepoRoot 'resources\png\cards' }
     if (Test-Path $cardArtDir) {
         New-Item -ItemType Directory -Force -Path (Join-Path $StageDir 'images\portraits') | Out-Null
