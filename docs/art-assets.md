@@ -72,6 +72,7 @@
 | 项 | 值 | 代码位置 |
 |---|---|---|
 | 角色名颜色 | `#7FD4FF` | [`Saria.cs`](../../mods-src/probe/src/Characters/Saria.cs) → `NameColor` |
+| 能量数字描边（能量球上的 3/3） | `#0b3692` | [`Saria.cs`](../../mods-src/probe/src/Characters/Saria.cs) → `EnergyLabelOutlineColor` |
 | 卡背色（牌组/历史） | `#7FD4FF` | [`ProbePools.cs`](../../mods-src/probe/src/Pools/ProbePools.cs) → `DeckEntryCardColor` |
 | 卡框着色 | `#7FD4FF` | 同上 → `ShaderColor`（BaseLib HSV 着色，底材质仍是红色框） |
 | 地图画线 / 联机瞄准线 | 原版默认（黑） | 未覆写 |

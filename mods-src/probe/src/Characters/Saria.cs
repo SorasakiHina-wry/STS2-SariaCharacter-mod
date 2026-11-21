@@ -46,6 +46,9 @@ public sealed class Saria : PlaceholderCharacterModel
 
     public override Color NameColor => new("7FD4FF");
 
+    /// <summary>能量球上数字的描边颜色（3/3 那一圈）。</summary>
+    public override Color EnergyLabelOutlineColor => new("0b3692");
+
     /// <summary>角色选择界面的选中音效：哨兵值，由 ProbeSelectSfx 拦截后播本地 ogg。</summary>
     public override string CharacterSelectSfx => ProbeSelectSfx.Key;
 
