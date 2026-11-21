@@ -4,13 +4,17 @@ using Godot;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Logging;
+using MegaCrit.Sts2.Core.Nodes.Cards;
 using MegaCrit.Sts2.Core.Nodes.Combat;
 
 namespace Saria;
 
 /// <summary>
-/// 塞雷娅的能量球：沿用原版场景骨架（NEnergyCounter 的旋转/压暗/数字都在脚本里），
-/// 只在实例化之后把 5 层贴图换成自制图，并把前后粒子染成 #f5f98e。
+/// 塞雷娅的能量球与能量图标。
+///
+/// 能量球：沿用原版 NEnergyCounter 场景骨架（旋转/压暗/数字都在脚本里），
+/// 实例化之后把 5 层贴图换成自制图（`saria_orb_layer_1..5.png`），并把前后粒子染成 #f5f98e。
+/// 能量图标：卡面费用位置的 `NCard._energyIcon` 换成 `energy_saria.png`。
 /// </summary>
 internal static class ProbeOrbSkin
 {
@@ -22,16 +26,16 @@ internal static class ProbeOrbSkin
 
     private static readonly Dictionary<string, Texture2D?> Cache = new();
 
-    internal static Texture2D? Load(int index)
+    /// <summary>读取 images/orb 下的贴图（按文件名，缓存）。</summary>
+    internal static Texture2D? Load(string fileName)
     {
-        string key = index.ToString();
-        if (Cache.TryGetValue(key, out var cached))
+        if (Cache.TryGetValue(fileName, out var cached))
             return cached;
 
         Texture2D? texture = null;
         try
         {
-            string path = OrbDir.PathJoin($"Layer{index}.png");
+            string path = OrbDir.PathJoin(fileName);
             if (FileAccess.FileExists(path))
             {
                 byte[] bytes = FileAccess.GetFileAsBytes(path);
@@ -44,23 +48,22 @@ internal static class ProbeOrbSkin
             }
             else
             {
-                Log.Warn($"[saria][orb] missing layer: {path}");
+                Log.Warn($"[saria][orb] missing file: {path}");
             }
         }
         catch (Exception ex)
         {
-            Log.Error($"[saria][orb] load threw for layer {index}: {ex.Message}");
+            Log.Error($"[saria][orb] load threw for {fileName}: {ex.Message}");
         }
 
-        Cache[key] = texture;
+        Cache[fileName] = texture;
         return texture;
     }
 
-    internal static void Apply(NEnergyCounter counter)
+    internal static void ApplyOrb(NEnergyCounter counter)
     {
         try
         {
-            // 5 层贴图：Layer1 在 Layers 下，Layer2/3 在 Layers/RotationLayers 下，Layer4/5 在 Layers 下
             for (int i = 1; i <= 5; i++)
             {
                 var node = counter.FindChild($"Layer{i}", recursive: true, owned: false) as TextureRect;
@@ -70,16 +73,14 @@ internal static class ProbeOrbSkin
                     continue;
                 }
 
-                var texture = Load(i);
+                var texture = Load($"saria_orb_layer_{i}.png");
                 if (texture != null)
                     node.Texture = texture;
             }
 
-            // 前后粒子统一染色
             foreach (var name in new[] { "EnergyVfxBack", "EnergyVfxFront" })
             {
-                var container = counter.FindChild(name, recursive: true, owned: false) as CanvasItem;
-                if (container != null)
+                if (counter.FindChild(name, recursive: true, owned: false) is CanvasItem container)
                     Tint(container);
             }
 
@@ -88,6 +89,32 @@ internal static class ProbeOrbSkin
         catch (Exception ex)
         {
             Log.Warn($"[saria][orb] apply failed: {ex.Message}");
+        }
+    }
+
+    /// <summary>把卡面费用图标换成自制能量图标。</summary>
+    internal static void ApplyCardEnergyIcon(NCard card)
+    {
+        try
+        {
+            var model = card.Model;
+            if (model?.Id.Entry is not string entry || !entry.StartsWith("SARIA-", StringComparison.Ordinal))
+                return;
+
+            var texture = Load("energy_saria.png");
+            if (texture == null)
+                return;
+
+            foreach (var fieldName in new[] { "_energyIcon", "_unplayableEnergyIcon" })
+            {
+                var field = AccessTools.Field(typeof(NCard), fieldName);
+                if (field?.GetValue(card) is TextureRect rect)
+                    rect.Texture = texture;
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Warn($"[saria][orb] card energy icon failed: {ex.Message}");
         }
     }
 
@@ -114,6 +141,14 @@ public static class ProbeOrbPatch
         if (!player.Character.Id.Entry.EndsWith("SARIA", StringComparison.Ordinal))
             return;
 
-        ProbeOrbSkin.Apply(__result);
+        ProbeOrbSkin.ApplyOrb(__result);
     }
+}
+
+/// <summary>卡面刷新完之后换掉费用位置的图标。</summary>
+[HarmonyPatch(typeof(NCard), "Reload")]
+public static class ProbeCardEnergyIconPatch
+{
+    [HarmonyPostfix]
+    private static void Postfix(NCard __instance) => ProbeOrbSkin.ApplyCardEnergyIcon(__instance);
 }
