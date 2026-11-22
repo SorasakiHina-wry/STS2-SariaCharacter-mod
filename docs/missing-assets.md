@@ -279,6 +279,11 @@ es://.godot/imported/，
 
 > 该图只出现在「进入/退出战斗、进入角色选择」的转场瞬间，属于锦上添花项。
 
+> **原版参考素材已导出**：`resources/vanilla/transition_ironclad/`
+> （`images/ui/transitions/ironclad_transition.png` 2560×1200 + 材质 `.tres` + README）。
+> 观感是一张**灰度墨迹/漩涡**：亮的地方**先显现**、暗的地方**后显现**（shader 里 `1 - R` 再与 threshold 比较），
+> 所以想做「从某处扩散揭开」就把握笔的起点画亮。
+
 ### 4.6 本节汇总（出图清单）
 
 | 资源 | 张数 | 尺寸 | 备注 |
