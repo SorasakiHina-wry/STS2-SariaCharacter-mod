@@ -10,7 +10,7 @@
 启动日志（`%APPDATA%\SlayTheSpire2\logs\godot.log`）里有且只有一行：
 
 ```
-[saria] harmony patches: 38 applied, 0 skipped
+[saria] harmony patches: 39 applied, 0 skipped
 ```
 
 - **数量不对**（比如少了一个） → 说明某个类没被 `PatchAll` 扫到，或目标方法改名（游戏更新）；
