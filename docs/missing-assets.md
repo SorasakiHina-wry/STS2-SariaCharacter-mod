@@ -100,6 +100,12 @@ Control                       ← 128×128，pivot (64,64)，脚本 NEnergyCount
 
 作用：球体外围一圈缓慢辉光，获得能量时闪一下。
 
+> **素材位置**：这些粒子场景引用的贴图已一并导出到
+> `resources/vanilla/energy_counter_ironclad/images/vfx/`（`common_glow.png` 128×128、
+> `common_ring_polar_a.png` 256×256、`fire_burst_flipbook_1..3.png` 256/512 的 3×2 图集、
+> `fire_burst_ember_straight.png` 128×128），材质与 shader 也在同目录的 `materials/vfx/`、`shaders/vfx/`。
+> 想换掉「获得能量」的火焰观感，只需按同样网格重画这 4 张 `fire_burst_*`。
+
 #### 1.1.6 前景粒子（`*_energy_vfx_front.tscn`）
 
 5 个子发射器（都用 `NParticlesContainer` 统一 Restart）：
