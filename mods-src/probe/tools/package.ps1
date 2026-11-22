@@ -125,6 +125,18 @@ if (Test-Path $pngDir) {
         Copy-Item $transitionSrc (Join-Path $StageDir 'images\transition\saria_transition.png') -Force
     }
 
+    # 遗物图标：resources\png\relics\derived\*.png -> images\relics\（大图 256）
+#            resources\png\relics\derived\cropped\*.png -> images\relics\cropped\（小图 80）
+    $relicArtDir = Join-Path $RepoRoot 'resources\png\relics\derived'
+    if (Test-Path $relicArtDir) {
+        New-Item -ItemType Directory -Force -Path (Join-Path $StageDir 'images\relics\cropped') | Out-Null
+        Copy-Item (Join-Path $relicArtDir '*.png') (Join-Path $StageDir 'images\relics') -Force
+        $relicSmallDir = Join-Path $relicArtDir 'cropped'
+        if (Test-Path $relicSmallDir) {
+            Copy-Item (Join-Path $relicSmallDir '*.png') (Join-Path $StageDir 'images\relics\cropped') -Force
+        }
+    }
+
     # 卡图：优先用压缩版 resources\png\cards-little\*.png -> images\portraits\（没有则退回原图）
     $cardArtDir = Join-Path $RepoRoot 'resources\png\cards-little'
 

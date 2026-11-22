@@ -10,7 +10,7 @@
 启动日志（`%APPDATA%\SlayTheSpire2\logs\godot.log`）里有且只有一行：
 
 ```
-[saria] harmony patches: 33 applied, 0 skipped
+[saria] harmony patches: 36 applied, 0 skipped
 ```
 
 - **数量不对**（比如少了一个） → 说明某个类没被 `PatchAll` 扫到，或目标方法改名（游戏更新）；
@@ -39,6 +39,9 @@
 | `ProbePowerHoverIconPatch` | `PowerModel.get_Icon` | Postfix | 状态悬停提示图标 | 同上 |
 | `ProbeOrbPatch` | `NEnergyCounter.Create` | Postfix | 能量球 5 层换图 + 粒子染色 `#f5f98e` + 获得能量特效贴图替换 | `[saria][orb] custom energy orb applied` / `custom energy vfx textures: N` |
 | `ProbeCardEnergyIconPatch` | `NCard.Reload` | Postfix | 卡面费用图标换成 `energy_saria.png` | 无（失败才 warn） |
+| `ProbeRelicReloadPatch` | `NRelic.Reload` | Postfix | 遗物栏图标（按 Small/Large 选 80 或 256） | `[saria][relic]` |
+| `ProbeRelicInspectPatch` | `NInspectRelicScreen.UpdateRelicDisplay` | Postfix | 遗物检视界面大图 | 同上 |
+| `ProbeRelicRewardPatch` | `RelicReward.CreateIcon` | Postfix | 遗物奖励弹窗图标 | 同上 |
 | `ProbeTransitionMaterialPatch` | `AssetCache.GetMaterial` | Prefix | 选中的是塞雷娅时，把铁甲战士的转场材质换成运行时构造的自制遮罩材质 | `[saria][transition] material built (2560x1200)` |
 | `ProbeHandPointPatch` | `CharacterModel.ArmPointingTexture`（getter） | Prefix | 猜拳「指向」手部换成自制贴图 | `[saria][hand] missing file` |
 | `ProbeHandRockPatch` | `CharacterModel.ArmRockTexture`（getter） | Prefix | 猜拳「石头」 | 同上 |
