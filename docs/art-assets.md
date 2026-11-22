@@ -26,7 +26,7 @@
 | 选中音效 | `resources/ogg/selected.ogg` | 固定文件名 | `mods/saria/audio/selected.ogg` | ❌ |
 | 猜拳手部 | `resources/png/hand/`（`multiplayer_hand_saria_<手势>.png`，4 张 424×1200） | 原版命名 | `mods/saria/images/hand/` | ❌ |
 | 转场遮罩 | `resources/png/saria_transition.png`（2560×1200 灰度） | 固定文件名 | `mods/saria/images/transition/` | ❌ |
-| 遗物图标 | `resources/png/relics/derived/`（8 张 256×256，`cropped/` 下 8 张 80×80） | `<类名>.png` | `mods/saria/images/relics/`（小图在 `cropped/`） | ❌ |
+| 遗物图标 | `resources/png/relics/derived/`（8 张 256×256，`cropped/` 8 张 80×80，`outline/` 8 张白色剪影） | `<类名>.png` | `mods/saria/images/relics/`（小图 `cropped/`、影子 `outline/`） | ❌ |
 | 遗物原图 | `resources/png/relics/sources/`（8 张 2~4 MB 的绘制稿） | `<类名>.png` | — | ❌ |
 | 原版参考素材 | `resources/vanilla/energy_counter_ironclad/` | 见目录内 README | —（只作参考） | ❌ |
 

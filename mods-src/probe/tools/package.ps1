@@ -135,6 +135,11 @@ if (Test-Path $pngDir) {
         if (Test-Path $relicSmallDir) {
             Copy-Item (Join-Path $relicSmallDir '*.png') (Join-Path $StageDir 'images\relics\cropped') -Force
         }
+        $relicOutlineDir = Join-Path $relicArtDir 'outline'
+        if (Test-Path $relicOutlineDir) {
+            New-Item -ItemType Directory -Force -Path (Join-Path $StageDir 'images\relics\outline') | Out-Null
+            Copy-Item (Join-Path $relicOutlineDir '*.png') (Join-Path $StageDir 'images\relics\outline') -Force
+        }
     }
 
     # 卡图：优先用压缩版 resources\png\cards-little\*.png -> images\portraits\（没有则退回原图）
