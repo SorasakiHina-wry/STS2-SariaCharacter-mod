@@ -188,7 +188,12 @@ es://.godot/imported/，
 
 细节：
 
-- 小图标是**图集里的一块**，带 9-slice 边距；自制时按 71×81 画、四周留 8/2/14/4 的可拉伸边即可；
+- 小图标是**图集里的一块**，带 9-slice 边距；**每块尺寸与边距都不一样**，实测两例：
+  `burning_blood` 71×81、margin (8, 2, 14, 4)；`strawberry` **76×80、margin (5, 3, 9, 5)**；
+  自制时按「图形紧贴画布、边距区域不放主体」来画即可。
+- **小图不是大图缩小**：`strawberry` 的大图 256×256 带一圈浅灰外发光，小图 76×80 没有那圈灰边、
+  且图形直接顶到画布边缘 —— 两种规格要分别画。
+- 参考素材：`resources/vanilla/relics/strawberry/`（大图 + 图集裁切 + 边距参考 + README）。
 - 大图 256×256 是独立 PNG，游戏直接缩放显示；
 - 我们 mod 现在用 `IconBaseName` 借原版（`anchor` / `vajra` / `lantern` / `bag_of_marbles` / `burning_blood`），
   自制后需要**运行时替换**（做法同卡图：`NRelic.Icon` / `BigIcon` 后置补丁 + 散文件加载）。
