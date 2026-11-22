@@ -37,7 +37,7 @@
 | `ProbeCardBigPortraitPatch` | `NCard.SetPortraitTexture` | Postfix | 检视大图同样换图（否则回落到打击图） | 同上 |
 | `ProbePowerIconPatch` | `NPower.Reload` | Postfix | 状态栏图标换成 64×64 自制图 | `[saria][power-art]` |
 | `ProbePowerHoverIconPatch` | `PowerModel.get_Icon` | Postfix | 状态悬停提示图标 | 同上 |
-| `ProbeOrbPatch` | `NEnergyCounter.Create` | Postfix | 能量球 5 层换图 + 粒子染色 `#f5f98e` | `[saria][orb] custom energy orb applied` |
+| `ProbeOrbPatch` | `NEnergyCounter.Create` | Postfix | 能量球 5 层换图 + 粒子染色 `#f5f98e` + 获得能量特效贴图替换 | `[saria][orb] custom energy orb applied` / `custom energy vfx textures: N` |
 | `ProbeCardEnergyIconPatch` | `NCard.Reload` | Postfix | 卡面费用图标换成 `energy_saria.png` | 无（失败才 warn） |
 | `ProbeEnergyPrefixPatch` | `EnergyIconHelper.GetPrefix(AbstractModel)` | Postfix | 文本里的 `{Energy}` 用 `saria` 前缀（**只有这里**用虚拟路径） | 无 |
 | `ProbeEnergyGetPathPatch` | `EnergyIconHelper.GetPath(AbstractModel)` | Postfix | 取路径时回退铁甲战士真实路径，避免同步加载失败 | 无 |
