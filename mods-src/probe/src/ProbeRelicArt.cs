@@ -13,14 +13,13 @@ namespace Saria;
 /// <summary>
 /// 遗物图标（大图 256×256 / 小图 80×80）。
 ///
-/// 原版两种规格：
-///   * 小图：图集区域 `atlases/relic_atlas.sprites/&lt;entry&gt;.tres`（每块尺寸、九宫格边距都不同）
-///   * 大图：`images/relics/&lt;entry&gt;.png` 256×256
-/// 两者都是 preload 的导入贴图，mod 的 PCK 加载不了，所以运行时用散文件解码后替换显示节点。
+/// 原版两种规格：小图是图集区域（每块尺寸/九宫格边距都不同），大图是 `images/relics/&lt;entry&gt;.png` 256×256。
+/// 两者都是 preload 的导入贴图，mod 的 PCK 加载不了，所以运行时用散文件解码后替换**显示节点**。
 ///
-/// 素材：`mods/saria/images/relics/&lt;类名&gt;.png`（256×256）
-///       `mods/saria/images/relics/cropped/&lt;类名&gt;.png`（80×80）
-/// 文件名用**类名**（CalciumCraft 等），和卡图/状态图标的约定一致。
+/// 素材：`mods/saria/images/relics/&lt;类名&gt;.png`（256）与 `cropped/&lt;类名&gt;.png`（80）。
+///
+/// 注意（v0.6.4 修正）：`NRelic.Icon` 是**属性**不是字段，早先按字段反射拿不到，导致完全没替换；
+/// 现在直接用公开属性 `Icon`，尺寸从私有字段 `_iconSize` 读。
 /// </summary>
 internal static class ProbeRelicArt
 {
@@ -49,6 +48,10 @@ internal static class ProbeRelicArt
                 else
                     Log.Warn($"[saria][relic] decode failed ({err}): {path}");
             }
+            else
+            {
+                Log.Warn($"[saria][relic] missing file: {path}");
+            }
         }
         catch (Exception ex)
         {
@@ -63,7 +66,6 @@ internal static class ProbeRelicArt
 
     internal static Texture2D? Small(RelicModel? model) => model == null ? null : Load(model.GetType().Name, small: true);
 
-    /// <summary>把某个 TextureRect 换成对应尺寸的自制图标；没有素材就保持原样。</summary>
     internal static void Apply(TextureRect? rect, RelicModel? model, bool small)
     {
         if (rect == null || model == null)
@@ -79,8 +81,8 @@ internal static class ProbeRelicArt
 [HarmonyPatch(typeof(NRelic), "Reload")]
 public static class ProbeRelicReloadPatch
 {
-    private static readonly AccessTools.FieldRef<NRelic, object> IconSizeRef =
-        AccessTools.FieldRefAccess<NRelic, object>("_iconSize");
+    private static readonly System.Reflection.FieldInfo? IconSizeField =
+        AccessTools.Field(typeof(NRelic), "_iconSize");
 
     [HarmonyPostfix]
     private static void Postfix(NRelic __instance)
@@ -88,14 +90,15 @@ public static class ProbeRelicReloadPatch
         try
         {
             var model = __instance.Model;
-            if (model == null)
+            var rect = __instance.Icon;
+            if (model == null || rect == null)
                 return;
 
-            // IconSize.Small == 0，Large == 1（原版枚举顺序）
-            bool small = Convert.ToInt32(IconSizeRef(__instance)) == 0;
-            var field = AccessTools.Field(typeof(NRelic), "Icon") ?? AccessTools.Field(typeof(NRelic), "_icon");
-            if (field?.GetValue(__instance) is TextureRect rect)
-                ProbeRelicArt.Apply(rect, model, small);
+            bool small = true;
+            if (IconSizeField?.GetValue(__instance) is object raw)
+                small = Convert.ToInt32(raw) == 0;   // IconSize.Small == 0
+
+            ProbeRelicArt.Apply(rect, model, small);
         }
         catch (Exception ex)
         {
@@ -108,19 +111,31 @@ public static class ProbeRelicReloadPatch
 [HarmonyPatch(typeof(NInspectRelicScreen), "UpdateRelicDisplay")]
 public static class ProbeRelicInspectPatch
 {
+    private static readonly System.Reflection.FieldInfo? RelicsField =
+        AccessTools.Field(typeof(NInspectRelicScreen), "_relics");
+
+    private static readonly System.Reflection.FieldInfo? IndexField =
+        AccessTools.Field(typeof(NInspectRelicScreen), "_index");
+
+    private static readonly System.Reflection.FieldInfo? ImageField =
+        AccessTools.Field(typeof(NInspectRelicScreen), "_relicImage");
+
     [HarmonyPostfix]
     private static void Postfix(NInspectRelicScreen __instance)
     {
         try
         {
-            var modelField = AccessTools.Field(typeof(NInspectRelicScreen), "_relic")
-                             ?? AccessTools.Field(typeof(NInspectRelicScreen), "_relicModel");
-            if (modelField?.GetValue(__instance) is not RelicModel model)
+            if (RelicsField?.GetValue(__instance) is not System.Collections.IList relics || relics.Count == 0)
                 return;
 
-            var imageField = AccessTools.Field(typeof(NInspectRelicScreen), "_relicImage");
-            if (imageField?.GetValue(__instance) is TextureRect rect)
-                ProbeRelicArt.Apply(rect, model, small: false);
+            int index = IndexField?.GetValue(__instance) is object raw ? Convert.ToInt32(raw) : 0;
+            if (index < 0 || index >= relics.Count)
+                return;
+
+            if (relics[index] is not RelicModel model)
+                return;
+
+            ProbeRelicArt.Apply(ImageField?.GetValue(__instance) as TextureRect, model, small: false);
         }
         catch (Exception ex)
         {
@@ -133,13 +148,15 @@ public static class ProbeRelicInspectPatch
 [HarmonyPatch(typeof(RelicReward), nameof(RelicReward.CreateIcon))]
 public static class ProbeRelicRewardPatch
 {
+    private static readonly System.Reflection.FieldInfo? RelicField =
+        AccessTools.Field(typeof(RelicReward), "_relic");
+
     [HarmonyPostfix]
     private static void Postfix(RelicReward __instance, TextureRect __result)
     {
         try
         {
-            var field = AccessTools.Field(typeof(RelicReward), "_relic");
-            if (field?.GetValue(__instance) is RelicModel model)
+            if (RelicField?.GetValue(__instance) is RelicModel model)
                 ProbeRelicArt.Apply(__result, model, small: false);
         }
         catch (Exception ex)
