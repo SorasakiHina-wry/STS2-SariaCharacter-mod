@@ -111,6 +111,13 @@ if (Test-Path $pngDir) {
         Copy-Item (Join-Path $vfxArtDir '*.png') (Join-Path $StageDir 'images\vfx') -Force
     }
 
+    # 猜拳手部贴图：resources\png\hand\*.png -> images\hand\
+    $handArtDir = Join-Path $RepoRoot 'resources\png\hand'
+    if (Test-Path $handArtDir) {
+        New-Item -ItemType Directory -Force -Path (Join-Path $StageDir 'images\hand') | Out-Null
+        Copy-Item (Join-Path $handArtDir '*.png') (Join-Path $StageDir 'images\hand') -Force
+    }
+
     # 卡图：优先用压缩版 resources\png\cards-little\*.png -> images\portraits\（没有则退回原图）
     $cardArtDir = Join-Path $RepoRoot 'resources\png\cards-little'
 

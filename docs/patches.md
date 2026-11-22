@@ -10,7 +10,7 @@
 启动日志（`%APPDATA%\SlayTheSpire2\logs\godot.log`）里有且只有一行：
 
 ```
-[saria] harmony patches: 28 applied, 0 skipped
+[saria] harmony patches: 32 applied, 0 skipped
 ```
 
 - **数量不对**（比如少了一个） → 说明某个类没被 `PatchAll` 扫到，或目标方法改名（游戏更新）；
@@ -39,6 +39,10 @@
 | `ProbePowerHoverIconPatch` | `PowerModel.get_Icon` | Postfix | 状态悬停提示图标 | 同上 |
 | `ProbeOrbPatch` | `NEnergyCounter.Create` | Postfix | 能量球 5 层换图 + 粒子染色 `#f5f98e` + 获得能量特效贴图替换 | `[saria][orb] custom energy orb applied` / `custom energy vfx textures: N` |
 | `ProbeCardEnergyIconPatch` | `NCard.Reload` | Postfix | 卡面费用图标换成 `energy_saria.png` | 无（失败才 warn） |
+| `ProbeHandPointPatch` | `CharacterModel.ArmPointingTexture`（getter） | Prefix | 猜拳「指向」手部换成自制贴图 | `[saria][hand] missing file` |
+| `ProbeHandRockPatch` | `CharacterModel.ArmRockTexture`（getter） | Prefix | 猜拳「石头」 | 同上 |
+| `ProbeHandPaperPatch` | `CharacterModel.ArmPaperTexture`（getter） | Prefix | 猜拳「布」 | 同上 |
+| `ProbeHandScissorsPatch` | `CharacterModel.ArmScissorsTexture`（getter） | Prefix | 猜拳「剪刀」 | 同上 |
 | `ProbeEnergyPrefixPatch` | `EnergyIconHelper.GetPrefix(AbstractModel)` | Postfix | 文本里的 `{Energy}` 用 `saria` 前缀（**只有这里**用虚拟路径） | 无 |
 | `ProbeEnergyGetPathPatch` | `EnergyIconHelper.GetPath(AbstractModel)` | Postfix | 取路径时回退铁甲战士真实路径，避免同步加载失败 | 无 |
 | `ProbeEnergyGetPathStringPatch` | `EnergyIconHelper.GetPath(string)` | Postfix | 同上（字符串重载），命中时打 warn | `[saria][energy-icon] GetPath(...) fell back` |

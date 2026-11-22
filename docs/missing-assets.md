@@ -11,7 +11,7 @@
 |---|---|---|---|---|
 | 1 | 遗物图标 | 8 个 | 借原版图集（anchor / vajra / lantern…） | §4.1 |
 | 2 | 地图标记 | 1 个 | **已用 head.png 派生（98×128）** | §4.3 |
-| 3 | 多人（猜拳）手部贴图 | 4 张 | 借铁甲战士 | §4.4 |
+| 3 | 多人（猜拳）手部贴图 | 4 张 | **已换成自制** | §4.4 |
 | 4 | 角色选择过渡材质 | 1 个 | 借铁甲战士 | §4.5 |
 
 > 已完成：战斗/商店/火堆 Spine、选人三张图、选中音效、卡图 89 张、状态图标 32 个、能量球 5 层 + 能量图标。
@@ -242,7 +242,7 @@ es://.godot/imported/，
 运行时由 `ProbeMapMarkerPatch`（`NMapMarker.Initialize` 后置）把 `TextureRect.Texture` 换成该图
 （原版 `CharacterModel.MapMarker` 返回 `CompressedTexture2D`，mod 造不出来，所以换在出口处）。
 
-### 4.4 多人猜拳手部贴图（4 张）
+### 4.4 多人猜拳手部贴图（已完成）
 
 多人模式里的「石头剪刀布」要用**手臂**贴图，每个角色 4 张：
 
@@ -256,8 +256,9 @@ es://.godot/imported/，
 规格：原版 **424×1200**（另有 422×1200 的导入版本；竖长构图，整条手臂从画布底部伸上来），透明背景；
 游戏内会缩放并做轻微旋转动画，所以**手臂根部要留在画布底边**，手指朝上。
 
-**原版参考素材**：已导出到 `resources/vanilla/hands_ironclad/images/ui/hands/`（4 张 424×1200，同目录 README 记了构图规律：上 1/6 手部、上 1/3 护腕、中 2/3 袖子、底部 1/8 渐隐）。
-我们 mod 现在用 `CustomArmPointingTexturePath` / `Rock` / `Paper` / `Scissors` 指向铁甲战士。
+**原版参考素材**：`resources/vanilla/hands_ironclad/`。
+**现状**：自制的 4 张放在 `resources/png/hand/multiplayer_hand_saria_<手势>.png`（424×1200），
+运行时由 `ProbeHands` 在 `CharacterModel.Arm*Texture` 的 getter 上返回（前缀补丁，四个手势各一个）。
 
 ### 4.5 角色选择过渡材质（转场遮罩）
 

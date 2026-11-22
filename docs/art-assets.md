@@ -24,6 +24,7 @@
 | 能量图标 | `resources/png/orb/energy_saria.png`（源图 148×148） | `energy_<卡池名>.png`（原版 74×74） | `mods/saria/images/orb/` | ❌ |
 | 能量球 / 图标 PSD | `resources/psd/orb/`（与 PNG 同名） | 与 PNG 同名 | — | ❌ |
 | 选中音效 | `resources/ogg/selected.ogg` | 固定文件名 | `mods/saria/audio/selected.ogg` | ❌ |
+| 猜拳手部 | `resources/png/hand/`（`multiplayer_hand_saria_<手势>.png`，4 张 424×1200） | 原版命名 | `mods/saria/images/hand/` | ❌ |
 | 原版参考素材 | `resources/vanilla/energy_counter_ironclad/` | 见目录内 README | —（只作参考） | ❌ |
 
 > 「入库」= 是否进 git。`resources/` 整体被 `.gitignore` 排除，只有 `cards-little/` 与 `powers/` 开了例外。
