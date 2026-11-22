@@ -118,6 +118,13 @@ if (Test-Path $pngDir) {
         Copy-Item (Join-Path $handArtDir '*.png') (Join-Path $StageDir 'images\hand') -Force
     }
 
+    # 转场遮罩：resources\png\saria_transition.png -> images\transition\
+    $transitionSrc = Join-Path $RepoRoot 'resources\png\saria_transition.png'
+    if (Test-Path $transitionSrc) {
+        New-Item -ItemType Directory -Force -Path (Join-Path $StageDir 'images\transition') | Out-Null
+        Copy-Item $transitionSrc (Join-Path $StageDir 'images\transition\saria_transition.png') -Force
+    }
+
     # 卡图：优先用压缩版 resources\png\cards-little\*.png -> images\portraits\（没有则退回原图）
     $cardArtDir = Join-Path $RepoRoot 'resources\png\cards-little'
 

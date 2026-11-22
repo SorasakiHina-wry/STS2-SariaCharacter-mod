@@ -30,6 +30,9 @@ public static class ProbeCharacterSelectBgPatch
     [HarmonyPostfix]
     private static void Postfix(NCharacterSelectScreen __instance, NCharacterSelectButton charSelectButton)
     {
+        // 记录当前选中的是不是塞雷娅：转场材质补丁靠它区分「谁的转场」
+        ProbeTransition.SariaSelected = IsSaria(charSelectButton);
+
         if (!IsSaria(charSelectButton))
             return;
 
