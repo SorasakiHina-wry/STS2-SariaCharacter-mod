@@ -159,13 +159,30 @@ internal static class ProbeOrbSkin
             Log.Info($"[saria][orb] custom energy vfx textures: {replaced}");
     }
 
+    /// <summary>
+    /// 给粒子容器上色。
+    ///
+    /// 原版每个粒子节点都自带 `self_modulate` 的火焰红（例如 `(0.82, 0.20, 0.20)`），
+    /// 会与父级染色相乘变成橙红 —— 所以这里把**所有后代**的 `modulate` / `self_modulate` 归白，
+    /// 只让容器本身承担染色，最终颜色才是我们的 `#f5f98e`。
+    /// </summary>
     private static void Tint(CanvasItem root)
     {
         root.Modulate = ParticleTint;
-        foreach (var child in root.GetChildren())
+        Neutralise(root);
+    }
+
+    private static void Neutralise(Node node)
+    {
+        foreach (var child in node.GetChildren())
         {
             if (child is CanvasItem item)
-                Tint(item);
+            {
+                item.Modulate = Colors.White;
+                item.SelfModulate = Colors.White;
+            }
+
+            Neutralise(child);
         }
     }
 }
