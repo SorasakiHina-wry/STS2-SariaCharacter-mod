@@ -104,6 +104,13 @@ if (Test-Path $pngDir) {
         Write-Warning "resources\png\orb 不存在，本次不含能量球图层。"
     }
 
+    # 获得能量特效贴图：resources\png\derived\vfx\*.png -> images\vfx\
+    $vfxArtDir = Join-Path $RepoRoot 'resources\png\derived\vfx'
+    if ((Test-Path $vfxArtDir) -and (Get-ChildItem $vfxArtDir -Filter '*.png' | Select-Object -First 1)) {
+        New-Item -ItemType Directory -Force -Path (Join-Path $StageDir 'images\vfx') | Out-Null
+        Copy-Item (Join-Path $vfxArtDir '*.png') (Join-Path $StageDir 'images\vfx') -Force
+    }
+
     # 卡图：优先用压缩版 resources\png\cards-little\*.png -> images\portraits\（没有则退回原图）
     $cardArtDir = Join-Path $RepoRoot 'resources\png\cards-little'
 

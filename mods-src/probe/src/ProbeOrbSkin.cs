@@ -84,6 +84,8 @@ internal static class ProbeOrbSkin
                     Tint(container);
             }
 
+            ApplyVfxTextures(counter);
+
             Log.Info("[saria][orb] custom energy orb applied");
         }
         catch (Exception ex)
@@ -116,6 +118,39 @@ internal static class ProbeOrbSkin
         {
             Log.Warn($"[saria][orb] card energy icon failed: {ex.Message}");
         }
+    }
+
+    /// <summary>
+    /// 「获得能量」特效用的 4 张粒子贴图（原版是火焰）。
+    /// 文件名对应 `resources/vanilla/energy_counter_ironclad/images/vfx/fire_impact/` 里的原版贴图；
+    /// 缺失时保留原版火焰，不影响运行。
+    /// </summary>
+    private static readonly (string Node, string File)[] VfxTextures =
+    {
+        ("vfx_fire_flipbook_1", "fire_burst_flipbook_1.png"),
+        ("vfx_fire_flipbook_2", "fire_burst_flipbook_2.png"),
+        ("vfx_fire_flipbook_3", "fire_burst_flipbook_3.png"),
+        ("vfx_fire_embers_straight", "fire_burst_ember_straight.png"),
+    };
+
+    private static void ApplyVfxTextures(NEnergyCounter counter)
+    {
+        int replaced = 0;
+        foreach (var (nodeName, fileName) in VfxTextures)
+        {
+            if (counter.FindChild(nodeName, recursive: true, owned: false) is not GpuParticles2D particles)
+                continue;
+
+            var texture = Load(fileName);
+            if (texture == null)
+                continue;
+
+            particles.Texture = texture;
+            replaced++;
+        }
+
+        if (replaced > 0)
+            Log.Info($"[saria][orb] custom energy vfx textures: {replaced}");
     }
 
     private static void Tint(CanvasItem root)
