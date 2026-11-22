@@ -1,7 +1,7 @@
 # Saria / 塞雷娅 — 自定义角色 Mod
 
 在《杀戮尖塔2》v0.113.x 上新增一个**可玩的原创角色「塞雷娅」**与**一整套原创卡牌**（钙铠机制）。
-美术已大部分换成自制资源，剩余占位项见下表。
+美术已全部换成自制资源，对应替换方式见下表。
 
 ## 当前状态（实测通过）
 
@@ -18,7 +18,7 @@
 | 选人界面 | 背景大图 + 底部头像 + 顶栏头像均已换成自定义资源 |
 | 通关 | 战胜建筑师可正常结算（`ArchitectWinRunPatch` 补占位台词） |
 | 已自制 | 卡图 89 张、状态图标 32 个、能量球 5 层图层 + 能量图标、选中音效、战斗/商店/火堆 Spine |
-| 仍占位 | 只剩遗物图标（8） |
+| 美术 | 全部自制（卡图 / 状态图标 / 能量球 / 特效 / 遗物图标 / 手部 / 转场） |
 
 角色/卡牌文本仍在 C# 的 `Localization` 里；只有**先古对话**走 PCK 里的 JSON（原因见「已知的坑」）。
 
@@ -108,7 +108,7 @@ BaseLib 的 `CustomCharacterModel` 构造时调用 `CustomContentDictionary.AddC
 - 角色/卡牌/power/遗物：写在代码里的 `Localization`（`(后缀, 文本)` 列表），BaseLib 按类别写表；
 - 先古对话：只能走 `<mod>/localization/zhs/ancients.json`（PCK 内）。
 
-### 5. 美术占位与替换
+### 5. 美术资源与替换方式
 角色继承 `PlaceholderCharacterModel`，`PlaceholderID => "ironclad"`，未覆盖的资源全指向铁甲战士。
 替换时**一次只覆盖一项**，逐项验收：
 
@@ -121,12 +121,13 @@ BaseLib 的 `CustomCharacterModel` 构造时调用 `CustomContentDictionary.AddC
 | 卡图（89 张） | ✅ | `NCard.UpdatePortrait` / `SetPortraitTexture` 后置替换（散文件解码） |
 | 状态图标（32） | ✅ | `NPower.Reload` 后置替换，`PowerModel.Icon` 同步 |
 | 能量球 | ✅ | `NEnergyCounter.Create` 后换 5 层贴图 + 粒子染色 `#f5f98e` |
+| 获得能量特效 | ✅ | 同上补丁里替换 4 张粒子贴图（`images/vfx/`），并把后代的 self_modulate 归白 |
 | 能量图标 | ✅ | `TakeOverPath` 注册虚拟 res:// 路径（正文 24×24、卡面/提示原尺寸） |
 | 商店 / 火堆 Spine | ✅ | 运行时换骨骼：`Relax` / `Sit` |
 | 地图标记 | ✅ | `NMapMarker.Initialize` 后置换图（`map_marker_saria.png`） |
 | 猜拳手部 | ✅ | `CharacterModel.Arm*Texture` 四个 getter 前缀替换 |
 | 转场遮罩 | ✅ | `AssetCache.GetMaterial` 拦截，运行时构造同款 ShaderMaterial |
-| 遗物图标 | ⬜ 仍占位 | — |
+| 遗物图标 | ✅ | `NRelic.Reload` + 检视 / 奖励 / 选人 / 头顶闪光（5 处） |
 
 素材索引（哪一处用哪张 png、命名规则、打包去向）见仓库根目录 [`docs/art-assets.md`](../../docs/art-assets.md)。
 
@@ -288,8 +289,7 @@ $env:PYTHONUTF8='1'; $exe = 'D:\STS2\.python312\python.exe'; $t = 'D:\STS2\mods-
 
 ## 下一步
 
-1. **补齐美术**：能量球（5 层 256×256）、地图标记（49×64）、过渡遮罩（2560×1200）、
-   休息处/商店 Spine、卡框、卡图（每张 250×190）。
+1. **美术**：已全部完成（卡图、状态图标、能量球、获得能量特效、遗物图标、手部、转场、地图标记）。
 2. **两张先古卡的可获得性**：原版「欧洛巴斯之触」「尘封魔典」内部写死了卡牌清单，
    不会自动包含「渗透」「极限功率」，需要额外补丁或改由其它途径获得。
 3. **遗物表扩充**：目前 4 张（1 初始 + 2 罕见 + 1 稀有），奖励档位偏薄。
