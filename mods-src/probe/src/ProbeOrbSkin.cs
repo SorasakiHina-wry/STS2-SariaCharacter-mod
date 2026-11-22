@@ -24,18 +24,24 @@ internal static class ProbeOrbSkin
     internal static string OrbDir =>
         OS.GetExecutablePath().GetBaseDir().PathJoin("mods").PathJoin("saria").PathJoin("images").PathJoin("orb");
 
+    /// <summary>「获得能量」粒子贴图所在目录（和能量球图层分开）。</summary>
+    internal static string VfxDir =>
+        OS.GetExecutablePath().GetBaseDir().PathJoin("mods").PathJoin("saria").PathJoin("images").PathJoin("vfx");
+
     private static readonly Dictionary<string, Texture2D?> Cache = new();
 
-    /// <summary>读取 images/orb 下的贴图（按文件名，缓存）。</summary>
-    internal static Texture2D? Load(string fileName)
+    /// <summary>读取贴图（按「目录 + 文件名」缓存；默认 images/orb）。</summary>
+    internal static Texture2D? Load(string fileName, string? folder = null)
     {
-        if (Cache.TryGetValue(fileName, out var cached))
+        string dir = folder ?? OrbDir;
+        string cacheKey = dir + "/" + fileName;
+        if (Cache.TryGetValue(cacheKey, out var cached))
             return cached;
 
         Texture2D? texture = null;
         try
         {
-            string path = OrbDir.PathJoin(fileName);
+            string path = dir.PathJoin(fileName);
             if (FileAccess.FileExists(path))
             {
                 byte[] bytes = FileAccess.GetFileAsBytes(path);
@@ -56,7 +62,7 @@ internal static class ProbeOrbSkin
             Log.Error($"[saria][orb] load threw for {fileName}: {ex.Message}");
         }
 
-        Cache[fileName] = texture;
+        Cache[cacheKey] = texture;
         return texture;
     }
 
@@ -141,7 +147,7 @@ internal static class ProbeOrbSkin
             if (counter.FindChild(nodeName, recursive: true, owned: false) is not GpuParticles2D particles)
                 continue;
 
-            var texture = Load(fileName);
+            var texture = Load(fileName, VfxDir);
             if (texture == null)
                 continue;
 
