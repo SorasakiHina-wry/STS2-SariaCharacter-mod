@@ -18,7 +18,7 @@
 | 选人界面 | 背景大图 + 底部头像 + 顶栏头像均已换成自定义资源 |
 | 通关 | 战胜建筑师可正常结算（`ArchitectWinRunPatch` 补占位台词） |
 | 已自制 | 卡图 89 张、状态图标 32 个、能量球 5 层图层 + 能量图标、选中音效、战斗/商店/火堆 Spine |
-| 仍占位 | 遗物图标（8）、地图标记、多人猜拳手部、角色选择过渡材质 |
+| 仍占位 | 只剩遗物图标（8） |
 
 角色/卡牌文本仍在 C# 的 `Localization` 里；只有**先古对话**走 PCK 里的 JSON（原因见「已知的坑」）。
 
@@ -123,7 +123,10 @@ BaseLib 的 `CustomCharacterModel` 构造时调用 `CustomContentDictionary.AddC
 | 能量球 | ✅ | `NEnergyCounter.Create` 后换 5 层贴图 + 粒子染色 `#f5f98e` |
 | 能量图标 | ✅ | `TakeOverPath` 注册虚拟 res:// 路径（正文 24×24、卡面/提示原尺寸） |
 | 商店 / 火堆 Spine | ✅ | 运行时换骨骼：`Relax` / `Sit` |
-| 遗物图标 / 地图标记 / 猜拳手部 / 过渡材质 | ⬜ 仍占位 | — |
+| 地图标记 | ✅ | `NMapMarker.Initialize` 后置换图（`map_marker_saria.png`） |
+| 猜拳手部 | ✅ | `CharacterModel.Arm*Texture` 四个 getter 前缀替换 |
+| 转场遮罩 | ✅ | `AssetCache.GetMaterial` 拦截，运行时构造同款 ShaderMaterial |
+| 遗物图标 | ⬜ 仍占位 | — |
 
 素材索引（哪一处用哪张 png、命名规则、打包去向）见仓库根目录 [`docs/art-assets.md`](../../docs/art-assets.md)。
 
