@@ -1,0 +1,27 @@
+# 构建输出
+**/bin/
+**/obj/
+**/out/
+mods-src/saria/lib/
+
+# 杂项
+*.log
+*.user
+.DS_Store
+__pycache__/
+*.pyc
+
+# 版权/本机素材：默认不入库，只保留下列例外
+resources/*
+!resources/png/
+resources/png/*
+!resources/png/cards-little/
+!resources/png/powers/
+!resources/png/hand/
+resources/png/hand/sources/
+!resources/png/orb/
+!resources/png/vfx/
+!resources/png/sundry/
+!resources/png/relics/
+resources/png/relics/*
+!resources/png/relics/derived/

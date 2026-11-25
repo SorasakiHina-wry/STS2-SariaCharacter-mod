@@ -1,0 +1,210 @@
+
+char_202_demkni.png
+size: 512,512
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+F_B_Hair
+  bounds:2,260,112,95
+  offsets:0,0,112,95
+  rotate:90
+F_Belt
+  bounds:177,386,34,23
+  offsets:0,0,34,23
+  rotate:false
+F_Card
+  bounds:378,436,9,11
+  offsets:0,0,9,11
+  rotate:false
+F_Chest
+  bounds:213,378,29,27
+  offsets:0,0,29,27
+  rotate:false
+F_Eyebrow
+  bounds:424,477,40,10
+  offsets:0,0,40,10
+  rotate:false
+F_Eyes
+  bounds:334,449,46,16
+  offsets:0,0,46,16
+  rotate:false
+F_Eyes_Close
+  bounds:38,55,46,8
+  offsets:0,0,46,8
+  rotate:90
+F_F_Hair
+  bounds:66,213,27,45
+  offsets:0,0,27,45
+  rotate:false
+F_Head
+  bounds:186,438,71,72
+  offsets:0,0,71,72
+  rotate:90
+F_Hip
+  bounds:2,2,38,22
+  offsets:0,0,38,22
+  rotate:90
+F_L_Arm
+  bounds:243,407,25,29
+  offsets:0,0,25,29
+  rotate:false
+F_L_Calf
+  bounds:143,377,32,60
+  offsets:0,0,32,60
+  rotate:false
+F_L_Finger
+  bounds:394,400,21,22
+  offsets:0,0,21,22
+  rotate:false
+F_L_Finger_2
+  bounds:493,473,10,10
+  offsets:0,0,10,10
+  rotate:false
+F_L_Foot
+  bounds:334,411,32,23
+  offsets:0,0,32,23
+  rotate:false
+F_L_Hair
+  bounds:103,377,38,60
+  offsets:0,0,38,60
+  rotate:false
+F_L_Hand
+  bounds:368,411,24,23
+  offsets:0,0,24,23
+  rotate:false
+F_L_Hand_B
+  bounds:244,378,25,27
+  offsets:0,0,25,27
+  rotate:false
+F_L_Hand_C
+  bounds:303,415,29,25
+  offsets:0,0,29,25
+  rotate:false
+F_L_Horn
+  bounds:394,424,20,24
+  offsets:0,0,20,24
+  rotate:false
+F_L_Horn_B
+  bounds:334,384,28,25
+  offsets:0,0,28,25
+  rotate:false
+F_L_Horn_Down
+  bounds:424,489,20,41
+  offsets:0,0,20,41
+  rotate:90
+F_L_Leg
+  bounds:467,485,24,36
+  offsets:0,0,24,36
+  rotate:90
+F_L_Ring
+  bounds:466,469,25,14
+  offsets:0,0,25,14
+  rotate:false
+F_L_Shoulder
+  bounds:213,407,28,29
+  offsets:0,0,28,29
+  rotate:false
+F_L_Wrap
+  bounds:237,351,25,27
+  offsets:0,0,25,27
+  rotate:90
+F_L_X
+  bounds:292,340,16,19
+  offsets:0,0,16,19
+  rotate:false
+F_Mouth
+  bounds:260,438,5,2
+  offsets:0,0,5,2
+  rotate:false
+F_Pinhead_A
+  bounds:392,382,16,23
+  offsets:0,0,16,23
+  rotate:90
+F_Pinhead_B
+  bounds:266,341,18,24
+  offsets:0,0,18,24
+  rotate:90
+F_R_Arm
+  bounds:177,358,26,28
+  offsets:0,0,26,28
+  rotate:90
+F_R_Calf
+  bounds:2,42,34,59
+  offsets:0,0,34,59
+  rotate:false
+F_R_Foot
+  bounds:270,415,31,25
+  offsets:0,0,31,25
+  rotate:false
+F_R_Hair
+  bounds:2,103,48,64
+  offsets:0,0,48,64
+  rotate:false
+F_R_Hand
+  bounds:364,383,26,26
+  offsets:0,0,26,26
+  rotate:false
+F_R_Hand_B
+  bounds:271,387,29,26
+  offsets:0,0,29,26
+  rotate:false
+F_R_Hand_C
+  bounds:207,350,26,28
+  offsets:0,0,26,28
+  rotate:90
+F_R_Horn
+  bounds:177,411,34,25
+  offsets:0,0,34,25
+  rotate:false
+F_R_Horn_B
+  bounds:271,361,28,24
+  offsets:0,0,28,24
+  rotate:false
+F_R_Horn_Down
+  bounds:334,467,53,42
+  offsets:0,0,53,42
+  rotate:false
+F_R_Leg
+  bounds:66,171,27,40
+  offsets:0,0,27,40
+  rotate:false
+F_R_Shoulder
+  bounds:389,474,33,35
+  offsets:0,0,33,35
+  rotate:false
+F_R_X
+  bounds:389,450,27,22
+  offsets:0,0,27,22
+  rotate:false
+F_Shield
+  bounds:2,374,99,135
+  offsets:0,0,99,135
+  rotate:false
+F_Skirt
+  bounds:260,442,72,67
+  offsets:0,0,72,67
+  rotate:false
+F_Sling
+  bounds:26,3,9,37
+  offsets:0,0,9,37
+  rotate:false
+F_Streamer_A
+  bounds:334,436,11,42
+  offsets:0,0,11,42
+  rotate:90
+F_Streamer_B
+  bounds:52,111,8,56
+  offsets:0,0,8,56
+  rotate:false
+F_Tail
+  bounds:103,439,81,70
+  offsets:0,0,81,70
+  rotate:false
+F_Waist
+  bounds:302,388,25,30
+  offsets:0,0,25,30
+  rotate:90
+F_Weapon
+  bounds:2,169,62,89
+  offsets:0,0,62,89
+  rotate:false

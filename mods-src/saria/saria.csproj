@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <AssemblyName>saria</AssemblyName>
+    <RootNamespace>Saria</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+
+    <!-- Game install. Override with -p:Sts2GameDir=... or the STS2_GAME_DIR env var. -->
+    <Sts2GameDir Condition="'$(Sts2GameDir)' == '' and '$(STS2_GAME_DIR)' != ''">$(STS2_GAME_DIR)</Sts2GameDir>
+    <Sts2GameDir Condition="'$(Sts2GameDir)' == ''">D:\SteamLibrary\steamapps\common\Slay the Spire 2</Sts2GameDir>
+    <Sts2BinDir>$(Sts2GameDir)\data_sts2_windows_x86_64</Sts2BinDir>
+  </PropertyGroup>
+
+  <!--
+    Reference the assemblies the game ships plus a vendored copy of BaseLib.dll.
+    Nothing is copied to the output: at runtime the game provides sts2/GodotSharp/0Harmony,
+    and the BaseLib mod provides BaseLib.dll.
+  -->
+  <ItemGroup>
+    <Reference Include="sts2">
+      <HintPath>$(Sts2BinDir)\sts2.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="GodotSharp">
+      <HintPath>$(Sts2BinDir)\GodotSharp.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="0Harmony">
+      <HintPath>$(Sts2BinDir)\0Harmony.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="BaseLib">
+      <HintPath>$(MSBuildProjectDirectory)\lib\BaseLib.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="mod_manifest.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

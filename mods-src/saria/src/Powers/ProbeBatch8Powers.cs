@@ -1,0 +1,158 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using BaseLib.Abstracts;
+using MegaCrit.Sts2.Core.CardSelection;
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Entities.Players;
+using MegaCrit.Sts2.Core.Entities.Powers;
+using MegaCrit.Sts2.Core.Extensions;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.ValueProps;
+
+namespace Saria.Powers;
+
+/// <summary>限位 — 下一次获得格挡时整段变 0，然后层数 -1。</summary>
+public sealed class ProbeLimitPower : CustomPowerModel
+{
+    public override PowerType Type => PowerType.Debuff;
+
+    public override PowerStackType StackType => PowerStackType.Counter;
+
+    public override string? CustomPackedIconPath => "res://images/atlases/power_atlas.sprites/thorns_power.tres";
+    public override string? CustomBigIconPath => "res://images/powers/thorns_power.png";
+
+    /// <summary>
+    /// 乘法阶段返回 0 就能把这一整段格挡清零。预览（cardSource 有、cardPlay 为空）不扣层，
+    /// 否则悬停看牌就会把层数消耗掉。
+    /// </summary>
+    public override decimal ModifyBlockMultiplicative(
+        Creature target, decimal block, ValueProp props, CardModel? cardSource, CardPlay? cardPlay)
+    {
+        if (target != Owner || block <= 0 || Amount <= 0)
+            return 1m;
+
+        if (cardSource != null && cardPlay == null)
+            return 1m;   // 预览
+
+        SetAmount(Amount - 1, silent: true);
+        Flash();
+
+        // 层数归零就把 power 本身移除，否则 buff 栏会留下一个 0 层的空图标
+        if (Amount <= 0)
+            RemoveWhenEmpty();
+
+        return 0m;
+    }
+
+    private async void RemoveWhenEmpty()
+    {
+        try
+        {
+            await PowerCmd.Remove(this);
+        }
+        catch (Exception ex)
+        {
+            MegaCrit.Sts2.Core.Logging.Log.Warn($"[saria] 限位 removal failed: {ex.Message}");
+        }
+    }
+
+    public override List<(string, string)>? Localization => new()
+    {
+        ("title", "限位"),
+        ("description", "获得[gold]格挡[/gold]时将被阻止。"),
+        ("smartDescription", "下[blue]{Amount}[/blue]次获得[gold]格挡[/gold]时将被阻止。"),
+    };
+}
+
+/// <summary>迅捷 — 回合开始时失去{Amount}层钙铠，从抽牌堆随机 3×Amount 张里选 Amount 张加入手牌。</summary>
+public sealed class ProbeSwiftPower : CustomPowerModel
+{
+    public override PowerType Type => PowerType.Buff;
+
+    public override PowerStackType StackType => PowerStackType.Counter;
+
+    public override string? CustomPackedIconPath => "res://images/atlases/power_atlas.sprites/thorns_power.tres";
+    public override string? CustomBigIconPath => "res://images/powers/thorns_power.png";
+
+    /// <summary>描述里的「随机{ReadyCard}张」= 层数 × 3；层数一变就刷新显示值。</summary>
+    private void RefreshVars()
+    {
+        if (DynamicVars == null)
+            return;
+
+        var ready = DynamicVars["ReadyCard"] as MultipliedAmountVar;
+        ready?.Refresh(Amount);
+    }
+
+    public override Task AfterPowerAmountChanged(
+        PlayerChoiceContext choiceContext, PowerModel power, decimal amount, Creature? applier, CardModel? cardSource)
+    {
+        if (power == this)
+            RefreshVars();
+        return Task.CompletedTask;
+    }
+
+    public override async Task AfterPlayerTurnStart(PlayerChoiceContext choiceContext, Player player)
+    {
+        if (player != Owner.Player || Amount <= 0)
+            return;
+
+        RefreshVars();
+        Flash();
+
+        int take = (int)Amount;
+
+        // 失去 take 层钙铠（不够就扣到 0；为 0 也照样抽牌）
+        var armour = Owner.GetPower<CalciumArmorPower>();
+        if (armour != null && armour.Amount > 0)
+        {
+            int loss = Math.Min(take, armour.Amount);
+            if (loss > 0)
+                await PowerCmd.ModifyAmount(choiceContext, armour, -loss, Owner, null);
+        }
+
+        var drawPile = PileType.Draw.GetPile(player);
+        if (drawPile.Cards.Count == 0)
+            return;
+
+        var options = drawPile.Cards.ToList()
+            .StableShuffle(player.RunState.Rng.CombatCardSelection)
+            .Take(take * 3)
+            .ToList();
+        if (options.Count == 0)
+            return;
+
+        var picks = await CardSelectCmd.FromCombatPile(
+            choiceContext,
+            drawPile,
+            player,
+            new CardSelectorPrefs(SelectionScreenPrompt, Math.Min(take, options.Count)),
+            (CardModel card) => options.Contains(card));
+
+        foreach (var card in picks)
+        {
+            if (card != null)
+                await CardPileCmd.Add(card, PileType.Hand);
+        }
+    }
+
+    /// <summary>显示用：随机张数 = 层数 × 3（SmartFormat 没有乘法，只能这样算好再显示）。</summary>
+    protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
+    {
+        new MultipliedAmountVar("ReadyCard", 3m),
+    };
+
+    public override List<(string, string)>? Localization => new()
+    {
+        ("title", "迅捷"),
+        ("selectionScreenPrompt", "选择{Amount}张牌放入你的手牌。"),
+        ("description", "在你的回合开始时，失去1层[gold]钙铠[/gold]，从[gold]抽牌堆[/gold]的随机3张牌中选择1张加入你的[gold]手牌[/gold]。"),
+        ("smartDescription", "在你的回合开始时，失去[blue]{Amount}[/blue]层[gold]钙铠[/gold]，从[gold]抽牌堆[/gold]的随机[blue]{ReadyCard}[/blue]张牌中选择[blue]{Amount}[/blue]张加入你的[gold]手牌[/gold]。"),
+    };
+}

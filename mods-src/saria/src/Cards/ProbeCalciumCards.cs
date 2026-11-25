@@ -1,0 +1,104 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using BaseLib.Abstracts;
+using BaseLib.Utils;
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.Models.Powers;
+using Saria.Pools;
+using Saria.Powers;
+
+namespace Saria.Cards;
+
+/// <summary>硬化 — basic skill: gain 钙铠 stacks.</summary>
+[Pool(typeof(ProbeCardPool))]
+public sealed class ProbeHardening : SariaCardModel
+{
+    public ProbeHardening()
+        : base(1, CardType.Skill, CardRarity.Basic, TargetType.Self)
+    {
+    }
+
+    protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
+    {
+        new PowerVar<CalciumArmorPower>(5m),
+    };
+
+    protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+    {
+
+        await PowerCmd.Apply<CalciumArmorPower>(
+            choiceContext,
+            Owner.Creature,
+            DynamicVars["CalciumArmorPower"].BaseValue,
+            Owner.Creature,
+            this);
+    }
+
+    protected override void OnUpgrade() => DynamicVars["CalciumArmorPower"].UpgradeValueBy(2m);
+
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
+    {
+        HoverTipFactory.FromPower<CalciumArmorPower>(),
+    };
+
+    public override List<(string, string)>? Localization => new()
+    {
+        ("title", "硬化"),
+        ("description", "获得{CalciumArmorPower:diff()}层[gold]钙铠[/gold]。"),
+    };
+}
+
+/// <summary>
+/// 激发 — basic skill: if you have at least 1 钙铠, spend 1 stack to apply Vulnerable.
+/// Upgrading only lowers the cost (1 -> 0).
+/// </summary>
+[Pool(typeof(ProbeCardPool))]
+public sealed class ProbeIgnite : SariaCardModel
+{
+    public ProbeIgnite()
+        : base(1, CardType.Skill, CardRarity.Basic, TargetType.AnyEnemy)
+    {
+    }
+
+    protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
+    {
+        new PowerVar<VulnerablePower>(3m),
+    };
+
+    protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+    {
+
+        var armor = Owner.Creature.GetPower<CalciumArmorPower>();
+        if (armor == null || armor.Amount < 1)
+            return; // 条件不满足：整张牌不产生效果
+
+        ArgumentNullException.ThrowIfNull(cardPlay.Target, "cardPlay.Target");
+
+        await PowerCmd.Decrement(armor);
+        await PowerCmd.Apply<VulnerablePower>(
+            choiceContext,
+            cardPlay.Target,
+            DynamicVars.Vulnerable.BaseValue,
+            Owner.Creature,
+            this);
+    }
+
+    protected override void OnUpgrade() => DynamicVars.Vulnerable.UpgradeValueBy(1m);
+
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
+    {
+        HoverTipFactory.FromPower<VulnerablePower>(),
+        HoverTipFactory.FromPower<CalciumArmorPower>(),
+    };
+
+    public override List<(string, string)>? Localization => new()
+    {
+        ("title", "激发"),
+        ("description", "若拥有大于等于1层[gold]钙铠[/gold]，则失去1层[gold]钙铠[/gold]，并给予{VulnerablePower:diff()}层[gold]易伤[/gold]。"),
+    };
+}
