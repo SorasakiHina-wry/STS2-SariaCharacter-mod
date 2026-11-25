@@ -286,7 +286,7 @@ public sealed class ProbeDragonForm : SariaCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new PowerVar<ProbeDragonFormPower>(5m),
+        new PowerVar<ProbeDragonFormPower>(4m),
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -295,7 +295,7 @@ public sealed class ProbeDragonForm : SariaCardModel
         await PowerCmd.Apply<ProbeDragonFormPower>(ctx, Owner.Creature, DynamicVars["ProbeDragonFormPower"].BaseValue, Owner.Creature, this);
     }
 
-    protected override void OnUpgrade() => DynamicVars["ProbeDragonFormPower"].UpgradeValueBy(2m);
+    protected override void OnUpgrade() => DynamicVars["ProbeDragonFormPower"].UpgradeValueBy(1m);
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
     {
@@ -304,6 +304,6 @@ public sealed class ProbeDragonForm : SariaCardModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "飞龙形态"),
-        ("description", "在你的回合开始时，获得{ProbeDragonFormPower:diff()}层[gold]钙铠[/gold]。"),
+        ("description", "在你的回合结束时，获得{ProbeDragonFormPower:diff()}层[gold]钙铠[/gold]。"),
     };
 }

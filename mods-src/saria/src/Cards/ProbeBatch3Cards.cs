@@ -196,7 +196,8 @@ public sealed class ProbeThermalRecovery : SariaCardModel
         }
     }
 
-    protected override void OnUpgrade() => DynamicVars["CalciumArmorPower"].UpgradeValueBy(1m);
+    /// <summary>升级只降费（1 -> 0），钙铠层数不变。</summary>
+    protected override void OnUpgrade() => EnergyCost.UpgradeBy(-1);
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
     {

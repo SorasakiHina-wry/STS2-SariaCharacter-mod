@@ -133,9 +133,10 @@ public sealed class ProbeDragonFormPower : CustomPowerModel
     public override string? CustomPackedIconPath => "res://images/atlases/power_atlas.sprites/thorns_power.tres";
     public override string? CustomBigIconPath => "res://images/powers/thorns_power.png";
 
-    public override async Task AfterPlayerTurnStart(PlayerChoiceContext choiceContext, Player player)
+    /// <summary>回合**结束**时结算（原版没有 AfterPlayerTurnEnd 钩子，玩家结束回合 = 玩家侧回合结束）。</summary>
+    public override async Task AfterSideTurnEnd(PlayerChoiceContext choiceContext, CombatSide side, System.Collections.Generic.IEnumerable<Creature> participants)
     {
-        if (player != Owner.Player || Amount <= 0)
+        if (side != CombatSide.Player || Amount <= 0)
             return;
 
         Flash();
@@ -145,7 +146,7 @@ public sealed class ProbeDragonFormPower : CustomPowerModel
     public override List<(string, string)>? Localization => new()
     {
         ("title", "飞龙形态"),
-        ("description", "在你的回合开始时，获得[gold]钙铠[/gold]。"),
-        ("smartDescription", "在你的回合开始时，获得[blue]{Amount}[/blue]层[gold]钙铠[/gold]。"),
+        ("description", "在你的回合结束时，获得[gold]钙铠[/gold]。"),
+        ("smartDescription", "在你的回合结束时，获得[blue]{Amount}[/blue]层[gold]钙铠[/gold]。"),
     };
 }
