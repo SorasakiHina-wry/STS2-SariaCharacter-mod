@@ -10,10 +10,10 @@
 ```powershell
 # 1) 改代码（见第 3 节的配方）
 # 2) 编译 + 部署（会自动关掉游戏，不自动启动）
-powershell -ExecutionPolicy Bypass -File D:\STS2\saria\mods-src\saria\tools\apply.ps1
+powershell -ExecutionPolicy Bypass -File D:\STS2\tools\apply.ps1 -Character saria
 
 # 3) 想直接开一局验证
-powershell -ExecutionPolicy Bypass -File D:\STS2\saria\mods-src\saria\tools\apply.ps1 -Launch
+powershell -ExecutionPolicy Bypass -File D:\STS2\tools\apply.ps1 -Character saria -Launch
 ```
 
 `apply.ps1` 干这些事：`编译 → 关闭正在运行的游戏（DLL 被占用）→ 复制到游戏 mods 目录`。
@@ -37,8 +37,8 @@ D:\STS2\saria\mods-src\saria\
   src\Relics\               遗物
   design\cards.md           ★ 卡牌设计表（你写需求用的表，也应同步数值）
   design\powers.md          状态设计表
-  tools\apply.ps1           一键编译+部署
-  tools\cardspec.py         设计表校验（可选）
+  ..\..\..\tools\apply.ps1 -Character saria           一键编译+部署
+  ..\..\..\tools\cardspec.py -c saria         设计表校验（可选）
 ```
 
 游戏安装后 mod 的文件在：`D:\SteamLibrary\steamapps\common\Slay the Spire 2\mods\saria\`
@@ -205,10 +205,10 @@ public override IEnumerable<CardKeyword> CanonicalKeywords => new[] { CardKeywor
 
 ```powershell
 # 编译 + 部署（自动关游戏）
-powershell -ExecutionPolicy Bypass -File D:\STS2\saria\mods-src\saria\tools\apply.ps1
+powershell -ExecutionPolicy Bypass -File D:\STS2\tools\apply.ps1 -Character saria
 
 # 或者一步到位：编译 + 部署 + 启动
-powershell -ExecutionPolicy Bypass -File D:\STS2\saria\mods-src\saria\tools\apply.ps1 -Launch
+powershell -ExecutionPolicy Bypass -File D:\STS2\tools\apply.ps1 -Character saria -Launch
 ```
 
 - 游戏**必须重启**才能加载新的 `saria.dll`（mod 只在启动时加载）；
@@ -250,7 +250,7 @@ powershell -ExecutionPolicy Bypass -File D:\STS2\saria\mods-src\saria\tools\appl
 
 ```powershell
 $env:PYTHONUTF8='1'
-D:\STS2\.python312\python.exe D:\STS2\saria\mods-src\saria\tools\cardspec.py
+D:\STS2\.python312\python.exe D:\STS2\tools\cardspec.py -c saria
 ```
 
 它检查：文字是否和代码一致、换行数量、词条、卡池稀有度分布、待办标记。
@@ -261,13 +261,13 @@ D:\STS2\.python312\python.exe D:\STS2\saria\mods-src\saria\tools\cardspec.py
 
 ```powershell
 # 编译 + 部署（不启动）
-powershell -ExecutionPolicy Bypass -File D:\STS2\saria\mods-src\saria\tools\apply.ps1
+powershell -ExecutionPolicy Bypass -File D:\STS2\tools\apply.ps1 -Character saria
 
 # 编译 + 部署 + 启动
-powershell -ExecutionPolicy Bypass -File D:\STS2\saria\mods-src\saria\tools\apply.ps1 -Launch
+powershell -ExecutionPolicy Bypass -File D:\STS2\tools\apply.ps1 -Character saria -Launch
 
 # 只编译（不动游戏）
-powershell -ExecutionPolicy Bypass -File D:\STS2\saria\mods-src\saria\tools\build.ps1
+powershell -ExecutionPolicy Bypass -File D:\STS2\tools\build.ps1 -Character saria
 ```
 
 | 想改 | 改哪里 |

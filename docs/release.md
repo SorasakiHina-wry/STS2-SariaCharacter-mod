@@ -35,7 +35,7 @@
 
 ```powershell
 cd D:\STS2
-powershell -ExecutionPolicy Bypass -File mods-src\saria\tools\package.ps1
+powershell -ExecutionPolicy Bypass -File mods-src\saria\..\tools\package.ps1 -Character saria
 ```
 
 产出：
@@ -57,8 +57,8 @@ dist\saria-<version>.zip    ← Release 上传用
 ```powershell
 cd mods-src\saria
 $env:PYTHONUTF8='1'
-D:\STS2\.python312\python.exe tools\cardspec.py            # 全量校验，必须「校验通过 ✅」
-D:\STS2\.python312\python.exe tools\cardspec.py --pending  # 应显示「没有待处理的条目」
+D:\STS2\.python312\python.exe ..\..\..\tools\cardspec.py -c saria            # 全量校验，必须「校验通过 ✅」
+D:\STS2\.python312\python.exe ..\..\..\tools\cardspec.py -c saria --pending  # 应显示「没有待处理的条目」
 ```
 
 ---

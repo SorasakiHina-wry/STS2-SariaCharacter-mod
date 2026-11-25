@@ -41,7 +41,6 @@
 │  ├─ src/                     C# 源码（Cards / Powers / Relics / Patches / Characters）
 │  ├─ assets/                  PCK 源：spine 与本地化 JSON
 │  ├─ design/                  ★ 设计表（卡牌/状态/遗物/文案），开发以此为准
-│  ├─ tools/                   构建、部署、打包与校验脚本
 │  ├─ mod_manifest.json        Mod 清单（id=saria，依赖 BaseLib）
 │  └─ README.md                开发细节：踩过的坑、必须满足的约束
 ├─ docs/                       本角色专属文档（补丁清单、改数值、发版）
@@ -53,7 +52,7 @@
 ```
 
 `design/` 是整套内容的**唯一事实来源**：卡牌数值、文案、稀有度、状态效果都先在表里写，
-再由代码实现，`tools/cardspec.py` 负责交叉校验。
+再由代码实现，`..\\..\\..\\tools\\cardspec.py -c saria` 负责交叉校验。
 
 ---
 
@@ -67,10 +66,10 @@ cd mods-src\saria
 dotnet build -c Release
 
 # 部署到本机游戏（会先关掉游戏进程）
-powershell -ExecutionPolicy Bypass -File tools\apply.ps1
+powershell -ExecutionPolicy Bypass -File ..\..\..\tools\apply.ps1 -Character saria
 
 # 打包给测试者：产出 dist\saria\ 与 dist\saria-<version>.zip
-powershell -ExecutionPolicy Bypass -File tools\package.ps1
+powershell -ExecutionPolicy Bypass -File ..\..\..\tools\package.ps1 -Character saria
 ```
 
 **测试者安装**：解压 zip，把其中的 `saria` 文件夹整体放进 `<游戏目录>\mods\`，
@@ -98,8 +97,8 @@ powershell -ExecutionPolicy Bypass -File tools\package.ps1
 | `待删除` | 删代码并删掉表里这一条 |
 | `已实装` | 不再改动 |
 
-日常检查：`python tools/cardspec.py --changed` / `--pending`；
-全量校验：`python tools/cardspec.py`。协作细节见 [`../docs/agent-workflow.md`](../docs/agent-workflow.md)。
+日常检查：`python ..\\..\\..\\tools\\cardspec.py -c saria --changed` / `--pending`；
+全量校验：`python ..\\..\\..\\tools\\cardspec.py -c saria`。协作细节见 [`../docs/agent-workflow.md`](../docs/agent-workflow.md)。
 
 ---
 
