@@ -10,12 +10,12 @@ namespace Saria;
 
 /// <summary>
 /// 能量悬浮提示里的图标（原版 `HoverTipFactory.ForEnergyWithIconPath` 用 `PreloadManager` 按 res:// 路径取图，
-/// mod 的 PCK 贴图加载不了，所以这里后置替换）。
+/// mod 的贴图不在导出包里，所以这里后置替换成运行时贴图）。
 ///
-/// 判定条件两条同时满足才替换：
-///   1. 当前本地角色是塞雷娅（`LocalContext.GetMe(RunManager.Instance.State)`）；
-///   2. 提示自带的图标是铁甲战士的能量图标（`energy_ironclad`）——即"这张牌的卡池就是我们的"，
-///      避免把无色/其他卡池的提示也换掉。
+/// ⚠️ `HoverTip` 是 **record struct**，方法返回的是装箱后的 `IHoverTip`。
+/// 之前把 `__result` 模式匹配成 `HoverTip tip` 再调用 setter，改的是**拆箱拷贝**，
+/// 所以日志显示替换成功、界面却还是铁甲战士的图标。
+/// 现在直接把反射 setter 作用在装箱对象上（`ref IHoverTip __result`）。
 /// </summary>
 [HarmonyPatch(typeof(HoverTipFactory), "ForEnergyWithIconPath")]
 public static class ProbeEnergyHoverTipPatch
@@ -24,8 +24,10 @@ public static class ProbeEnergyHoverTipPatch
         AccessTools.PropertySetter(typeof(HoverTip), nameof(HoverTip.Icon))
         ?? AccessTools.Property(typeof(HoverTip), nameof(HoverTip.Icon))?.GetSetMethod(true);
 
+    private static int _logged;
+
     [HarmonyPostfix]
-    private static void Postfix(IHoverTip __result)
+    private static void Postfix(ref IHoverTip __result)
     {
         try
         {
@@ -44,8 +46,14 @@ public static class ProbeEnergyHoverTipPatch
             if (texture == null || IconSetter == null)
                 return;
 
-            IconSetter.Invoke(tip, new object?[] { texture });
-            Log.Info("[saria][orb] energy hover tip icon replaced");
+            // 作用在装箱的 HoverTip 上（ref 参数就是那个箱子），改动才能带回返回值。
+            IconSetter.Invoke(__result, new object?[] { texture });
+
+            if (_logged < 3)
+            {
+                _logged++;
+                Log.Info("[saria][orb] energy hover tip icon replaced");
+            }
         }
         catch (Exception ex)
         {

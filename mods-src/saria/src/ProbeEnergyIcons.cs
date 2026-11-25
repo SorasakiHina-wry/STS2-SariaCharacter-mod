@@ -97,6 +97,17 @@ internal static class ProbeEnergyIcons
         return image;
     }
 
+    /// <summary>正文内联用的 24×24 贴图（RichTextLabel.AddImage 直接用它，绕过资源加载器）。</summary>
+    internal static Texture2D? TextTexture
+    {
+        get
+        {
+            if (!_registered && !_failed)
+                Register();
+            return _textTexture;
+        }
+    }
+
     /// <summary>给其它补丁复用的贴图（优先用卡面那张 74×74 的注册贴图）。</summary>
     internal static Texture2D? Texture
     {
