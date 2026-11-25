@@ -130,7 +130,19 @@ public static class ProbeAncientDialoguePatch
                 for (int i = 0; i < sfx.Length; i++)
                     sfx[i] = string.Empty;
 
-                var dialogue = new AncientDialogue(sfx) { VisitIndex = index };
+                // 建筑师结局的「对峙」动画由 AncientDialogue 的两个 init 字段驱动（原版每个角色都写死了）：
+                //   StartAttackers = 对话开始时谁出手；EndAttackers = 结束时谁出手
+                // 我们自建的对话若保持默认（None），结局就完全没有攻击动画。
+                // 对齐原版：结尾一律双方互击；后续轮次开头由玩家先出手（同 Silent）。
+                var dialogue = ancientEntry == "THE_ARCHITECT"
+                    ? new AncientDialogue(sfx)
+                    {
+                        VisitIndex = index,
+                        EndAttackers = ArchitectAttackers.Both,
+                        StartAttackers = index > 0 ? ArchitectAttackers.Player : ArchitectAttackers.None,
+                    }
+                    : new AncientDialogue(sfx) { VisitIndex = index };
+
                 dialogue.PopulateLines(ancientEntry, ProbeAncientDialogueData.CharacterEntry, index);
 
                 // PopulateLines 只填台词，按钮文字（`.next`）是 AncientDialogueSet.PopulateLocKeys 里补的；
