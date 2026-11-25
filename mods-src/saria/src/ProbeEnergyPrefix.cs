@@ -35,6 +35,21 @@ public static class ProbeEnergyPrefix
     /// 我们卡牌的 Entry 里并没有 "SARIA-" 前缀（v0.7.4 之前就是因此一直匹配失败，
     /// 内联能量图标退回铁甲战士图标）。用**类型所在命名空间**判断最稳：所有自制模型都在 `Saria` 命名空间下。
     /// </summary>
+    /// <summary>当前本地角色是不是塞雷娅（没有对局 / 其他角色时为 false）。</summary>
+    internal static bool IsLocalSaria()
+    {
+        try
+        {
+            // 没有对局时返回 null；本地角色是塞雷娅时 GetPrefix 已经被本补丁改成 "saria"。
+            string? prefix = MegaCrit.Sts2.Core.Runs.RunManager.Instance.GetLocalCharacterEnergyIconPrefix();
+            return string.Equals(prefix, Prefix, StringComparison.OrdinalIgnoreCase);
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
     internal static bool IsOurs(AbstractModel? model)
     {
         if (model == null)
