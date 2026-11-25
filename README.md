@@ -37,15 +37,19 @@
 
 ```
 .
-├─ mods-src/probe/            ★ Mod 源码与设计表
+├─ mods-src/saria/            ★ Mod 源码与设计表
 │  ├─ src/                     C# 源码（Cards / Powers / Relics / Patches / Characters）
 │  ├─ assets/                  PCK 源：spine 与本地化 JSON
 │  ├─ design/                  ★ 设计表（卡牌/状态/遗物/文案），开发以此为准
 │  ├─ tools/                   构建、部署、打包与校验脚本
 │  ├─ mod_manifest.json        Mod 清单（id=saria，依赖 BaseLib）
 │  └─ README.md                开发细节：踩过的坑、必须满足的约束
-├─ docs/                       协作约定与格式说明
-└─ resources/                  美术与 Spine 源文件（仅 `png/cards-little`、`png/powers` 入库）
+├─ docs/                       本角色专属文档（补丁清单、改数值、发版）
+├─ art-assets.md               美术素材索引
+├─ resources/                  美术与 Spine 源文件（只入库自制派生素材；原图/PSD/Spine 仅本地）
+└─ .gitignore
+
+> 通用协作/格式/踩坑文档在仓库外的 `../docs/`（不随本仓库发布）。
 ```
 
 `design/` 是整套内容的**唯一事实来源**：卡牌数值、文案、稀有度、状态效果都先在表里写，
@@ -59,7 +63,7 @@
 
 ```powershell
 # 编译
-cd mods-src\probe
+cd mods-src\saria
 dotnet build -c Release
 
 # 部署到本机游戏（会先关掉游戏进程）
@@ -73,13 +77,13 @@ powershell -ExecutionPolicy Bypass -File tools\package.ps1
 确认已订阅 BaseLib，启动游戏后在角色选择界面选「塞雷娅」。
 
 > 发版（版本号、打包、推送、Release）见 [docs/release.md](docs/release.md)。
-> 还缺哪些美术/音频资源、各自尺寸规格见 [docs/missing-assets.md](docs/missing-assets.md)。
-> 已完成的素材在哪个目录、怎么命名、打包去哪见 [docs/art-assets.md](docs/art-assets.md)。
+> 已完成的素材在哪个目录、怎么命名、打包去哪见 [art-assets.md](art-assets.md)。
 > 所有 Harmony 补丁的目标与调试方法见 [docs/patches.md](docs/patches.md)。
-> 踩过的坑与开发小贴士（标签、内联、虚拟路径、工坊等）见 [docs/pitfalls.md](docs/pitfalls.md)。
+> 改数值/改牌效的操作流程见 [docs/card-code-guide.md](docs/card-code-guide.md)、[docs/how-to-adjust.md](docs/how-to-adjust.md)。
+> 踩过的坑与开发小贴士（标签、内联、虚拟路径、工坊等）见 [`../docs/pitfalls.md`](../docs/pitfalls.md)。
 >
 > 注意：`saria.pck` 只装 Spine 与本地化 JSON；图片走散文件（`images/`），
-> 详见 `mods-src/probe/README.md` 的「已知的坑」。
+> 详见 `mods-src/saria/README.md` 的「已知的坑」。
 
 ---
 
@@ -95,14 +99,14 @@ powershell -ExecutionPolicy Bypass -File tools\package.ps1
 | `已实装` | 不再改动 |
 
 日常检查：`python tools/cardspec.py --changed` / `--pending`；
-全量校验：`python tools/cardspec.py`。协作细节见 [`docs/agent-workflow.md`](docs/agent-workflow.md)。
+全量校验：`python tools/cardspec.py`。协作细节见 [`../docs/agent-workflow.md`](../docs/agent-workflow.md)。
 
 ---
 
 ## 版权与分发声明
 
-- 本仓库**只托管自制资源**：`resources/` 整体被 `.gitignore` 排除，只有 `png/cards-little/`（压缩卡图）与 `png/powers/`（状态图标）入库；其余美术素材仅在本地；
-  `mods-src/probe/assets/` 仅含 Spine 骨骼与本地化 JSON（本地构建用）
+- 本仓库**只托管自制资源**：`resources/` 整体被 `.gitignore` 排除，只保留压缩卡图、状态图标、猜拳手部、能量球、特效、遗物派生图、`png/sundry/`（角色图与转场）这些例外；原图、PSD、Spine 源、参考图仅在本地；
+  `mods-src/saria/assets/` 仅含 Spine 骨骼与本地化 JSON（本地构建用）
   部分取自游戏或为同人创作，**仅供本地构建使用，请勿二次分发**。
 - 正式发行包（Release 附件 `saria-<version>.zip`）里含立绘与 Spine，属于同人再分发，请勿转售；
   本地若要自己打完整包，需要自备 `resources/` 目录（见 [`docs/release.md`](docs/release.md)）。
