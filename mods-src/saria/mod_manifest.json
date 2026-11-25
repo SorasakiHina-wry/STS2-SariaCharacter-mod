@@ -3,7 +3,7 @@
   "name": "Saria Character",
   "author": "STS2 Modding",
   "description": "Saria - a custom character with the Calcium Armor mechanic and 89 original cards.",
-  "version": "0.7.1",
+  "version": "0.7.15",
   "has_dll": true,
   "has_pck": true,
   "affects_gameplay": true,
