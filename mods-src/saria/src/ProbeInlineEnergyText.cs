@@ -2,7 +2,9 @@ using System;
 using System.Text.RegularExpressions;
 using Godot;
 using HarmonyLib;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Logging;
+using MegaCrit.Sts2.addons.mega_text;
 
 namespace Saria;
 
@@ -97,6 +99,23 @@ public static class ProbeTooltipEnergyIconPatch
     private static readonly System.Reflection.FieldInfo? ContainerField =
         AccessTools.Field(typeof(MegaCrit.Sts2.Core.Nodes.HoverTips.NHoverTipSet), "_textHoverTipContainer");
 
+    private static string? _energyTitle;
+    private static int _logged;
+
+    /// <summary>「能量」提示的本地化标题（用原版工厂拿，避免硬编码语言）。</summary>
+    private static string? TryGetEnergyTitle()
+    {
+        try
+        {
+            var tip = HoverTipFactory.Static(StaticHoverTip.Energy);
+            return tip is HoverTip hoverTip ? hoverTip.Title : null;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
     [HarmonyPostfix]
     private static void Postfix(MegaCrit.Sts2.Core.Nodes.HoverTips.NHoverTipSet __instance)
     {
@@ -106,12 +125,37 @@ public static class ProbeTooltipEnergyIconPatch
         if (ContainerField?.GetValue(__instance) is not Control container)
             return;
 
+        // 「能量」词义提示的图标：它的 HoverTip 由 ForEnergyWithIconPath 构建，
+        // 而那个方法可能被内联导致补丁不触发；这里在节点层兜底按标题识别并换图。
+        string? energyTitle = _energyTitle ??= TryGetEnergyTitle();
+
         foreach (Node child in container.GetChildren())
         {
             if (child is not Control control)
                 continue;
+
             if (control.GetNodeOrNull<RichTextLabel>("%Description") is { } label)
                 ProbeInlineEnergyText.Replace(label);
+
+            if (energyTitle == null)
+                continue;
+
+            var titleLabel = control.GetNodeOrNull<MegaLabel>("%Title");
+            if (titleLabel == null || !string.Equals(titleLabel.Text, energyTitle, StringComparison.Ordinal))
+                continue;
+
+            var icon = control.GetNodeOrNull<TextureRect>("%Icon");
+            var texture = ProbeOrbSkin.Load("energy_saria.png");
+            if (icon != null && texture != null && icon.Texture != texture)
+            {
+                icon.Texture = texture;
+                icon.Visible = true;
+                if (_logged < 5)
+                {
+                    _logged++;
+                    Log.Info("[saria][orb] energy keyword tip icon replaced");
+                }
+            }
         }
     }
 }
