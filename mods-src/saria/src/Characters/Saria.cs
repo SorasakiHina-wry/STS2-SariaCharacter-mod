@@ -24,20 +24,23 @@ public sealed class Saria : PlaceholderCharacterModel
     public override string PlaceholderID => "ironclad";
 
     /// <summary>
-    /// 动画触发名 → 骨架剪辑名。**保持引擎默认的能力牌映射**：PowerUp 用 cast 剪辑
-    /// （原版 CharacterModel 的默认表就是 (new AnimState("cast"), "PowerUp")）。
-    /// 早期版本把它覆写成 Attack_2（powerup 剪辑），结果打能力牌时看起来像"又打了一下"，
-    /// 容易误认为播了旧素材动画。另外把原版卡可能触发的其它名字也接上，避免静默无动作。
+    /// 动画触发名 → 骨架剪辑名。
+    ///
+    /// 关键约定：**不给 <c>"Cast"</c> 绑任何动画**。
+    /// 骨架里的 <c>cast</c> 只是 <c>Skill_Begin</c> 的复制，播出来很像「起手攻击」；
+    /// 而原版无色技能牌（如「震荡波」）会主动 <c>TriggerAnim(Cast)</c>，
+    /// 一旦绑上，所有这类牌都会播放错误的骨骼动画。
+    /// 引擎本身不会自动播 Cast（只有攻击牌由 <c>AttackCommand</c> 播 <c>Attack</c>），
+    /// 所以「没有 Cast 映射」正好等于「这些牌不播额外动画」。
+    ///
+    /// 能力牌用专用的 <c>powerup</c> 剪辑（骨架里由 <c>Attack_2</c> 复制），
+    /// 不要退回默认的 <c>cast</c>，否则打能力牌看起来像又打了一下。
     /// </summary>
     protected override List<(AnimState, string)> AnimationStates => new()
     {
-        (new AnimState("cast"), "Cast"),
-        (new AnimState("powerup"), "PowerUp"),   // 能力牌用专属的 powerup 剪辑（骨架里由 Attack_2 复制）
+        (new AnimState("powerup"), "PowerUp"),
         (new AnimState("attack"), "Attack"),
         (new AnimState("hurt"), "Hit"),
-        (new AnimState("cast"), "Buff"),
-        (new AnimState("cast"), "Heal"),
-        (new AnimState("cast"), "Summon"),
         (new AnimState("stun"), "Stun"),
         (new AnimState("stun"), "StunTrigger"),
         (new AnimState("idle_loop"), "WakeUp"),

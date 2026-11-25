@@ -32,15 +32,25 @@ public static class ProbeEnergyHoverTipPatch
         try
         {
             if (__result is not HoverTip tip || tip.Icon == null)
+            {
+                LogDiag("skip: no HoverTip/icon");
                 return;
+            }
 
             string? iconPath = tip.Icon.ResourcePath;
+            string iconClass = tip.Icon.GetClass();
             if (iconPath == null || !iconPath.Contains("energy_ironclad"))
+            {
+                LogDiag($"skip: iconPath={iconPath ?? "<null>"} class={iconClass}");
                 return;
+            }
 
             var me = LocalContext.GetMe(CombatManager.Instance.DebugOnlyGetState())?.Character;
             if (me?.Id.Entry is not string entry || !entry.EndsWith("SARIA", StringComparison.Ordinal))
+            {
+                LogDiag($"skip: local char={me?.Id.Entry ?? "<null>"}");
                 return;
+            }
 
             var texture = ProbeOrbSkin.Load("energy_saria.png");
             if (texture == null || IconSetter == null)
@@ -59,5 +69,15 @@ public static class ProbeEnergyHoverTipPatch
         {
             Log.Warn($"[saria][orb] hover tip icon failed: {ex.Message}");
         }
+    }
+
+    private static int _diag;
+
+    private static void LogDiag(string message)
+    {
+        if (_diag >= 10)
+            return;
+        _diag++;
+        Log.Info($"[saria][orb][diag] energy hover tip {message}");
     }
 }
