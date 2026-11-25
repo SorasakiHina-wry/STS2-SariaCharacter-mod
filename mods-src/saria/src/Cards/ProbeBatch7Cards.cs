@@ -111,8 +111,8 @@ public sealed class ProbeEncircle : SariaCardModel
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {
-        new DamageVar(3m, ValueProp.Move),
-        new PowerVar<SetupStrikePower>(4m),
+        new DamageVar(4m, ValueProp.Move),
+        new PowerVar<SetupStrikePower>(3m),
         new DynamicVar("ArmorCost", 3m),
     };
 
@@ -141,8 +141,7 @@ public sealed class ProbeEncircle : SariaCardModel
 
     protected override void OnUpgrade()
     {
-        DynamicVars.Damage.UpgradeValueBy(1m);
-        DynamicVars["SetupStrikePower"].UpgradeValueBy(2m);
+        DynamicVars.Damage.UpgradeValueBy(2m);
     }
 
     /// <summary>Returns to hand instead of the discard pile.</summary>
